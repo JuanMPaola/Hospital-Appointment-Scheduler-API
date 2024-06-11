@@ -29,7 +29,7 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
 
 ## 3. Database Structure
 
-https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API/assets/137726036/48197c68-7bfa-4f6c-8f75-84514d49fbef
+![DB](https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API/assets/137726036/766abab8-135e-433b-8483-36213e218aa0)
 
 ## 4. Base URL
 	http://localhost:3000
