@@ -5,10 +5,9 @@
 1. Description
 2. Technical requirements
 3. Database Structure
-4. Base URL
-5. API Documentation
-6. Install
-7. Run
+4. API Documentation
+5. Install
+6. Run
 
 ## 1. Description
 
@@ -31,12 +30,12 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
 
 ![DB](https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API/assets/137726036/766abab8-135e-433b-8483-36213e218aa0)
 
-## 4. Base URL
+## 4. API Documentation
+
+Base URL
 	http://localhost:3000
 
-## 5. API Documentation
-
-## 5.1 POST endpoints
+## 4.1 POST endpoints
 
  - #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">api/post/patient</span>   Create a patient (user)
   - This endpoint is basically a registration endpoint, allowing patients (users) to create a "profile".
@@ -129,7 +128,7 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
 	status 200
 	Appointment created
 
-## 5.2 GET endpoints
+## 4.2 GET endpoints
 
 - #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">api/get/doctor</span>  - Retrieve all doctors
   - This endpoint retrieves a list of all doctors.
@@ -238,14 +237,14 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
 		}
 	]
 
-### 5.3 UPDATE endpoints
+### 4.3 UPDATE endpoints
 
 (define update endpoints here)
 
-## 6. Install
+## 5. Install
 
 (steps to install the project)
 
-## 7. Run
+## 6. Run
 
 (steps to run the project)
