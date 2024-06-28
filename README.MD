@@ -14,15 +14,17 @@
 
 # 1. Description
 
-This project is a Hospital Appointment Scheduler API. It helps patients to book appointments with doctors based on the doctor's availability and specialty with the following functionalities:
+This project is a Hospital Appointment Scheduler API. It helps patients book appointments with doctors based on the doctor's availability and specialty with the following functionalities:
 
 - Create patient profiles
-- Create appointments
-- Get doctors (all or by specialty)
+- Create doctor profiles
+- See patients registred
+- See doctors availables (all or by specialty)
+- Set appointments
 - Update appointment (48 hours in advance)
-- Delete appointment (cancel)
+- Delete profiles or appointments
 
-# 2. Technical requirements
+# 2. Technical Requirements
 
 - TypeScript
 - NestJS
@@ -31,80 +33,108 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
 
 # 3. Database Structure
 
-![DB](https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API/assets/137726036/766abab8-135e-433b-8483-36213e218aa0)
+![Captura de pantalla 2024-06-28 151613](https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API/assets/137726036/52764253-7f35-47e3-bb51-b9bcf6589d68)
 
 # 4. API Documentation
 
 ### Base URL
-	http://localhost:3000/api/v1
+    http://localhost:3000/api/v1
 
-## Patients
+## <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; color: #E64C91; font-size: 1.5em;"> Patients
 
-### POST
+### <span style=" color: #C574E5" >**POST**
 
- - #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/post/patient</span>   Create a patient (user)
-	This endpoint is basically a registration endpoint, allowing patients to create a "profile".<br>
-  All the information of the table patient in the dabatabase is mandatory to succefully post.
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/post/patient</span> Create a patient profile
+    This endpoint is basically a registration endpoint, allowing patients to create a "profile". <br>
+    All the information in the table patient in the database is mandatory to successfully post.
 
-	### Table picture
+    ![Captura de pantalla 2024-06-28 150809](https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API/assets/137726036/c12103b0-d154-4c56-b7a1-5de48ea56d45)
 
-	#### Example:
+    #### Example:
 
-	#### Request
-		POST http://localhost:3000/api/v1/post/patient
+    #### Request
+        POST http://localhost:3000/api/v1/post/patient
 
-		Body
-			{
-				"name": "John Doe",
-				"age": 30,
-				"email": "john.doe@example.com",
-				"phone": "123-456-7890",
-				"born": "1994-05-20T14:30:00Z"
-			}
+        Body
+        {
+            "name": "John Doe",
+            "age": 30,
+            "email": "john.doe@example.com",
+            "phone": "123-456-7890",
+            "born": "1994-05-20T14:30:00Z"
+        }
 
-	#### Response
-		status 200
-		Patient created
+    #### Response
+        status 200
+        Patient created
 
-### GET
+### <span style=" color: #C574E5" > **GET**
 
- - #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/get/patient</span>  Retrieve all patients
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/get/patient</span> Retrieve all patients
 
-	This endpoint retrieves a list of all registered patients. <br>
-	 No parameters are required for this request.
+    This endpoint retrieves a list of all registered patients. <br>
+    No parameters are required for this request.
 
-	#### Example:
+    #### Example:
 
-	#### Request
+    #### Request
 
-		GET http://localhost:3000/api/v1/get/patient
+        GET http://localhost:3000/api/v1/get/patient
 
-	#### Response
-		status 200
-		PATIENTS EXAMPLES
+    #### Response
+        status 200
+        [
+            {
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+                "name": "John Doe",
+                "age": 30,
+                "email": "john.doe@example.com",
+                "phone": "123-456-7890",
+                "born": "1994-05-20T14:30:00Z"
+            },
+            {
+                "id": "550e8400-e29b-41d4-a716-446655440001",
+                "name": "Jane Smith",
+                "age": 25,
+                "email": "jane.smith@example.com",
+                "phone": "987-654-3210",
+                "born": "1999-04-15T08:20:00Z"
+            },
+            {
+                "id": "550e8400-e29b-41d4-a716-446655440002",
+                "name": "Alice Johnson",
+                "age": 40,
+                "email": "alice.johnson@example.com",
+                "phone": "555-123-4567",
+                "born": "1984-12-10T12:00:00Z"
+            }
+        ]
 
- - #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/get/patient/:id</span>  Retrieve a patient by ID
-	
-	This endpoint retrieves the details of a specific patient by their ID. <br>
-	The request must include the patient's ID as a parameter.
-	
-	#### Example
-	#### Request
-		GET http://localhost:3000/api/v1/get/patient/550e8400-e29b-41d4-a716-446655440000
-	
-	#### Response
-			{
-				"name": "John Doe",
-				"age": 30,
-				"email": "john.doe@example.com",
-				"phone": "123-456-7890",
-				"born": "1994-05-20T14:30:00Z"
-			}
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/get/patient/:id</span> Retrieve a patient by ID
 
+    This endpoint retrieves the details of a specific patient by their ID. <br>
+    The request must include the patient's ID as a parameter.
 
-### PUT
+    #### Example
+    #### Request
+        GET http://localhost:3000/api/v1/get/patient/550e8400-e29b-41d4-a716-446655440000
 
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/put/patient/:id</span>  Update a specific patient's information
+    #### Response
+        status 200
+        {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "name": "John Doe",
+            "age": 30,
+            "email": "john.doe@example.com",
+            "phone": "123-456-7890",
+            "born": "1994-05-20T14:30:00Z"
+        }
+
+### <span style=" color: #C574E5" > **PUT**
+
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/put/patient/:id</span> Update a patient profile
+    This endpoint allows updating the profile of a specific patient by their ID. <br>
+    The request must include the patient's ID as a parameter, and the body should contain the updated details.
 
     #### Example:
 
@@ -125,28 +155,34 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
         status 200
         Patient updated
 
-### DELETE
+### <span style=" color: #C574E5" > **DELETE**
 
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/delete/patient/:id</span>  Delete a specific patient
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/delete/patient/:id</span> Delete a specific patient
+
+    This endpoint allows deleting a specific patient profile by their ID. <br>
+    The request must include the patient's ID as a parameter.
 
     #### Example:
 
     #### Request
 
-        DELETE http://localhost:3000/api/delete/patient/550e8400-e29b-41d4-a716-446655440000
+        DELETE http://localhost:3000/api/v1/delete/patient/550e8400-e29b-41d4-a716-446655440000
 
     #### Response
         status 200
         Patient deleted
+        
+<br>
+<br>
+<br>
 
-## Doctors
+## <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; color: #E64C91; font-size: 1.5em;"> Doctors </span>
 
-### POST
+### <span style=" color: #C574E5" > **POST**
 
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/post/doctor</span>   Create a doctor profile
-
-    This endpoint allows doctors to create a "profile". <br>
-    All the information of the table doctor in the database is mandatory to successfully post.
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;"> /post/doctor</span> Create a doctor profile
+    This endpoint allows creating a new doctor profile. <br>
+    All the information in the doctor table in the database is mandatory to successfully post.
 
     ### Table picture
 
@@ -154,134 +190,86 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
 
     #### Request
 
-        POST http://localhost:3000/api/post/doctor
+        POST http://localhost:3000/api/v1/post/doctor
 
         Body
         {
-            "name": "Dr. Smith",
-            "email": "dr.smith@example.com",
-            "specialties": [1, 2]
+            "name": "Dr. Jane Doe",
+            "specialty": "Cardiology",
+            "email": "dr.jane.doe@example.com",
+            "phone": "123-456-7890",
+            "license_number": "MD123456"
         }
 
     #### Response
         status 200
-        Doctor profile created
+        Doctor created
 
-### GET
+### <span style=" color: #C574E5" > **GET**
 
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/get/doctor</span>  Retrieve all doctors
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;"> /get/doctor</span> Retrieve all doctors
 
-    This endpoint retrieves a list of all doctors. <br>
+    This endpoint retrieves a list of all registered doctors. <br>
     No parameters are required for this request.
 
     #### Example:
 
     #### Request
 
-        GET http://localhost:3000/api/get/doctor
+        GET http://localhost:3000/api/v1/get/doctor
 
     #### Response
         status 200
         [
             {
-                "id": "123e4567-e89b-12d3-a456-426614174001",
-                "name": "Dr. Smith",
-                "email": "dr.smith@example.com",
-                "specialties": [
-                    {
-                        "id": 1,
-                        "title": "Cardiology"
-                    },
-                    {
-                        "id": 2,
-                        "title": "Neurology"
-                    }
-                ]
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+                "name": "Dr. John Doe",
+                "specialty": "Cardiology",
+                "email": "dr.john.doe@example.com",
+                "phone": "123-456-7890",
+                "license_number": "MD123456"
             },
             {
-                "id": "123e4567-e89b-12d3-a456-426614174002",
-                "name": "Dr. Johnson",
-                "email": "dr.johnson@example.com",
-                "specialties": [
-                    {
-                        "id": 3,
-                        "title": "Orthopedics"
-                    }
-                ]
+                "id": "550e8400-e29b-41d4-a716-446655440001",
+                "name": "Dr. Jane Smith",
+                "specialty": "Neurology",
+                "email": "dr.jane.smith@example.com",
+                "phone": "987-654-3210",
+                "license_number": "MD654321"
+            },
+            {
+                "id": "550e8400-e29b-41d4-a716-446655440002",
+                "name": "Dr. Alice Johnson",
+                "specialty": "Pediatrics",
+                "email": "dr.alice.johnson@example.com",
+                "phone": "555-123-4567",
+                "license_number": "MD987654"
             }
         ]
 
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/get/doctor/:id</span>  Retrieve a doctor by ID
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/get/doctor/:id</span> Retrieve a doctor by ID
 
     This endpoint retrieves the details of a specific doctor by their ID. <br>
     The request must include the doctor's ID as a parameter.
 
-    #### Example:
-
+    #### Example
     #### Request
-
-        GET http://localhost:3000/api/get/doctor/123e4567-e89b-12d3-a456-426614174001
+        GET http://localhost:3000/api/v1/get/doctor/550e8400-e29b-41d4-a716-446655440000
 
     #### Response
         status 200
         {
-            "id": "123e4567-e89b-12d3-a456-426614174001",
-            "name": "Dr. Smith",
-            "email": "dr.smith@example.com",
-            "specialties": [
-                {
-                    "id": 1,
-                    "title": "Cardiology"
-                },
-                {
-                    "id": 2,
-                    "title": "Neurology"
-                }
-            ]
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "name": "Dr. John Doe",
+            "specialty": "Cardiology",
+            "email": "dr.john.doe@example.com",
+            "phone": "123-456-7890",
+            "license_number": "MD123456"
         }
 
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/get/doctors/specialty/:id</span>  Retrieve doctors by specialty
+### <span style=" color: #C574E5" > **PUT**
 
-    This endpoint retrieves a list of doctors based on the given specialty ID. <br>
-    The request must include the specialty's ID as a parameter.
-
-    #### Example:
-
-    #### Request
-
-        GET http://localhost:3000/api/get/doctors/specialty/1
-
-    #### Response
-        status 200
-        [
-            {
-                "id": "123e4567-e89b-12d3-a456-426614174001",
-                "name": "Dr. Smith",
-                "email": "dr.smith@example.com",
-                "specialties": [
-                    {
-                        "id": 1,
-                        "title": "Cardiology"
-                    }
-                ]
-            },
-            {
-                "id": "123e4567-e89b-12d3-a456-426614174003",
-                "name": "Dr. Brown",
-                "email": "dr.brown@example.com",
-                "specialties": [
-                    {
-                        "id": 1,
-                        "title": "Cardiology"
-                    }
-                ]
-            }
-        ]
-
-### PUT
-
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/put/doctor/:id<span> Update a doctor profile
-
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/put/doctor/:id</span> Update a doctor profile
     This endpoint allows updating the profile of a specific doctor by their ID. <br>
     The request must include the doctor's ID as a parameter, and the body should contain the updated details.
 
@@ -289,22 +277,24 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
 
     #### Request
 
-        PUT http://localhost:3000/api/v1/put/doctor/123e4567-e89b-12d3-a456-426614174001
+        PUT http://localhost:3000/api/v1/put/doctor/550e8400-e29b-41d4-a716-446655440000
 
         Body
         {
-            "name": "Dr. Smith Updated",
-            "email": "dr.smith.updated@example.com",
-            "specialties": [1, 3]
+            "name": "Dr. John Doe",
+            "specialty": "Cardiology",
+            "email": "dr.john.newemail@example.com",
+            "phone": "123-456-7891",
+            "license_number": "MD123456"
         }
 
     #### Response
         status 200
-        Doctor profile updated
+        Doctor updated
 
-### DELETE
+### <span style=" color: #C574E5" > **DELETE**
 
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/delete/doctor/:id<span> Delete a doctor profile
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/delete/doctor/:id</span> Delete a specific doctor
 
     This endpoint allows deleting a specific doctor profile by their ID. <br>
     The request must include the doctor's ID as a parameter.
@@ -313,22 +303,21 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
 
     #### Request
 
-        DELETE http://localhost:3000/api/v1/delete/doctor/123e4567-e89b-12d3-a456-426614174001
+        DELETE http://localhost:3000/api/v1/delete/doctor/550e8400-e29b-41d4-a716-446655440000
 
     #### Response
         status 200
-        Doctor profile deleted
+        Doctor deleted
 
-## Appointments
+## <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; color: #E64C91; font-size: 1.5em;"> Appointments
 
-### POST
+### <span style=" color: #C574E5" > **POST**
 
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/post/appointment</span>  Create an appointment
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/post/appointment</span> Create an appointment
+    This endpoint allows creating a new appointment for a patient with a specific doctor. <br>
+    All the information in the appointment table in the database is mandatory to successfully post.
 
-    This endpoint allows the creation of an appointment between a patient and a doctor. <br>
-    All the information of the table appointment in the database is mandatory to successfully post.
-
-    ### Table picture
+    ![Captura de pantalla 2024-06-28 150846](https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API/assets/137726036/5ed11622-9481-4f7f-b1f2-06ea4db8eeb1)
 
     #### Example:
 
@@ -338,23 +327,21 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
 
         Body
         {
-            "day": "2024-06-10",
-            "starts_at": "2024-06-10T09:00:00Z",
-            "ends_at": "2024-06-10T09:30:00Z",
-            "doctor_id": "123e4567-e89b-12d3-a456-426614174001",
-            "patient_id": "123e4567-e89b-12d3-a456-426614174000",
-            "status": "scheduled"
+            "patient_id": "550e8400-e29b-41d4-a716-446655440000",
+            "doctor_id": "550e8400-e29b-41d4-a716-446655440000",
+            "date": "2024-07-15T10:00:00Z",
+            "reason": "Routine check-up"
         }
 
     #### Response
         status 200
         Appointment created
 
-### GET
+### <span style=" color: #C574E5" > **GET**
 
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/get/appointment</span>  Retrieve all appointments
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/get/appointment</span> Retrieve all appointments
 
-    This endpoint retrieves a list of all appointments.
+    This endpoint retrieves a list of all appointments. <br>
     No parameters are required for this request.
 
     #### Example:
@@ -367,56 +354,68 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
         status 200
         [
             {
-                "id": 1,
-                "day": "2024-06-10",
-                "starts_at": "2024-06-10T09:00:00Z",
-                "ends_at": "2024-06-10T09:30:00Z",
-                "doctor_id": "123e4567-e89b-12d3-a456-426614174001",
-                "patient_id": "123e4567-e89b-12d3-a456-426614174000",
-                "status": "scheduled"
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+                "patient_id": "550e8400-e29b-41d4-a716-446655440000",
+                "doctor_id": "550e8400-e29b-41d4-a716-446655440000",
+                "date": "2024-07-15T10:00:00Z",
+                "reason": "Routine check-up"
             },
             {
-                "id": 2,
-                "day": "2024-06-11",
-                "starts_at": "2024-06-11T10:00:00Z",
-                "ends_at": "2024-06-11T10:30:00Z",
-                "doctor_id": "123e4567-e89b-12d3-a456-426614174002",
-                "patient_id": "123e4567-e89b-12d3-a456-426614174001",
-                "status": "scheduled"
+                "id": "550e8400-e29b-41d4-a716-446655440001",
+                "patient_id": "550e8400-e29b-41d4-a716-446655440001",
+                "doctor_id": "550e8400-e29b-41d4-a716-446655440001",
+                "date": "2024-07-16T14:30:00Z",
+                "reason": "Consultation"
             }
         ]
 
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/get/appointment/:id</span> Retrieve an appointment by ID
 
-### PUT
+    This endpoint retrieves the details of a specific appointment by its ID.<br>
+    The request must include the appointment ID as a parameter.
 
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/put/appointment/:id</span> Update an appointment
+    #### Example
+    #### Request
+        GET http://localhost:3000/api/v1/get/appointment/550e8400-e29b-41d4-a716-446655440000
 
-    This endpoint allows updating the details of a specific appointment by its ID. <br>
+    #### Response
+        status 200
+        {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "patient_id": "550e8400-e29b-41d4-a716-446655440000",
+            "doctor_id": "550e8400-e29b-41d4-a716-446655440000",
+            "date": "2024-07-15T10:00:00Z",
+            "reason": "Routine check-up"
+        }
+
+### <span style=" color: #C574E5" > **PUT**
+
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/put/appointment/:id</span> Update an appointment
+    This endpoint allows updating an existing appointment by its ID. <br>
+    Appointments can only be updated 48 hours in advance. <br>
     The request must include the appointment ID as a parameter, and the body should contain the updated details.
 
     #### Example:
 
     #### Request
 
-        PUT http://localhost:3000/api/v1/put/appointment/1
+        PUT http://localhost:3000/api/v1/put/appointment/550e8400-e29b-41d4-a716-446655440000
 
         Body
         {
-            "day": "2024-06-10",
-            "starts_at": "2024-06-10T09:00:00Z",
-            "ends_at": "2024-06-10T09:30:00Z",
-            "doctor_id": "123e4567-e89b-12d3-a456-426614174001",
-            "patient_id": "123e4567-e89b-12d3-a456-426614174000",
-            "status": "rescheduled"
+            "patient_id": "550e8400-e29b-41d4-a716-446655440000",
+            "doctor_id": "550e8400-e29b-41d4-a716-446655440000",
+            "date": "2024-07-16T10:00:00Z",
+            "reason": "Updated reason"
         }
 
     #### Response
         status 200
         Appointment updated
 
-### DELETE
+### <span style=" color: #C574E5" > **DELETE**
 
-- #### <span style="font-family:&quot;SFMono-Regular&quot;, Menlo, Consolas, &quot;PT Mono&quot;, &quot;Liberation Mono&quot;, Courier, monospace;line-height:normal;background:rgba(135,131,120,.15);color:C574E5;border-radius:4px;font-size:100%;padding:0.2em 0.4em" data-token-index="1" spellcheck="false" class="notion-enable-hover">/delete/appointment/:id</span> Delete an appointment
+- #### <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; background: rgba(135,131,120,.15); color: #C574E5; border-radius: 4px; padding: 0.2em 0.4em;">/delete/appointment/:id</span> Delete an appointment
 
     This endpoint allows deleting a specific appointment by its ID. <br>
     The request must include the appointment ID as a parameter.
@@ -425,16 +424,39 @@ This project is a Hospital Appointment Scheduler API. It helps patients to book 
 
     #### Request
 
-        DELETE http://localhost:3000/api/v1/delete/appointment/1
+        DELETE http://localhost:3000/api/v1/delete/appointment/550e8400-e29b-41d4-a716-446655440000
 
     #### Response
         status 200
         Appointment deleted
 
-## 5. Install
+# 5. Install
 
-(steps to install the project)
+To install this project, follow these steps:
 
-## 6. Run
+1. Clone the repository:
+    ```
+    git clone https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API.git
+    ```
+2. Navigate to the project directory:
+    ```
+    cd Hospital-Appointment-Scheduler-API
+    ```
+3. Install dependencies:
+    ```
+    npm install
+    ```
 
-(steps to run the project)
+# 6. Run
+
+To run this project, follow these steps:
+
+1. Ensure PostgreSQL is running on your local machine.
+2. Run the application:
+    ```
+    npm run start:dev
+    ```
+3. The API will be available at:
+    ```
+    http://localhost:3000/api/v1
+    ```
