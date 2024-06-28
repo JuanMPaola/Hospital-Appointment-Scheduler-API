@@ -1,4 +1,4 @@
-# Hospital Appointment Scheduler
+<h1 style="color: #808080;">Hospital Appointment Scheduler</h1>
 
 ## Content
 
