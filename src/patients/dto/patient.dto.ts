@@ -1,9 +1,29 @@
+import { IsString, IsEmail, IsNotEmpty, IsOptional, IsInt, IsDate } from 'class-validator';
+
+
 export class Patient {
-    name: string;
-    age: number;
-    email: string;
-    phone: string;
-    born: Date;
-    username: string;
-    password: string;
-  }
+  @IsString()
+  @IsOptional()
+  name: string;
+
+  @IsInt()
+  age: number;
+
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  phone: string;
+
+  @IsDate()
+  born: Date;
+
+  @IsString()
+  @IsNotEmpty()
+  username: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}

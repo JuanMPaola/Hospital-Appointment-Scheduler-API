@@ -3,27 +3,27 @@ import { Client } from 'pg';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit {
-    private client: Client;
+  private client: Client;
 
-    async onModuleInit() {
-        this.client = new Client({
-            host: 'localhost', 
-            port: 5432,        
-            user: 'postgres', 
-            password: 'asdasd123',
-            database: 'Hospital',
-        });
+  async onModuleInit() {
+    this.client = new Client({
+      host: 'localhost',
+      port: 5432,
+      user: 'postgres',
+      password: 'asdasd123',
+      database: 'Hospital',
+    });
 
-        await this.client.connect();
-    }
+    await this.client.connect();
+  }
 
-    // Function to create Tables if not exists, and to active UUID generative function.
-    async createTables() {
-        const activeUUIDQuery = `
+  // Function to create Tables if not exists, and to active UUID generative function.
+  async createTables() {
+    const activeUUIDQuery = `
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
       `;
 
-        const createTablesQuery = `
+    const createTablesQuery = `
         CREATE TABLE IF NOT EXISTS patient (
           id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
           name VARCHAR,
@@ -70,12 +70,13 @@ export class DatabaseService implements OnModuleInit {
 
         CREATE TABLE IF NOT EXISTS days (
           id SERIAL PRIMARY KEY,
-          day VARCHAR
+          day VARCHAR(20) NOT NULL
         );
 
         CREATE TABLE IF NOT EXISTS time_range (
           id SERIAL PRIMARY KEY,
-          time_range VARCHAR
+          start_time TIME NOT NULL,
+          end_time TIME NOT NULL
         );
 
         CREATE TABLE IF NOT EXISTS doctor_availability (
@@ -89,14 +90,62 @@ export class DatabaseService implements OnModuleInit {
         );
           `;
 
+          const insertBasicInfoQuery = `
+          DO $$
+          BEGIN
+              IF NOT EXISTS (SELECT 1 FROM days) THEN
+                  INSERT INTO days (day) VALUES 
+                  ('Monday'),
+                  ('Tuesday'),
+                  ('Wednesday'),
+                  ('Thursday'),
+                  ('Friday'),
+                  ('Saturday'),
+                  ('Sunday');
+              END IF;
+      
+              IF NOT EXISTS (SELECT 1 FROM time_range) THEN
+                  INSERT INTO time_range (start_time, end_time) VALUES
+                  ('08:00', '08:30'),
+                  ('08:30', '09:00'),
+                  ('09:00', '09:30'),
+                  ('09:30', '10:00'),
+                  ('10:00', '10:30'),
+                  ('10:30', '11:00'),
+                  ('11:00', '11:30'),
+                  ('11:30', '12:00'),
+                  ('12:00', '12:30'),
+                  ('12:30', '13:00'),
+                  ('13:00', '13:30'),
+                  ('13:30', '14:00'),
+                  ('14:00', '14:30'),
+                  ('14:30', '15:00'),
+                  ('15:00', '15:30'),
+                  ('15:30', '16:00'),
+                  ('16:00', '16:30'),
+                  ('16:30', '17:00'),
+                  ('17:00', '17:30'),
+                  ('17:30', '18:00'),
+                  ('18:00', '18:30'),
+                  ('18:30', '19:00'),
+                  ('19:00', '19:30'),
+                  ('19:30', '20:00'),
+                  ('20:00', '20:30'),
+                  ('20:30', '21:00'),
+                  ('21:00', '21:30'),
+                  ('21:30', '22:00');
+              END IF;
+          END $$;
+      `;
+      
+    await this.client.query(insertBasicInfoQuery);
+    await this.client.query(activeUUIDQuery);
+    await this.client.query(createTablesQuery);
+    console.log('Tables created successfully');
+  }
 
-        await this.client.query(activeUUIDQuery);
-        await this.client.query(createTablesQuery);
-        console.log('Tables created successfully');
-    }
-
-    //??
-    async query(text: string, params?: any[]) {
-        return this.client.query(text, params);
-    }
+  //??
+  async query(text: string, params?: any[]) {
+    return this.client.query(text, params);
+  }
 }
