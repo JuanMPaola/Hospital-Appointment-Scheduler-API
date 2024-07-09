@@ -33,7 +33,7 @@ This project is a Hospital Appointment Scheduler API. It helps patients book app
 
 # 3. Database Structure
 
-![Captura de pantalla 2024-06-28 151613](https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API/assets/137726036/52764253-7f35-47e3-bb51-b9bcf6589d68)
+![Captura de pantalla 2024-07-04 141105](https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API/assets/137726036/8fb580b0-8b28-4c31-aa01-5e19e4bd4224)
 
 # 4. API Documentation
 
