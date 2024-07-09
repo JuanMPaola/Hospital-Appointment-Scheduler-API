@@ -1,13 +1,13 @@
 import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
 import { PatientsService } from './patients.service';
-import { Patient } from './dto/patient.dto';
+import { PatientDto } from './dto/patient.dto';
 
 @Controller('patients')
 export class PatientsController {
   constructor(private readonly patientsService: PatientsService) {}
 
   @Post()
-  create(@Body() patient: Patient) {
+  create(@Body() patient: PatientDto) {
     return this.patientsService.create(patient);
   }
 
@@ -22,7 +22,7 @@ export class PatientsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() patient: Patient) {
+  update(@Param('id') id: string, @Body() patient: PatientDto) {
     return this.patientsService.update(id, patient);
   }
 

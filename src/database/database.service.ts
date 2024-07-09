@@ -23,72 +23,74 @@ export class DatabaseService implements OnModuleInit {
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
       `;
 
-    const createTablesQuery = `
-        CREATE TABLE IF NOT EXISTS patient (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          name VARCHAR,
-          age INTEGER,
-          email VARCHAR,
-          phone VARCHAR,
-          born TIMESTAMP,
-          username VARCHAR,
-          password VARCHAR
-        );
-
-        CREATE TABLE IF NOT EXISTS doctor (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          name VARCHAR,
-          email VARCHAR,
-          username VARCHAR,
-          password VARCHAR
-        );
-
-        CREATE TABLE IF NOT EXISTS specialties (
-          id SERIAL PRIMARY KEY,
-          title VARCHAR
-        );
-
-        CREATE TABLE IF NOT EXISTS doctor_specialties (
-          specialty_id INTEGER,
-          doctor_id UUID,
-          PRIMARY KEY (specialty_id, doctor_id),
-          FOREIGN KEY (specialty_id) REFERENCES specialties(id),
-          FOREIGN KEY (doctor_id) REFERENCES doctor(id)
-        );
-
-        CREATE TABLE IF NOT EXISTS appointment (
-          id SERIAL PRIMARY KEY,
-          day DATE,
-          starts_at TIMESTAMP,
-          ends_at TIMESTAMP,
-          doctor_id UUID,
-          patient_id UUID,
-          status VARCHAR,
-          FOREIGN KEY (doctor_id) REFERENCES doctor(id),
-          FOREIGN KEY (patient_id) REFERENCES patient(id)
-        );
-
-        CREATE TABLE IF NOT EXISTS days (
-          id SERIAL PRIMARY KEY,
-          day VARCHAR(20) NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS time_range (
-          id SERIAL PRIMARY KEY,
-          start_time TIME NOT NULL,
-          end_time TIME NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS doctor_availability (
-          id SERIAL PRIMARY KEY,
-          doctor_id UUID,
-          day_id INTEGER,
-          time_range_id INTEGER,
-          FOREIGN KEY (doctor_id) REFERENCES doctor(id),
-          FOREIGN KEY (day_id) REFERENCES days(id),
-          FOREIGN KEY (time_range_id) REFERENCES time_range(id)
-        );
-          `;
+      const createTablesQuery = `
+      CREATE TABLE IF NOT EXISTS users (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        name VARCHAR,
+        email VARCHAR,
+        password VARCHAR,
+        role VARCHAR
+      );
+  
+      CREATE TABLE IF NOT EXISTS patients (
+        user_id UUID PRIMARY KEY,
+        age INTEGER,
+        phone VARCHAR,
+        born TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
+  
+      CREATE TABLE IF NOT EXISTS doctors (
+        user_id UUID PRIMARY KEY,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
+  
+      CREATE TABLE IF NOT EXISTS specialties (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR
+      );
+  
+      CREATE TABLE IF NOT EXISTS doctor_specialties (
+        specialty_id INTEGER,
+        doctor_id UUID,
+        PRIMARY KEY (specialty_id, doctor_id),
+        FOREIGN KEY (specialty_id) REFERENCES specialties(id),
+        FOREIGN KEY (doctor_id) REFERENCES doctors(user_id)
+      );
+  
+      CREATE TABLE IF NOT EXISTS appointments (
+        id SERIAL PRIMARY KEY,
+        day DATE,
+        starts_at TIMESTAMP,
+        ends_at TIMESTAMP,
+        doctor_id UUID,
+        patient_id UUID,
+        status VARCHAR,
+        FOREIGN KEY (doctor_id) REFERENCES doctors(user_id),
+        FOREIGN KEY (patient_id) REFERENCES patients(user_id)
+      );
+  
+      CREATE TABLE IF NOT EXISTS days (
+        id SERIAL PRIMARY KEY,
+        day VARCHAR(20) NOT NULL
+      );
+  
+      CREATE TABLE IF NOT EXISTS time_range (
+        id SERIAL PRIMARY KEY,
+        start_time TIME NOT NULL,
+        end_time TIME NOT NULL
+      );
+  
+      CREATE TABLE IF NOT EXISTS doctor_availability (
+        id SERIAL PRIMARY KEY,
+        doctor_id UUID,
+        day_id INTEGER,
+        time_range_id INTEGER,
+        FOREIGN KEY (doctor_id) REFERENCES doctors(user_id),
+        FOREIGN KEY (day_id) REFERENCES days(id),
+        FOREIGN KEY (time_range_id) REFERENCES time_range(id)
+      );
+    `;
 
           const insertBasicInfoQuery = `
           DO $$
@@ -138,13 +140,13 @@ export class DatabaseService implements OnModuleInit {
           END $$;
       `;
       
-    await this.client.query(insertBasicInfoQuery);
-    await this.client.query(activeUUIDQuery);
-    await this.client.query(createTablesQuery);
+      await this.client.query(activeUUIDQuery);
+      await this.client.query(createTablesQuery);
+      await this.client.query(insertBasicInfoQuery);
     console.log('Tables created successfully');
   }
 
-  //??
+  //Function to make queries outside the class
   async query(text: string, params?: any[]) {
     return this.client.query(text, params);
   }
