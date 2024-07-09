@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Patient } from './dto/patient.dto';
+import { PatientDto } from './dto/patient.dto';
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class PatientsService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async create(patient: Patient) {
+  async create(patient: PatientDto) {
     const query = `
       INSERT INTO patient (name, age, email, phone, born, username, password)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -37,7 +37,7 @@ export class PatientsService {
     return result.rows[0];
   }
 
-  async update(id: string, patient: Patient) {
+  async update(id: string, patient: PatientDto) {
     const query = `
       UPDATE patient
       SET name = $1, age = $2, email = $3, phone = $4, born = $5, username = $6, password = $7

@@ -1,16 +1,9 @@
-import { IsString, IsEmail, IsNotEmpty, IsOptional, IsInt, IsDate } from 'class-validator';
+import { IsString, IsNotEmpty, IsInt, IsDate } from 'class-validator';
+import { UserDto } from '../../users/dto/user.dto'
 
-
-export class Patient {
-  @IsString()
-  @IsOptional()
-  name: string;
-
+export class Patient extends UserDto {
   @IsInt()
   age: number;
-
-  @IsEmail()
-  email: string;
 
   @IsString()
   @IsNotEmpty()
@@ -18,12 +11,4 @@ export class Patient {
 
   @IsDate()
   born: Date;
-
-  @IsString()
-  @IsNotEmpty()
-  username: string;
-
-  @IsString()
-  @IsNotEmpty()
-  password: string;
 }
