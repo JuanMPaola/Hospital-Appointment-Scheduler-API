@@ -1,22 +1,7 @@
-import { IsString, IsEmail, IsNotEmpty, IsArray, ArrayNotEmpty} from 'class-validator';
+import { IsString, IsArray, ArrayNotEmpty} from 'class-validator';
+import { UserDto } from '../../users/dto/user.dto'
 
-export class DoctorDto {
-    @IsString()
-    @IsNotEmpty()
-    name: string;
-  
-    @IsEmail()
-    @IsNotEmpty()
-    email: string;
-  
-    @IsString()
-    @IsNotEmpty()
-    username: string;
-  
-    @IsString()
-    @IsNotEmpty()
-    password: string;
-    
+export class DoctorDto extends UserDto {    
     @IsArray()
     @ArrayNotEmpty()
     @IsString({ each: true })

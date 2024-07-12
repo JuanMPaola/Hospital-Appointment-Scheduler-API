@@ -26,9 +26,9 @@ export class DatabaseService implements OnModuleInit {
       const createTablesQuery = `
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        name VARCHAR,
-        email VARCHAR,
-        password VARCHAR,
+        name VARCHAR NOT NULL,
+        email VARCHAR NOT NULL UNIQUE,
+        password VARCHAR NOT NULL,
         role VARCHAR
       );
   
