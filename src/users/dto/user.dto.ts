@@ -4,6 +4,10 @@ import { IsString, IsEmail, IsNotEmpty } from "class-validator";
 export class UserDto {
     @IsString()
     @IsNotEmpty()
+    id: string;
+
+    @IsString()
+    @IsNotEmpty()
     name: string;
   
     @IsEmail()
@@ -13,4 +17,8 @@ export class UserDto {
     @IsString()
     @IsNotEmpty()
     password: string;
+
+    @IsString()
+    @IsNotEmpty()
+    role: string;
 }

@@ -6,36 +6,28 @@ import { DatabaseService } from 'src/database/database.service';
 export class DoctorsService {
   constructor(private readonly databaseService: DatabaseService) { }
 
-  async create(doctor: DoctorDto) {
+  async create(userId: string, doctorData: DoctorDto) {
     try {
-      // Query to insert into users table (returns ID)
-      const createUserQuery = `
-        INSERT INTO users (name, email, password, role)
-        VALUES ($1, $2, $3, $4)
-        RETURNING id;
-      `;
-  
-      // Extracting values from dto
-      const userValues = [
-        doctor.name,
-        doctor.email,
-        doctor.password,
-        'doctor'
-      ];
-  
-      // Sending query and values to db
-      const userResult = await this.databaseService.query(createUserQuery, userValues);
-      const userId = userResult.rows[0].id;
-  
       // Insert into doctors table using the user_id
       const createDoctorQuery = `
         INSERT INTO doctors (user_id)
         VALUES ($1)
         RETURNING *;
       `;
-  
+      
       const doctorResult = await this.databaseService.query(createDoctorQuery, [userId]);
-  
+      
+      // Insert specialties into doctor_specialties table
+      /* const specialties = doctorData.specialties;
+      for (const specialty of specialties) {
+        const createSpecialtyQuery = `
+          INSERT INTO doctor_specialties (doctor_id, specialty_id)
+          VALUES ($1, (SELECT id FROM specialties WHERE title = $2))
+          RETURNING *;
+        `;
+        await this.databaseService.query(createSpecialtyQuery, [userId, specialty]);
+      } */
+
       return doctorResult.rows[0];
   
     } catch (error) {

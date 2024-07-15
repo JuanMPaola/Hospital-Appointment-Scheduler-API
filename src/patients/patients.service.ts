@@ -6,7 +6,7 @@ import { DatabaseService } from '../database/database.service';
 export class PatientsService {
   constructor(private readonly databaseService: DatabaseService) { }
 
-  async create(patient: PatientDto) {
+  async create(userId: string ,patient: PatientDto) {
     try {
       // Query to insert into users table (returns ID)
       const createUserQuery = `

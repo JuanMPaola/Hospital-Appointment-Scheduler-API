@@ -140,10 +140,26 @@ export class DatabaseService implements OnModuleInit {
           END $$;
       `;
       
+      const deleteTablesQuery = `
+      DROP TABLE IF EXISTS doctor_availability;
+      DROP TABLE IF EXISTS time_range;
+      DROP TABLE IF EXISTS days;
+      DROP TABLE IF EXISTS appointments;
+      DROP TABLE IF EXISTS doctor_specialties;
+      DROP TABLE IF EXISTS specialties;
+      DROP TABLE IF EXISTS doctors;
+      DROP TABLE IF EXISTS patients;
+      DROP TABLE IF EXISTS users;
+  `;
+  
+
       await this.client.query(activeUUIDQuery);
       await this.client.query(createTablesQuery);
       await this.client.query(insertBasicInfoQuery);
-    console.log('Tables created successfully');
+      console.log('Tables created successfully');
+
+      // Query to reset DB
+      //await this.client.query(deleteTablesQuery);
   }
 
   //Function to make queries outside the class
