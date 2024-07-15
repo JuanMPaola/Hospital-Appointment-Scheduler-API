@@ -23,7 +23,7 @@ export class DatabaseService implements OnModuleInit {
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
       `;
 
-      const createTablesQuery = `
+    const createTablesQuery = `
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR NOT NULL,
@@ -92,22 +92,22 @@ export class DatabaseService implements OnModuleInit {
       );
     `;
 
-          const insertBasicInfoQuery = `
-          DO $$
-          BEGIN
-              IF NOT EXISTS (SELECT 1 FROM days) THEN
-                  INSERT INTO days (day) VALUES 
-                  ('Monday'),
-                  ('Tuesday'),
-                  ('Wednesday'),
-                  ('Thursday'),
-                  ('Friday'),
-                  ('Saturday'),
-                  ('Sunday');
-              END IF;
+    const insertBasicInfoQuery = `
+      DO $$
+      BEGIN
+       IF NOT EXISTS (SELECT 1 FROM days) THEN
+          INSERT INTO days (day) VALUES 
+            ('Monday'),
+            ('Tuesday'),
+            ('Wednesday'),
+            ('Thursday'),
+            ('Friday'),
+            ('Saturday'),
+            ('Sunday');
+        END IF;
       
-              IF NOT EXISTS (SELECT 1 FROM time_range) THEN
-                  INSERT INTO time_range (start_time, end_time) VALUES
+        IF NOT EXISTS (SELECT 1 FROM time_range) THEN
+          INSERT INTO time_range (start_time, end_time) VALUES
                   ('08:00', '08:30'),
                   ('08:30', '09:00'),
                   ('09:00', '09:30'),
@@ -136,11 +136,37 @@ export class DatabaseService implements OnModuleInit {
                   ('20:30', '21:00'),
                   ('21:00', '21:30'),
                   ('21:30', '22:00');
-              END IF;
-          END $$;
-      `;
+        END IF;
+      END $$;
+    `;
+
+    const insertSpecialtiesQuery = `
+    INSERT INTO specialties (title) VALUES
+      ('Anesthesiology'),
+      ('Cardiology'),
+      ('Dermatology'),
+      ('Emergency Medicine'),
+      ('Family Medicine'),
+      ('Internal Medicine'),
+      ('Medical Genetics'),
+      ('Neurology'),
+      ('Nuclear Medicine'),
+      ('Obstetrics and Gynecology'),
+      ('Ophthalmology'),
+      ('Orthopedic Surgery'),
+      ('Otolaryngology (ENT)'),
+      ('Pathology'),
+      ('Pediatrics'),
+      ('Physical Medicine and Rehabilitation'),
+      ('Plastic Surgery'),
+      ('Psychiatry'),
+      ('Radiation Oncology'),
+      ('Radiology'),
+      ('Surgery'),
+      ('Urology');
+    `
       
-      const deleteTablesQuery = `
+    const deleteTablesQuery = `
       DROP TABLE IF EXISTS doctor_availability;
       DROP TABLE IF EXISTS time_range;
       DROP TABLE IF EXISTS days;
@@ -150,13 +176,14 @@ export class DatabaseService implements OnModuleInit {
       DROP TABLE IF EXISTS doctors;
       DROP TABLE IF EXISTS patients;
       DROP TABLE IF EXISTS users;
-  `;
+   `;
   
 
-      await this.client.query(activeUUIDQuery);
-      await this.client.query(createTablesQuery);
-      await this.client.query(insertBasicInfoQuery);
-      console.log('Tables created successfully');
+    await this.client.query(activeUUIDQuery);
+    await this.client.query(createTablesQuery);
+    await this.client.query(insertBasicInfoQuery);
+    await this.client.query(insertSpecialtiesQuery);
+    console.log('Tables created successfully');
 
       // Query to reset DB
       //await this.client.query(deleteTablesQuery);

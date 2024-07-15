@@ -18,7 +18,7 @@ export class DoctorsService {
       const doctorResult = await this.databaseService.query(createDoctorQuery, [userId]);
       
       // Insert specialties into doctor_specialties table
-      /* const specialties = doctorData.specialties;
+      const specialties = doctorData.specialties;
       for (const specialty of specialties) {
         const createSpecialtyQuery = `
           INSERT INTO doctor_specialties (doctor_id, specialty_id)
@@ -26,7 +26,7 @@ export class DoctorsService {
           RETURNING *;
         `;
         await this.databaseService.query(createSpecialtyQuery, [userId, specialty]);
-      } */
+      }
 
       return doctorResult.rows[0];
   
