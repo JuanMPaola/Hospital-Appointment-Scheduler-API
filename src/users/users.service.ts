@@ -49,7 +49,6 @@ export class UsersService {
       const userResult = await this.databaseService.query(createUserQuery, userValues);
       const userId = userResult.rows[0].id;
 
-      console.log(user)
       // Using patient and doctor service to create patient or doctor
       if (user.role === 'patient') {
 
@@ -63,7 +62,11 @@ export class UsersService {
 
       } else if (user.role === 'doctor' ) {
 
-        user.id = userId;
+        const doctor = new DoctorDto;
+        doctor.id = user.id;
+        doctor.availability = user.availability;
+        doctor.specialties = user.specialties;
+        
         await this.doctorsService.create(user);
         
       } else {

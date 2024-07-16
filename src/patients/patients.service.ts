@@ -15,8 +15,6 @@ export class PatientsService {
         RETURNING *;
       `;
 
-      console.log(patient)
-
       // Extracting values from dto
       const patientValues = [
         patient.id,

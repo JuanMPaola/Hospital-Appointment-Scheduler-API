@@ -49,19 +49,13 @@ export class DatabaseService implements OnModuleInit {
         id SERIAL PRIMARY KEY,
         title VARCHAR
       );
-  
 
-  
-      CREATE TABLE IF NOT EXISTS appointments (
-        id SERIAL PRIMARY KEY,
-        day DATE,
-        starts_at TIMESTAMP,
-        ends_at TIMESTAMP,
+            CREATE TABLE IF NOT EXISTS doctor_specialties (
+        specialty_id INTEGER,
         doctor_id UUID,
-        patient_id UUID,
-        status VARCHAR,
-        FOREIGN KEY (doctor_id) REFERENCES doctors(user_id),
-        FOREIGN KEY (patient_id) REFERENCES patients(user_id)
+        PRIMARY KEY (specialty_id, doctor_id),
+        FOREIGN KEY (specialty_id) REFERENCES specialties(id),
+        FOREIGN KEY (doctor_id) REFERENCES doctors(user_id)
       );
   
       CREATE TABLE IF NOT EXISTS days (
@@ -75,10 +69,7 @@ export class DatabaseService implements OnModuleInit {
         end_time TIME NOT NULL
       );
   
-      
-    `;
-/* 
-CREATE TABLE IF NOT EXISTS doctor_availability (
+      CREATE TABLE IF NOT EXISTS doctor_availability (
         id SERIAL PRIMARY KEY,
         doctor_id UUID,
         day_id INTEGER,
@@ -88,14 +79,19 @@ CREATE TABLE IF NOT EXISTS doctor_availability (
         FOREIGN KEY (time_range_id) REFERENCES time_range(id)
       );
 
-            CREATE TABLE IF NOT EXISTS doctor_specialties (
-        specialty_id INTEGER,
+            CREATE TABLE IF NOT EXISTS appointments (
+        id SERIAL PRIMARY KEY,
+        day DATE,
+        starts_at TIMESTAMP,
+        ends_at TIMESTAMP,
         doctor_id UUID,
-        PRIMARY KEY (specialty_id, doctor_id),
-        FOREIGN KEY (specialty_id) REFERENCES specialties(id),
-        FOREIGN KEY (doctor_id) REFERENCES doctors(user_id)
+        patient_id UUID,
+        status VARCHAR,
+        FOREIGN KEY (doctor_id) REFERENCES doctors(user_id),
+        FOREIGN KEY (patient_id) REFERENCES patients(user_id)
       );
-*/
+    `;
+
     const insertBasicInfoQuery = `
       DO $$
       BEGIN
@@ -182,7 +178,7 @@ CREATE TABLE IF NOT EXISTS doctor_availability (
       DROP TABLE IF EXISTS users;
    `;
     // Query to reset DB
-    await this.client.query(deleteTablesQuery);
+    //await this.client.query(deleteTablesQuery);
   
     await this.client.query(activeUUIDQuery);
     await this.client.query(createTablesQuery);
