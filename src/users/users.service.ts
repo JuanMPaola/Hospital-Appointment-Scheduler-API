@@ -16,14 +16,13 @@ export class UsersService {
   ) { }
 
   // This functions ensures that the roleData object is either a PatientDto or Doctor type
-  private isPatientDto(roleData: PatientDto | DoctorDto): roleData is PatientDto {
-    return (roleData as PatientDto).age !== undefined;
-  }
-  private isDoctorDto(roleData: PatientDto | DoctorDto): roleData is DoctorDto {
-    return (roleData as DoctorDto).specialties !== undefined;
+  private matchDto(user: PatientDto | DoctorDto) {
+    if(user.role === "patient") return user as PatientDto;
+
+    if(user.role === "doctor") return user as DoctorDto;
   }
 
-  async create(user: UserDto, roleData: PatientDto | DoctorDto) {
+  async create(user: PatientDto & DoctorDto) {
     try {
       const existingUser = await this.findOneByEmail(user.email);
       
@@ -50,12 +49,22 @@ export class UsersService {
       const userResult = await this.databaseService.query(createUserQuery, userValues);
       const userId = userResult.rows[0].id;
 
+      console.log(user)
       // Using patient and doctor service to create patient or doctor
-      if (user.role === 'patient' && this.isPatientDto(roleData)) {
-        await this.patientsService.create(userId, roleData);
+      if (user.role === 'patient') {
 
-      } else if (user.role === 'doctor' && this.isDoctorDto(roleData)) {
-        await this.doctorsService.create(userId, roleData);
+        const patient = new PatientDto;
+        patient.id = userId;
+        patient.age = user.age;
+        patient.born = user.born;
+        patient.phone = user.phone;
+
+        await this.patientsService.create(patient);
+
+      } else if (user.role === 'doctor' ) {
+
+        user.id = userId;
+        await this.doctorsService.create(user);
         
       } else {
         throw new BadRequestException('Invalid role or role data');

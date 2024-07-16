@@ -50,13 +50,7 @@ export class DatabaseService implements OnModuleInit {
         title VARCHAR
       );
   
-      CREATE TABLE IF NOT EXISTS doctor_specialties (
-        specialty_id INTEGER,
-        doctor_id UUID,
-        PRIMARY KEY (specialty_id, doctor_id),
-        FOREIGN KEY (specialty_id) REFERENCES specialties(id),
-        FOREIGN KEY (doctor_id) REFERENCES doctors(user_id)
-      );
+
   
       CREATE TABLE IF NOT EXISTS appointments (
         id SERIAL PRIMARY KEY,
@@ -81,7 +75,10 @@ export class DatabaseService implements OnModuleInit {
         end_time TIME NOT NULL
       );
   
-      CREATE TABLE IF NOT EXISTS doctor_availability (
+      
+    `;
+/* 
+CREATE TABLE IF NOT EXISTS doctor_availability (
         id SERIAL PRIMARY KEY,
         doctor_id UUID,
         day_id INTEGER,
@@ -90,8 +87,15 @@ export class DatabaseService implements OnModuleInit {
         FOREIGN KEY (day_id) REFERENCES days(id),
         FOREIGN KEY (time_range_id) REFERENCES time_range(id)
       );
-    `;
 
+            CREATE TABLE IF NOT EXISTS doctor_specialties (
+        specialty_id INTEGER,
+        doctor_id UUID,
+        PRIMARY KEY (specialty_id, doctor_id),
+        FOREIGN KEY (specialty_id) REFERENCES specialties(id),
+        FOREIGN KEY (doctor_id) REFERENCES doctors(user_id)
+      );
+*/
     const insertBasicInfoQuery = `
       DO $$
       BEGIN
@@ -177,19 +181,19 @@ export class DatabaseService implements OnModuleInit {
       DROP TABLE IF EXISTS patients;
       DROP TABLE IF EXISTS users;
    `;
+    // Query to reset DB
+    await this.client.query(deleteTablesQuery);
   
-
     await this.client.query(activeUUIDQuery);
     await this.client.query(createTablesQuery);
     await this.client.query(insertBasicInfoQuery);
     await this.client.query(insertSpecialtiesQuery);
     console.log('Tables created successfully');
 
-      // Query to reset DB
-      //await this.client.query(deleteTablesQuery);
+      
   }
 
-  //Function to make queries outside the class
+  //Function that sent queries to db
   async query(text: string, params?: any[]) {
     return this.client.query(text, params);
   }

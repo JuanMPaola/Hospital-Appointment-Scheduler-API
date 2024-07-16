@@ -7,8 +7,8 @@ export class DoctorsController {
   constructor(private readonly doctorsService: DoctorsService) {}
 
   @Post()
-  create(@Body() userId: string, doctor: DoctorDto) {
-    return this.doctorsService.create(userId, doctor);
+  create(@Body() doctor: DoctorDto) {
+    return this.doctorsService.create(doctor);
   }
 
   @Get()

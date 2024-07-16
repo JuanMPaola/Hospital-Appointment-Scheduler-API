@@ -6,27 +6,8 @@ import { DatabaseService } from '../database/database.service';
 export class PatientsService {
   constructor(private readonly databaseService: DatabaseService) { }
 
-  async create(userId: string ,patient: PatientDto) {
+  async create(patient: PatientDto) {
     try {
-      // Query to insert into users table (returns ID)
-      const createUserQuery = `
-        INSERT INTO users (name, email, password, role)
-        VALUES ($1, $2, $3, $4)
-        RETURNING id;
-      `;
-
-      // Extracting values from dto 
-      const userValues = [
-        patient.name,
-        patient.email,
-        patient.password,
-        'patient'
-      ];
-
-      // Sending query and values to db
-      const userResult = await this.databaseService.query(createUserQuery, userValues);
-      const userId = userResult.rows[0].id;
-
       // Query to insert into patients table patientValues using the user_id
       const createPatientQuery = `
         INSERT INTO patients (user_id, age, phone, born)
@@ -34,9 +15,11 @@ export class PatientsService {
         RETURNING *;
       `;
 
+      console.log(patient)
+
       // Extracting values from dto
       const patientValues = [
-        userId,
+        patient.id,
         patient.age,
         patient.phone,
         patient.born

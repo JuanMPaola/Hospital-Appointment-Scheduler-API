@@ -6,7 +6,7 @@ import { DatabaseService } from 'src/database/database.service';
 export class DoctorsService {
   constructor(private readonly databaseService: DatabaseService) { }
 
-  async create(userId: string, doctorData: DoctorDto) {
+  async create(doctor: DoctorDto) {
     try {
       // Insert into doctors table using the user_id
       const createDoctorQuery = `
@@ -15,18 +15,18 @@ export class DoctorsService {
         RETURNING *;
       `;
       
-      const doctorResult = await this.databaseService.query(createDoctorQuery, [userId]);
+      const doctorResult = await this.databaseService.query(createDoctorQuery, [doctor.id]);
       
       // Insert specialties into doctor_specialties table
-      const specialties = doctorData.specialties;
-      for (const specialty of specialties) {
+      //const specialties = doctorData.specialties;
+      /* for (const specialty of specialties) {
         const createSpecialtyQuery = `
           INSERT INTO doctor_specialties (doctor_id, specialty_id)
           VALUES ($1, (SELECT id FROM specialties WHERE title = $2))
           RETURNING *;
         `;
         await this.databaseService.query(createSpecialtyQuery, [userId, specialty]);
-      }
+      } */
 
       return doctorResult.rows[0];
   
