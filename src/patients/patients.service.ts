@@ -30,8 +30,6 @@ export class PatientsService {
       return patientResult.rows[0];
 
     } catch (error) {
-
-      console.error('Error creating patient:', error);
       throw new Error('Could not create patient');
     }
   }

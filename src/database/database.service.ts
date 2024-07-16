@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Client } from 'pg';
+import { Client, PoolClient } from 'pg';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit {
@@ -177,8 +177,8 @@ export class DatabaseService implements OnModuleInit {
       DROP TABLE IF EXISTS patients;
       DROP TABLE IF EXISTS users;
    `;
-    // Query to reset DB
-    //await this.client.query(deleteTablesQuery);
+
+    await this.client.query(deleteTablesQuery); // Uncomment if you want to reset DB
   
     await this.client.query(activeUUIDQuery);
     await this.client.query(createTablesQuery);
@@ -193,4 +193,9 @@ export class DatabaseService implements OnModuleInit {
   async query(text: string, params?: any[]) {
     return this.client.query(text, params);
   }
+
+  async getClient(): Promise<PoolClient> {
+    return this.client.connect();
+  }
+  
 }

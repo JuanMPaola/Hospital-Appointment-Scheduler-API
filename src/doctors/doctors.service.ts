@@ -14,24 +14,29 @@ export class DoctorsService {
         VALUES ($1)
         RETURNING *;
       `;
-      
+    
       const doctorResult = await this.databaseService.query(createDoctorQuery, [doctor.id]);
       
       // Insert specialties into doctor_specialties table
-      //const specialties = doctorData.specialties;
-      /* for (const specialty of specialties) {
-        const createSpecialtyQuery = `
-          INSERT INTO doctor_specialties (doctor_id, specialty_id)
-          VALUES ($1, (SELECT id FROM specialties WHERE title = $2))
-          RETURNING *;
-        `;
-        await this.databaseService.query(createSpecialtyQuery, [userId, specialty]);
-      } */
+
+      
+
+      console.log(doctor)
+      const insertSpecialtiesQuery = `
+        INSERT INTO doctor_specialties (doctor_id, specialty_id)
+        VALUES ${
+          
+          doctor.specialties.map((index) => `($1, $${index + 2})`).join(', ') //?
+          
+        }
+        RETURNING *;
+      `;
+      await this.databaseService.query(insertSpecialtiesQuery, [doctor.id, doctor.specialties]);
+      
 
       return doctorResult.rows[0];
-  
     } catch (error) {
-      console.error('Error creating doctor:', error);
+      console.log(error)
       throw new Error('Could not create doctor');
     }
   }

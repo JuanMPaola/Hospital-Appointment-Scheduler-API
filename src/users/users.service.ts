@@ -29,6 +29,10 @@ export class UsersService {
       if (existingUser) {
         throw new BadRequestException('Email already registered');
       }
+      
+      // To use transaction
+      const client = this.databaseService.getClient
+      await this.databaseService.query('BEGIN')
 
       // Query to insert into users table (returns ID)
       const createUserQuery = `
@@ -52,22 +56,21 @@ export class UsersService {
       // Using patient and doctor service to create patient or doctor
       if (user.role === 'patient') {
 
-        const patient = new PatientDto;
-        patient.id = userId;
-        patient.age = user.age;
-        patient.born = user.born;
-        patient.phone = user.phone;
-
+        // To berificate that users don't create if patient creation failed dont send the id
+        const patient: PatientDto = {
+          ...user,
+          id: userId
+        };
         await this.patientsService.create(patient);
 
-      } else if (user.role === 'doctor' ) {
+      } else if (user.role === 'doctor') {
 
-        const doctor = new DoctorDto;
-        doctor.id = user.id;
-        doctor.availability = user.availability;
-        doctor.specialties = user.specialties;
-        
-        await this.doctorsService.create(user);
+        const doctor: DoctorDto = {
+          ...user,
+          id: userId
+        };
+
+        await this.doctorsService.create(doctor);
         
       } else {
         throw new BadRequestException('Invalid role or role data');
@@ -94,18 +97,11 @@ export class UsersService {
 
   async findOneByEmail(email: string): Promise<UserDto | undefined> {
     try {
-
-      // Query to find a user by email
-      const getByEmailQuery = `
-    SELECT * FROM users
-    WHERE email = ($1);
-    `
-
-      const result = await this.databaseService.query(getByEmailQuery, [email])
-
-      return;//result.rows[0]; 
+      const getByEmailQuery = 'SELECT * FROM users WHERE email = $1;';
+      const result = await this.databaseService.query(getByEmailQuery, [email]);
+      return result.rows[0];
     } catch (error) {
-      throw error;
+      throw new InternalServerErrorException(error.message);
     }
   }
 
