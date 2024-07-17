@@ -1,13 +1,16 @@
-import { IsString, IsArray, ArrayNotEmpty} from 'class-validator';
+import { IsString, IsArray, ArrayNotEmpty, IsObject, ValidateNested, IsNotEmpty} from 'class-validator';
 import { UserDto } from '../../users/dto/user.dto'
 
 export class DoctorDto extends UserDto {    
     id: string;
-
+  
     @IsArray()
     @ArrayNotEmpty()
     @IsString({ each: true })
-    specialties: string[];
-
-    availability: Object;
-}
+    specialties: number[];
+  
+    @IsObject()
+    @IsNotEmpty()
+    @ValidateNested()
+    availability: {[key: number]: number[] };
+  }

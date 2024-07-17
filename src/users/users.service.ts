@@ -31,9 +31,11 @@ export class UsersService {
       }
       
       // To use transaction
+      /* 
       const client = this.databaseService.getClient
       await this.databaseService.query('BEGIN')
-
+       */
+      
       // Query to insert into users table (returns ID)
       const createUserQuery = `
         INSERT INTO users (name, email, password, role)

@@ -79,7 +79,7 @@ export class DatabaseService implements OnModuleInit {
         FOREIGN KEY (time_range_id) REFERENCES time_range(id)
       );
 
-            CREATE TABLE IF NOT EXISTS appointments (
+      CREATE TABLE IF NOT EXISTS appointments (
         id SERIAL PRIMARY KEY,
         day DATE,
         starts_at TIMESTAMP,
@@ -178,7 +178,7 @@ export class DatabaseService implements OnModuleInit {
       DROP TABLE IF EXISTS users;
    `;
 
-    await this.client.query(deleteTablesQuery); // Uncomment if you want to reset DB
+    //await this.client.query(deleteTablesQuery); // Uncomment if you want to reset DB
   
     await this.client.query(activeUUIDQuery);
     await this.client.query(createTablesQuery);
@@ -194,8 +194,10 @@ export class DatabaseService implements OnModuleInit {
     return this.client.query(text, params);
   }
 
-  async getClient(): Promise<PoolClient> {
+  /*   
+    async getClient(): Promise<PoolClient> {
     return this.client.connect();
-  }
+  } 
+  */
   
 }
