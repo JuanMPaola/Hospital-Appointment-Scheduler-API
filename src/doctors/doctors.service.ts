@@ -7,6 +7,8 @@ export class DoctorsService {
   constructor(private readonly databaseService: DatabaseService) { }
 
   async create(doctor: DoctorDto) {
+    const doctorId = doctor.id;
+
     try {
       // Insert into doctors table using the user_id
       const createDoctorQuery = `
@@ -15,7 +17,7 @@ export class DoctorsService {
         RETURNING *;
       `;
 
-      const doctorResult = await this.databaseService.query(createDoctorQuery, [doctor.id]);
+      const doctorResult = await this.databaseService.query(createDoctorQuery, [doctorId]);
 
 
       // Insert specialties into doctor_specialties table
@@ -26,14 +28,12 @@ export class DoctorsService {
         RETURNING *;
       `;
 
-      await this.databaseService.query(insertSpecialtiesQuery, [doctor.id, ...doctor.specialties]);
+      await this.databaseService.query(insertSpecialtiesQuery, [doctorId, ...doctor.specialties]);
 
 
       // Insert availability into doctor_availability
       const { availability } = doctor;
       if (availability) {
-        // Insert availability into doctor_availability
-        const doctorId = doctor.id;
         const availabilityEntries = Object.entries(availability);
 
         const valuesArray: any[] = [];
