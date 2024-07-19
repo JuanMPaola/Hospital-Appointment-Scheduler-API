@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AppoinmentDto } from './dto/create-appoinment.dto';
+import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
 import { DatabaseService } from 'src/database/database.service';
 
@@ -10,19 +10,19 @@ export class AppoinmentsService {
   async create(appoinmentDto: AppoinmentDto) {
     // Query to insert data into appointment table
     const createAppointmentQuery = `
-    INSERT INTO appointments (doctor_id, patient_id, day, time_range_id, status)
-    VALUES ($1, $2, $3, $4, 5$)
+    INSERT INTO appointments (doctor_id, patient_id, date, status)
+    VALUES ($1, $2, $3, $4)
     RETURNING *
     `
     //Extracting values from dto
     const appoinmentValues = [
       appoinmentDto.doctor_id,
       appoinmentDto.patient_id,
-      appoinmentDto.day,
-      appoinmentDto.time_rage_id,
+      appoinmentDto.date,
       appoinmentDto.status
     ]
 
+    console.log(appoinmentValues)
     // Send the query and values to db
     const appoinmentResult = await this.databaseService.query(createAppointmentQuery, appoinmentValues)
     

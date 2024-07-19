@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { AppoinmentsService } from './appoinments.service';
-import { AppoinmentDto } from './dto/create-appoinment.dto';
+import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
 
 @Controller('appoinments')

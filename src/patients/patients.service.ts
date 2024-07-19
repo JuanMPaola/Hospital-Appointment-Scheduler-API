@@ -8,7 +8,7 @@ export class PatientsService {
 
   async create(patient: PatientDto) {
     try {
-      // Query to insert into patients table patientValues using the user_id
+      // Query to insert data into patients table
       const createPatientQuery = `
         INSERT INTO patients (user_id, age, phone, born)
         VALUES ($1, $2, $3, $4)

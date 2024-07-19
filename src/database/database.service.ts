@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Client, PoolClient } from 'pg';
+import { Client } from 'pg';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit {
@@ -81,9 +81,7 @@ export class DatabaseService implements OnModuleInit {
 
       CREATE TABLE IF NOT EXISTS appointments (
         id SERIAL PRIMARY KEY,
-        day DATE,
-        starts_at TIMESTAMP,
-        ends_at TIMESTAMP,
+        date DATE,
         doctor_id UUID,
         patient_id UUID,
         status VARCHAR,
@@ -168,9 +166,9 @@ export class DatabaseService implements OnModuleInit {
       
     const deleteTablesQuery = `
       DROP TABLE IF EXISTS doctor_availability;
-      DROP TABLE IF EXISTS time_range;
       DROP TABLE IF EXISTS days;
       DROP TABLE IF EXISTS appointments;
+      DROP TABLE IF EXISTS time_range;
       DROP TABLE IF EXISTS doctor_specialties;
       DROP TABLE IF EXISTS specialties;
       DROP TABLE IF EXISTS doctors;

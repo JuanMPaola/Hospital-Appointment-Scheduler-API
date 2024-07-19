@@ -1,0 +1,43 @@
+[
+{
+  "name": "Jane Smith",
+  "password": "contraseña",
+  "age": 34,
+  "phone": "123-456-7890",
+  "email": "jane.smith@example.com",
+  "born": "1990-01-01T00:00:00Z",
+  "role":"patient"
+},
+{
+  "name": "Juan Manuel",
+  "password": "contra",
+  "age": 23,
+  "phone": "123-456-7890",
+  "email": "juanma@example.com",
+  "born": "2001-01-01T00:00:00Z",
+  "role":"patient"
+},
+
+{
+  "id": "fd028c9b-97bf-4695-95c3-d1543959c38d",
+  "name": "Dr. John Doe",
+  "email": "john.doe@example.com",
+  "password": "securepassword",
+  "role": "doctor",
+  "specialties": [1, 5, 7],
+  "availability": {
+    "1": [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    "2": [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    "3": [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    "4": [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    "5": [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+  }
+},
+
+{
+  "doctor_id": "11d9a0b0-3b6a-4416-8ab8-da38e69c412b",
+  "patient_id": "c8d2ab41-ee38-4961-98b0-ece2a3e286ec",
+  "date": "2024-07-22T08:00:00.000Z",
+  "status": "pending"
+}
+]
