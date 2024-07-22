@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { PatientDto } from 'src/patients/dto/patient.dto';
 import { DoctorDto } from 'src/doctors/dto/doctor.dto';
@@ -22,7 +22,7 @@ export class UsersService {
       if (existingUser) {
         throw new BadRequestException('Email already registered');
       }
-      
+
       // Start the transaction
       await this.databaseService.query('BEGIN');
 
@@ -61,13 +61,13 @@ export class UsersService {
       } else {
         throw new BadRequestException('Invalid role or role data');
       }
-       
+
       // End transaction
       this.databaseService.query('COMMIT');
       return { id: userId, ...user };
 
     } catch (error) {
-    
+
       // Rollback the transaction to not store user if something go wrong in doc/patient service
       await this.databaseService.query('ROLLBACK');
       throw new InternalServerErrorException(error.message);
@@ -100,16 +100,52 @@ export class UsersService {
     return `This action updates a #${id} user`;
   }
 
-  async remove(id: string) {
+  async delete(id: string) {
     try {
+      // Start the transaction
+      await this.databaseService.query('BEGIN');
+      // Get if user is pacient or doctor
+      const role = await this.getRole(id);
+
+      // First delete the doc/patient part
+      if (role === 'patient') {
+        await this.patientsService.delete(id);
+      } else if (role === 'doctor') {
+        //await this.doctorsService.delete(id)
+      }
+
+      // Query to delete user form users table
       const deleteUserQuery = `
         DELETE FROM users
         WHERE id = $1
         RETURNING *;
       `;
-
       const result = await this.databaseService.query(deleteUserQuery, [id]);
+
+      if (result.rowCount === 0) {
+        throw new NotFoundException(`User with id ${id} not found`);
+      }
+
+      // End transaction
+      this.databaseService.query('COMMIT');
       return result.rows[0];
+    } catch (error) {
+
+      // Rollback the transaction
+      await this.databaseService.query('ROLLBACK');
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async getRole(id: string) {
+    try {
+      const getRoleQuery = `
+      SELECT role FROM users
+      WHERE id = $1
+      `
+      const result = await this.databaseService.query(getRoleQuery, [id]);
+      return result.rows[0].role;
+
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

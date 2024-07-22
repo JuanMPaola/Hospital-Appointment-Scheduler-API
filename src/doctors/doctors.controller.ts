@@ -28,6 +28,6 @@ export class DoctorsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.doctorsService.remove(+id);
+    return this.doctorsService.delete(id);
   }
 }

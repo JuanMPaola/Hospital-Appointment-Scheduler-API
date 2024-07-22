@@ -102,7 +102,7 @@ export class DoctorsService {
   }
 
 
-  remove(id: number) {
+  delete(id: string) {
     return `This action removes a #${id} doctor`;
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PatientDto } from './dto/patient.dto';
 import { DatabaseService } from '../database/database.service';
 
@@ -64,9 +64,20 @@ export class PatientsService {
     return result.rows[0];
   }
 
-  async remove(id: string) {
-    const query = 'DELETE FROM patient WHERE id = $1 RETURNING *';
-    const result = await this.databaseService.query(query, [id]);
-    return result.rows[0];
+  async delete(userId: string) {
+    try {
+      const query = `
+      DELETE FROM patients 
+      WHERE user_id = $1 
+      RETURNING *
+      `;
+      const result = await this.databaseService.query(query, [userId]);
+      if (result.rowCount === 0) {
+        throw new NotFoundException(`Patient with user_id ${userId} not found`);
+      }
+      return result.rows[0];
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

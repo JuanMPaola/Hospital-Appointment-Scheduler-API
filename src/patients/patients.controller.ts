@@ -26,8 +26,8 @@ export class PatientsController {
     return this.patientsService.update(id, patient);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.patientsService.remove(id);
+  @Delete()
+  remove(userId: string) {
+    return this.patientsService.delete(userId);
   }
 }
