@@ -11,7 +11,7 @@ export class AppoinmentDto {
     date: Date;
 
     @IsNumber()
-    time_rage_id: number;
+    time_range_id: number;
     
     @IsString()
     status: string;

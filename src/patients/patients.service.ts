@@ -15,22 +15,20 @@ export class PatientsService {
         RETURNING *;
       `;
 
-      // Extracting values from dto
+      // Extracting values from dto, and sending the query and values to db
       const patientValues = [
         patient.id,
         patient.age,
         patient.phone,
         patient.born
       ];
-
-      // Send the query and values to db
       const patientResult = await this.databaseService.query(createPatientQuery, patientValues);
 
 
       return patientResult.rows[0];
 
     } catch (error) {
-      throw new Error('Could not create patient');
+      throw new Error('Could not create patient'), error;
     }
   }
 

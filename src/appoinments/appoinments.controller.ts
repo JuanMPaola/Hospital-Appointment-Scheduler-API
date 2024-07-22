@@ -17,11 +17,11 @@ export class AppoinmentsController {
     return this.appoinmentsService.findAll();
   }
 
-  @Get(':id')
+/*   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.appoinmentsService.findOne(+id);
   }
-
+ */
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAppoinmentDto: UpdateAppoinmentDto) {
     return this.appoinmentsService.update(+id, updateAppoinmentDto);

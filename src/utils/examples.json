@@ -9,6 +9,7 @@
   "role":"patient"
 },
 {
+  "id": "71420f7b-b7a4-410e-af63-319e304b3c89",
   "name": "Juan Manuel",
   "password": "contra",
   "age": 23,
@@ -35,8 +36,9 @@
 },
 
 {
-  "doctor_id": "11d9a0b0-3b6a-4416-8ab8-da38e69c412b",
-  "patient_id": "c8d2ab41-ee38-4961-98b0-ece2a3e286ec",
+  "doctor_id": "fd028c9b-97bf-4695-95c3-d1543959c38d",
+  "patient_id": "71420f7b-b7a4-410e-af63-319e304b3c89",
+  "time_range_id": 1,
   "date": "2024-07-22T08:00:00.000Z",
   "status": "pending"
 }

@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { PatientDto } from 'src/patients/dto/patient.dto';
-import { DoctorDto } from 'src/doctors/dto/doctor.dto'; 
+import { DoctorDto } from 'src/doctors/dto/doctor.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DatabaseService } from '../database/database.service';
 import { DoctorsService } from 'src/doctors/doctors.service';
@@ -15,27 +15,17 @@ export class UsersService {
     private readonly doctorsService: DoctorsService
   ) { }
 
-  // This functions ensures that the roleData object is either a PatientDto or Doctor type
-  private matchDto(user: PatientDto | DoctorDto) {
-    if(user.role === "patient") return user as PatientDto;
-
-    if(user.role === "doctor") return user as DoctorDto;
-  }
-
   async create(user: PatientDto & DoctorDto) {
     try {
+      // Check if email is registered
       const existingUser = await this.findOneByEmail(user.email);
-      
       if (existingUser) {
         throw new BadRequestException('Email already registered');
       }
       
-      // To use transaction
-      /* 
-      const client = this.databaseService.getClient
-      await this.databaseService.query('BEGIN')
-       */
-      
+      // Start the transaction
+      await this.databaseService.query('BEGIN');
+
       // Query to insert into users table (returns ID)
       const createUserQuery = `
         INSERT INTO users (name, email, password, role)
@@ -43,22 +33,18 @@ export class UsersService {
         RETURNING id;
       `;
 
-      // Extracting values from dto
+      // Extracting values from dto. Sending query and values to db
       const userValues = [
         user.name,
         user.email,
         user.password,
         user.role
       ];
-
-      // Sending query and values to db
       const userResult = await this.databaseService.query(createUserQuery, userValues);
       const userId = userResult.rows[0].id;
 
-      // Using patient and doctor service to create patient or doctor
+      // Adding the userId to patient/doctor dto and sending it to respective service
       if (user.role === 'patient') {
-
-        // To berificate that users don't create if patient creation failed dont send the id
         const patient: PatientDto = {
           ...user,
           id: userId
@@ -66,21 +52,24 @@ export class UsersService {
         await this.patientsService.create(patient);
 
       } else if (user.role === 'doctor') {
-
         const doctor: DoctorDto = {
           ...user,
           id: userId
         };
-
         await this.doctorsService.create(doctor);
-        
+
       } else {
         throw new BadRequestException('Invalid role or role data');
       }
-
+       
+      // End transaction
+      this.databaseService.query('COMMIT');
       return { id: userId, ...user };
-      
+
     } catch (error) {
+    
+      // Rollback the transaction to not store user if something go wrong in doc/patient service
+      await this.databaseService.query('ROLLBACK');
       throw new InternalServerErrorException(error.message);
     }
   }

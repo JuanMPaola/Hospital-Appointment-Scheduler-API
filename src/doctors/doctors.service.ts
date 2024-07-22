@@ -10,13 +10,15 @@ export class DoctorsService {
     const doctorId = doctor.id;
 
     try {
+      // Start the transaction
+      await this.databaseService.query('BEGIN');
+
       // Insert into doctors table using the user_id
       const createDoctorQuery = `
         INSERT INTO doctors (user_id)
         VALUES ($1)
         RETURNING *;
       `;
-
       const doctorResult = await this.databaseService.query(createDoctorQuery, [doctorId]);
 
 
@@ -27,7 +29,6 @@ export class DoctorsService {
         }
         RETURNING *;
       `;
-
       await this.databaseService.query(insertSpecialtiesQuery, [doctorId, ...doctor.specialties]);
 
 
@@ -38,9 +39,8 @@ export class DoctorsService {
 
         const valuesArray: any[] = [];
         let valuesString = '';
-
-        availabilityEntries.forEach(([dayId, timeRanges], dayIndex) => {
-          timeRanges.forEach((timeRangeId, timeRangeIndex) => {
+        availabilityEntries.forEach(([dayId, timeRanges]) => {
+          timeRanges.forEach((timeRangeId) => {
             valuesString += `($1, $${valuesArray.length + 2}, $${valuesArray.length + 3}), `;
             valuesArray.push(dayId, timeRangeId);
           });
@@ -63,10 +63,15 @@ export class DoctorsService {
         throw new Error("Availability is undefined or null");
       }
 
+      // End transaction
+      this.databaseService.query('COMMIT');
       return doctorResult.rows[0];
+
     } catch (error) {
-      console.log(error)
-      throw new Error('Could not create doctor');
+
+      // Rollback the transaction to not store info is something go wrong in one of the querys
+      await this.databaseService.query('ROLLBACK');
+      throw new Error('Could not create doctor'), error;
     }
   }
 
