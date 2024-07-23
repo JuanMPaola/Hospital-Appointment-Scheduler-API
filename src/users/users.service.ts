@@ -96,10 +96,6 @@ export class UsersService {
     }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
   async delete(id: string) {
     try {
       // Start the transaction
@@ -111,7 +107,7 @@ export class UsersService {
       if (role === 'patient') {
         await this.patientsService.delete(id);
       } else if (role === 'doctor') {
-        //await this.doctorsService.delete(id)
+        await this.doctorsService.delete(id)
       }
 
       // Query to delete user form users table
@@ -122,10 +118,6 @@ export class UsersService {
       `;
       const result = await this.databaseService.query(deleteUserQuery, [id]);
 
-      if (result.rowCount === 0) {
-        throw new NotFoundException(`User with id ${id} not found`);
-      }
-
       // End transaction
       this.databaseService.query('COMMIT');
       return result.rows[0];
@@ -133,7 +125,7 @@ export class UsersService {
 
       // Rollback the transaction
       await this.databaseService.query('ROLLBACK');
-      throw new InternalServerErrorException(error.message);
+      throw new Error('Could not delete user: ' + error.message);
     }
   }
 
@@ -144,10 +136,20 @@ export class UsersService {
       WHERE id = $1
       `
       const result = await this.databaseService.query(getRoleQuery, [id]);
+      /*
+      if (result.rowCount === 0) {
+        throw new NotFoundException(`User with id ${id} not found`);
+      }else 
+      */
+
       return result.rows[0].role;
 
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
+  }
+
+  update(id: number, updateUserDto: UpdateUserDto) {
+    return `This action updates a #${id} user`;
   }
 }

@@ -36,8 +36,8 @@
 },
 
 {
-  "doctor_id": "fd028c9b-97bf-4695-95c3-d1543959c38d",
-  "patient_id": "71420f7b-b7a4-410e-af63-319e304b3c89",
+  "doctor_id": "",
+  "patient_id": "",
   "time_range_id": 1,
   "date": "2024-07-22T08:00:00.000Z",
   "status": "pending"

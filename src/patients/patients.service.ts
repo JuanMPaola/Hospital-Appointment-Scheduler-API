@@ -1,10 +1,14 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PatientDto } from './dto/patient.dto';
 import { DatabaseService } from '../database/database.service';
+import { AppoinmentsService } from 'src/appoinments/appoinments.service';
 
 @Injectable()
 export class PatientsService {
-  constructor(private readonly databaseService: DatabaseService) { }
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly appointmentService: AppoinmentsService
+  ) { }
 
   async create(patient: PatientDto) {
     try {
@@ -66,18 +70,31 @@ export class PatientsService {
 
   async delete(userId: string) {
     try {
-      const query = `
-      DELETE FROM patients 
-      WHERE user_id = $1 
-      RETURNING *
+      // Start the transaction
+      await this.databaseService.query('BEGIN');
+  
+      // Get appointments - if there are any, delete them first
+      await this.appointmentService.deleteAllByDocOrPatientId(userId);
+  
+      // Query to delete the patient
+      const deletePatientQuery = `
+        DELETE FROM patients 
+        WHERE user_id = $1 
+        RETURNING *;
       `;
-      const result = await this.databaseService.query(query, [userId]);
+      const result = await this.databaseService.query(deletePatientQuery, [userId]);
+  
       if (result.rowCount === 0) {
         throw new NotFoundException(`Patient with user_id ${userId} not found`);
       }
+  
+      // End transaction
+      await this.databaseService.query('COMMIT');
       return result.rows[0];
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      // Rollback the transaction
+      await this.databaseService.query('ROLLBACK');
+      throw new Error('Could not delete patient: ' + error.message);
     }
   }
 }

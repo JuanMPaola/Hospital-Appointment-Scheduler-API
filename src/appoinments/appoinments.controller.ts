@@ -17,18 +17,28 @@ export class AppoinmentsController {
     return this.appoinmentsService.findAll();
   }
 
-/*   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.appoinmentsService.findOne(+id);
+  @Get('user/:userId')
+  findAllByUserId(@Param('userId') userId: string) {
+    return this.appoinmentsService.findAllByUserId(userId);
   }
- */
+
+/*   @Get('specific')
+  findSpecificAppointment(@Body() appointmentDto: AppoinmentDto) {
+    return this.appoinmentsService.findSpecificAppointment(appointmentDto);
+  } */
+
+  @Patch(':id/status')
+  updateStatus(@Param('id') id: string, @Body('status') status: string) {
+    return this.appoinmentsService.updateStatus(id, status);
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAppoinmentDto: UpdateAppoinmentDto) {
-    return this.appoinmentsService.update(+id, updateAppoinmentDto);
+  update(@Param('id') id: string, @Body() updateAppointmentDto: UpdateAppoinmentDto) {
+    return this.appoinmentsService.update(id, updateAppointmentDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.appoinmentsService.remove(+id);
+    return this.appoinmentsService.deleteAllByDocOrPatientId(id);
   }
 }

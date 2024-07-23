@@ -21,6 +21,16 @@ export class DoctorsController {
     return this.doctorsService.findOne(id);
   }
 
+  @Get('specialty/:specialtyId')
+  findBySpecialty(@Param('specialtyId') specialtyId: number) {
+    return this.doctorsService.findBySpecialty(specialtyId);
+  }
+
+  @Get(':id/availability')
+  findAvailability(@Param('id') id: string) {
+    return this.doctorsService.findAvailability(id);
+  }
+  
   @Patch(':id')
   update(@Param('id') id: string, @Body() doctorDto: DoctorDto) {
     return this.doctorsService.update(+id, doctorDto);
