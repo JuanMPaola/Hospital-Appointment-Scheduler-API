@@ -1,17 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, Query, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PatientDto } from 'src/patients/dto/patient.dto';
-import { DoctorDto } from 'src/doctors/dto/doctor.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  create(@Body() user: PatientDto & DoctorDto) {
-    return this.usersService.create(user);
-  }
 
   @Get()
   findAll() {

@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { PatientDto } from 'src/patients/dto/patient.dto';
 import { DoctorDto } from 'src/doctors/dto/doctor.dto';
@@ -70,7 +70,7 @@ export class UsersService {
 
       // Rollback the transaction to not store user if something go wrong in doc/patient service
       await this.databaseService.query('ROLLBACK');
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException('Could not create user', error.message);
     }
   }
 

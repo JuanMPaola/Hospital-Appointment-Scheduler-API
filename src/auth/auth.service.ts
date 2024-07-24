@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService, } from 'src/users/users.service';
 import { UserDto } from 'src/users/dto/user.dto';
-import { sign, verify } from '../utils/jwl';
+import { sign, verify } from './jwl';
+import { AuthDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService : UsersService) {}
+  constructor(
+    private readonly usersService: UsersService
+  ) {}
 
-  async validateUser(email: string, password: string): Promise<UserDto | null>{
+  async validateUser({email, password}: AuthDto): Promise<UserDto | null>{
     const user = await this.usersService.findOneByEmail(email);
 
     if(user && user.password === password){
@@ -25,7 +28,7 @@ export class AuthService {
     };
   }
 
-  async verifyToken(token: string) {
+  async verifyToken(token: string): Promise<any> {
     try {
       const decoded = verify(token);
       return decoded;

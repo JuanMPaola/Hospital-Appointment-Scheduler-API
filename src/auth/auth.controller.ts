@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { AuthDto } from './dto/auth.dto';
 import { UsersService } from 'src/users/users.service';
+import { PatientDto } from 'src/patients/dto/patient.dto';
+import { DoctorDto } from 'src/doctors/dto/doctor.dto';
+import { SkipAuth } from './skip-auth.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -11,10 +13,11 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
-  @Post()
-  async login(@Body() email: string, password: string) {
+  @SkipAuth()
+  @Post('login')
+  async login(@Body() authDto: AuthDto) {
     
-    const user = await this.authService.validateUser(email, password);
+    const user = await this.authService.validateUser(authDto);
     if (!user){
       return 'Invalid credentials'
     }
@@ -22,14 +25,10 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  @Post()
-  async register(@Body() createAuthDto: CreateAuthDto) {
-    return ;//this.authService.create(createAuthDto);
-  }
-
-  @Get()
-  findAll() {
-    return ;//this.authService.findAll();
+  @SkipAuth()
+  @Post('register')
+  async register(@Body() patOrDoc: PatientDto & DoctorDto) {
+    return this.usersService.create(patOrDoc);
   }
 
 }
