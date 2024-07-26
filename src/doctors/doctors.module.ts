@@ -7,5 +7,6 @@ import { AppoinmentsService } from 'src/appoinments/appoinments.service';
 @Module({
   controllers: [DoctorsController],
   providers: [DoctorsService, DatabaseService, AppoinmentsService],
+/*   exports:[DoctorsService], */
 })
 export class DoctorsModule {}

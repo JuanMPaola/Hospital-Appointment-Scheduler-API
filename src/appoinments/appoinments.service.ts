@@ -2,18 +2,35 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
 import { DatabaseService } from 'src/database/database.service';
+import { DoctorsService } from 'src/doctors/doctors.service';
+import { PatientsService } from 'src/patients/patients.service';
 
 @Injectable()
 export class AppoinmentsService {
-  constructor(private readonly databaseService: DatabaseService) { }
+  constructor(
+    private readonly databaseService: DatabaseService,
+/*     private readonly patientsService: PatientsService,*/
+/*     private readonly doctorsService: DoctorsService  */
+  ) { }
 
-  async create(appoinmentDto: AppoinmentDto) {
+  async appointmentValidation(appoinmentDto: AppoinmentDto){
     try {
       // Search if doctor already have an appointment at that tame_range and date
       const existingAppointment = await this.findSpecificAppointment(appoinmentDto);
       if (existingAppointment) {
         throw new BadRequestException('Doctor is not available')
-      }else{
+      }
+
+
+    } catch (error) {
+      throw new InternalServerErrorException('Could not validate appointment', error.message);
+    }
+  }
+
+  async create(appoinmentDto: AppoinmentDto) {
+    try {
+      const appointmentData = await this.appointmentValidation(appoinmentDto)
+      
 
         
         // Query to insert data into appointment table
@@ -36,9 +53,9 @@ export class AppoinmentsService {
         
         return appoinmentResult.rows[0];
         
-      }
+      
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException('Could not create appointment', error.message);
     }
   }
 
@@ -148,4 +165,5 @@ export class AppoinmentsService {
       throw new InternalServerErrorException('Could not update appointment: ' + error.message);
     }
   }
+
 }

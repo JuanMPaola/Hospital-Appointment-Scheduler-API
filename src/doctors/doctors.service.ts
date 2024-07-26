@@ -82,8 +82,21 @@ export class DoctorsService {
 
   async findAll() {
     const query = `
-    SELECT * FROM doctors
-      `
+      SELECT 
+          u.name,
+          u.email,
+          array_agg(DISTINCT ds.specialty_id) AS specialties
+      FROM 
+          users u
+      JOIN 
+          doctors d ON u.id = d.user_id
+      JOIN 
+          doctor_specialties ds ON d.user_id = ds.doctor_id
+      LEFT JOIN 
+          doctor_availability da ON d.user_id = da.doctor_id
+      GROUP BY 
+          u.id
+    `
     const result = await this.databaseService.query(query);
     return result.rows[0];
   }
@@ -91,8 +104,26 @@ export class DoctorsService {
 
   async findOne(id: string) {
     const query = `
-    SELECT * FROM doctors
-    WHERE doctor.id = $1
+      SELECT 
+          u.name,
+          u.email,
+          array_agg(DISTINCT ds.specialty_id) AS specialties,
+          json_agg(DISTINCT jsonb_build_object(
+              'day', da.day_id,
+              'time_range', da.time_range_id
+          )) AS availability
+      FROM 
+          users u
+      JOIN 
+          doctors d ON u.id = d.user_id
+      JOIN 
+          doctor_specialties ds ON d.user_id = ds.doctor_id
+      LEFT JOIN 
+          doctor_availability da ON d.user_id = da.doctor_id
+      WHERE 
+          u.id = $1
+      GROUP BY 
+          u.id
       `
     const result = await this.databaseService.query(query, [id]);
     return result.rows[0];
@@ -101,10 +132,20 @@ export class DoctorsService {
 
   async findBySpecialty(specialtyId: number) {
     const query = `
-      SELECT d.*
-      FROM doctors d
-      JOIN doctor_specialties ds ON d.user_id = ds.doctor_id
-      WHERE ds.specialty_id = $1;
+      SELECT 
+          u.id,
+          u.name,
+          u.email
+      FROM 
+          users u
+      JOIN 
+          doctors d ON u.id = d.user_id
+      JOIN 
+          doctor_specialties ds ON d.user_id = ds.doctor_id
+      WHERE 
+          ds.specialty_id = $1
+      GROUP BY 
+          u.id;
     `;
     const result = await this.databaseService.query(query, [specialtyId]);
     return result.rows;
@@ -113,9 +154,18 @@ export class DoctorsService {
 
   async findAvailability(doctorId: string) {
     const query = `
-      SELECT da.*
-      FROM doctor_availability da
-      WHERE da.doctor_id = $1;
+      SELECT jsonb_object_agg(
+               day_id,
+               time_ranges
+             ) AS availability
+      FROM (
+          SELECT
+              da.day_id,
+              array_agg(da.time_range_id ORDER BY da.time_range_id) AS time_ranges
+          FROM doctor_availability da
+          WHERE da.doctor_id = $1
+          GROUP BY da.day_id
+      ) subquery;
     `;
     const result = await this.databaseService.query(query, [doctorId]);
     return result.rows;
