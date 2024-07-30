@@ -1,21 +1,23 @@
-import { activeUUIDQuery, createTablesQuery, insertBasicInfoQuery, insertSpecialtiesQuery, deleteTablesQuery } from 'src/utils/querysDB';
+import { activeUUIDQuery, createTablesQuery, insertBasicInfoQuery, deleteTablesQuery } from 'src/utils/querysDB';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Client, PoolClient } from 'pg';
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 
 @Injectable()
 export class DatabaseService implements OnModuleInit {
   private client: Client;
 
   async onModuleInit() {
-    this.client = new Client({
-      host: 'localhost',
+    this.client = new Client({ 
+      connectionString: process.env.DATABASE_URL
+/*       host: 'localhost',
       port: 5432,
       user: 'postgres',
       password: 'asdasd123',
-      database: 'Hospital',
+      database: 'Hospital', */
     });
-
     await this.client.connect();
   }
 
@@ -27,7 +29,6 @@ export class DatabaseService implements OnModuleInit {
     await this.client.query(activeUUIDQuery);
     await this.client.query(createTablesQuery);
     await this.client.query(insertBasicInfoQuery);
-    await this.client.query(insertSpecialtiesQuery);
     console.log('Tables created successfully');
 
       

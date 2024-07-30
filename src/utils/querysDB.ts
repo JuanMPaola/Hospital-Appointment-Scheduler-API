@@ -2,33 +2,77 @@ export const activeUUIDQuery = `
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
       `;
 
-      export const createTablesQuery = `
+export const createTablesQuery = `
+            DO $$
+      BEGIN
+          IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
+              CREATE TYPE user_role AS ENUM ('admin', 'doctor', 'patient');
+          END IF;
+      END $$;
+      
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'specialty_title') THEN
+        CREATE TYPE specialty_title AS ENUM (
+            'Anesthesiology',
+            'Cardiology',
+            'Dermatology',
+            'Emergency Medicine',
+            'Family Medicine',
+            'Internal Medicine',
+            'Medical Genetics',
+            'Neurology',
+            'Nuclear Medicine',
+            'Obstetrics and Gynecology',
+            'Ophthalmology',
+            'Orthopedic Surgery',
+            'Otolaryngology (ENT)',
+            'Pathology',
+            'Pediatrics',
+            'Physical Medicine and Rehabilitation',
+            'Plastic Surgery',
+            'Psychiatry',
+            'Radiation Oncology',
+            'Radiology',
+            'Surgery',
+            'Urology'
+        );
+    END IF;
+END $$;
+      
+      DO $$
+      BEGIN
+          IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'day_enum') THEN
+              CREATE TYPE day_enum AS ENUM ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+          END IF;
+      END $$;
+
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        name VARCHAR NOT NULL,
-        email VARCHAR NOT NULL UNIQUE,
-        password VARCHAR NOT NULL,
-        role ENUM NOT NULL
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        role user_role NOT NULL
       );
-  
+    
       CREATE TABLE IF NOT EXISTS patients (
         user_id UUID PRIMARY KEY,
         age INTEGER NOT NULL,
-        phone VARCHAR NOT NULL,
-        born TIMESTAMP NOT NULL,
+        phone VARCHAR(15) NOT NULL,
+        born DATE NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
-  
+    
       CREATE TABLE IF NOT EXISTS doctors (
         user_id UUID PRIMARY KEY,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
-      
+    
       CREATE TABLE IF NOT EXISTS specialties (
-          id SERIAL PRIMARY KEY,
-          title ENUM NOT NULL
+        id SERIAL PRIMARY KEY,
+        title specialty_title NOT NULL
       );
-
+    
       CREATE TABLE IF NOT EXISTS doctor_specialties (
         specialty_id INTEGER NOT NULL,
         doctor_id UUID NOT NULL,
@@ -36,18 +80,17 @@ export const activeUUIDQuery = `
         FOREIGN KEY (specialty_id) REFERENCES specialties(id),
         FOREIGN KEY (doctor_id) REFERENCES doctors(user_id)
       );
-  
-
+    
       CREATE TABLE IF NOT EXISTS days (
         id SERIAL PRIMARY KEY,
-        day ENUM NOT NULL
+        day day_enum NOT NULL
       );
-
+    
       CREATE TABLE IF NOT EXISTS time_range (
         id SERIAL PRIMARY KEY,
-        time_range ENUM NOT NULL
+        time_range VARCHAR(11) NOT NULL
       );
-  
+    
       CREATE TABLE IF NOT EXISTS doctor_availability (
         id SERIAL PRIMARY KEY,
         doctor_id UUID NOT NULL,
@@ -57,23 +100,24 @@ export const activeUUIDQuery = `
         FOREIGN KEY (day_id) REFERENCES days(id),
         FOREIGN KEY (time_range_id) REFERENCES time_range(id)
       );
-
+    
       CREATE TABLE IF NOT EXISTS appointments (
         id SERIAL PRIMARY KEY,
         date DATE NOT NULL,
         time_range_id INTEGER NOT NULL,
         doctor_id UUID NOT NULL,
         patient_id UUID NOT NULL,
-        status VARCHAR NOT NULL,
+        status VARCHAR(255) NOT NULL,
         FOREIGN KEY (doctor_id) REFERENCES doctors(user_id),
         FOREIGN KEY (patient_id) REFERENCES patients(user_id),
         FOREIGN KEY (time_range_id) REFERENCES time_range(id)
       );
     `;
 
-export const insertBasicInfoQuery = `
+    export const insertBasicInfoQuery = `
     DO $$
     BEGIN
+     -- Insert days if they don't already exist
      IF NOT EXISTS (SELECT 1 FROM days) THEN
         INSERT INTO days (day) VALUES 
           ('Monday'),
@@ -85,6 +129,7 @@ export const insertBasicInfoQuery = `
           ('Sunday');
       END IF;
     
+      -- Insert time ranges if they don't already exist
       IF NOT EXISTS (SELECT 1 FROM time_range) THEN
         INSERT INTO time_range (time_range) VALUES
         ('00:00-00:30'), ('00:30-01:00'), ('01:00-01:30'), ('01:30-02:00'),
@@ -100,33 +145,34 @@ export const insertBasicInfoQuery = `
         ('20:00-20:30'), ('20:30-21:00'), ('21:00-21:30'), ('21:30-22:00'),
         ('22:00-22:30'), ('22:30-23:00'), ('23:00-23:30'), ('23:30-00:00');
       END IF;
-    END $$;
-  `;
 
-export const insertSpecialtiesQuery = `
-  INSERT INTO specialties (title) VALUES
-    ('Anesthesiology'),
-    ('Cardiology'),
-    ('Dermatology'),
-    ('Emergency Medicine'),
-    ('Family Medicine'),
-    ('Internal Medicine'),
-    ('Medical Genetics'),
-    ('Neurology'),
-    ('Nuclear Medicine'),
-    ('Obstetrics and Gynecology'),
-    ('Ophthalmology'),
-    ('Orthopedic Surgery'),
-    ('Otolaryngology (ENT)'),
-    ('Pathology'),
-    ('Pediatrics'),
-    ('Physical Medicine and Rehabilitation'),
-    ('Plastic Surgery'),
-    ('Psychiatry'),
-    ('Radiation Oncology'),
-    ('Radiology'),
-    ('Surgery'),
-    ('Urology');
+      -- Insert specialties if they don't already exist
+      IF NOT EXISTS (SELECT 1 FROM specialties) THEN
+        INSERT INTO specialties (title) VALUES
+          ('Anesthesiology'),
+          ('Cardiology'),
+          ('Dermatology'),
+          ('Emergency Medicine'),
+          ('Family Medicine'),
+          ('Internal Medicine'),
+          ('Medical Genetics'),
+          ('Neurology'),
+          ('Nuclear Medicine'),
+          ('Obstetrics and Gynecology'),
+          ('Ophthalmology'),
+          ('Orthopedic Surgery'),
+          ('Otolaryngology (ENT)'),
+          ('Pathology'),
+          ('Pediatrics'),
+          ('Physical Medicine and Rehabilitation'),
+          ('Plastic Surgery'),
+          ('Psychiatry'),
+          ('Radiation Oncology'),
+          ('Radiology'),
+          ('Surgery'),
+          ('Urology');
+      END IF;
+    END $$;
   `;
       
 export const deleteTablesQuery = `

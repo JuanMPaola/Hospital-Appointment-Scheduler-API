@@ -1,11 +1,18 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PatientsService } from './patients.service';
 import { PatientsController } from './patients.controller';
-import { DatabaseService } from 'src/database/database.service';
-import { AppoinmentsService } from 'src/appoinments/appoinments.service';
+import { DatabaseModule } from 'src/database/database.module';
+import { DoctorsModule } from 'src/doctors/doctors.module';
+import { AppoinmentsModule } from 'src/appoinments/appoinments.module';
 
 @Module({
   controllers: [PatientsController],
-  providers: [PatientsService, DatabaseService, AppoinmentsService],
+  providers: [PatientsService],
+  imports: [
+    DatabaseModule,
+    DoctorsModule,
+    AppoinmentsModule,
+  ],
+  exports: [PatientsService],
 })
 export class PatientsModule {}

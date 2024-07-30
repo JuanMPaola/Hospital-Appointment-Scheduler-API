@@ -2,15 +2,15 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
 import { DatabaseService } from 'src/database/database.service';
-import { DoctorsService } from 'src/doctors/doctors.service';
 import { PatientsService } from 'src/patients/patients.service';
+import { DoctorsService } from 'src/doctors/doctors.service';
 
 @Injectable()
 export class AppoinmentsService {
   constructor(
     private readonly databaseService: DatabaseService,
-/*     private readonly patientsService: PatientsService,*/
-/*     private readonly doctorsService: DoctorsService  */
+/*     private readonly patientsService: PatientsService,
+    private readonly doctorsService: DoctorsService */ 
   ) { }
 
   async appointmentValidation(appoinmentDto: AppoinmentDto){

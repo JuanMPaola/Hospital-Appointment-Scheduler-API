@@ -49,8 +49,8 @@
 },
 
 {
-  "doctor_id": "",
-  "patient_id": "",
+  "doctor_id": "add uuid here",
+  "patient_id": "add uuid here",
   "time_range_id": 1,
   "date": "2024-07-22T08:00:00.000Z",
   "status": "pending"
