@@ -10,8 +10,8 @@ import { DoctorsModule } from 'src/doctors/doctors.module';
   providers: [AppoinmentsService],
   imports: [
     DatabaseModule,
-/*     forwardRef(() => PatientsModule),
-    forwardRef(() => DoctorsModule), */
+    forwardRef(() => PatientsModule),
+    forwardRef(() => DoctorsModule),
   ],
   exports: [AppoinmentsService],
 })

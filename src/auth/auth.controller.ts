@@ -5,7 +5,9 @@ import { UsersService } from 'src/users/users.service';
 import { PatientDto } from 'src/patients/dto/patient.dto';
 import { DoctorDto } from 'src/doctors/dto/doctor.dto';
 import { SkipAuth } from './skip-auth.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(

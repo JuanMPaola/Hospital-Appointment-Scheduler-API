@@ -10,7 +10,7 @@ export class AppoinmentsService {
   constructor(
     private readonly databaseService: DatabaseService,
 /*     private readonly patientsService: PatientsService,
-    private readonly doctorsService: DoctorsService */ 
+    private readonly doctorsService: DoctorsService  */
   ) { }
 
   async appointmentValidation(appoinmentDto: AppoinmentDto){

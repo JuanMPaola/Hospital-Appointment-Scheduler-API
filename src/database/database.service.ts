@@ -11,12 +11,12 @@ export class DatabaseService implements OnModuleInit {
 
   async onModuleInit() {
     this.client = new Client({ 
-      connectionString: process.env.DATABASE_URL
-/*       host: 'localhost',
+/*       connectionString: process.env.DATABASE_URL */
+      host: 'localhost',
       port: 5432,
       user: 'postgres',
       password: 'asdasd123',
-      database: 'Hospital', */
+      database: 'Hospital',
     });
     await this.client.connect();
   }
