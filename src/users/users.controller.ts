@@ -1,9 +1,10 @@
 import { Controller, Get, Body, Patch, Param, Delete, Query, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Users')
+@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -24,7 +25,6 @@ export class UsersController {
   
   @Delete(':id')
   remove(@Param('id') id: string) {
-    console.log(id);
     return this.usersService.delete(id);
   }
 

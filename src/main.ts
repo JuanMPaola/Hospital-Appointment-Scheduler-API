@@ -12,6 +12,7 @@ async function bootstrap() {
     .setTitle("Hospital Appointment Scheduler")
     .setDescription("This project is an API to manage appointments between users (patients and doctors) for a hospital.")
     .setVersion("1.0")
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("apidocs", app, document);

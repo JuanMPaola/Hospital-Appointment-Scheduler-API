@@ -1,17 +1,14 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
 import { DoctorDto } from './dto/doctor.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Doctors')
+@ApiBearerAuth()
 @Controller('doctors')
 export class DoctorsController {
   constructor(private readonly doctorsService: DoctorsService) {}
 
-  @Post()
-  create(@Body() doctor: DoctorDto) {
-    return this.doctorsService.create(doctor);
-  }
 
   @Get()
   findAll() {
@@ -33,13 +30,12 @@ export class DoctorsController {
     return this.doctorsService.findAvailability(id);
   }
   
+/*   @Post()
+  create(@Body() doctor: DoctorDto) {
+    return this.doctorsService.create(doctor);
+  }
   @Patch(':id')
   update(@Param('id') id: string, @Body() doctorDto: DoctorDto) {
     return this.doctorsService.update(+id, doctorDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.doctorsService.delete(id);
-  }
+  } */
 }

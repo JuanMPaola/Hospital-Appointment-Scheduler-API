@@ -1,12 +1,11 @@
-import { IsString, IsNotEmpty, IsInt, IsDate, IsUUID } from 'class-validator';
+import { IsString, IsNotEmpty, IsInt, IsDate } from 'class-validator';
 import { UserDto } from '../../users/dto/user.dto'
-import { UUID } from 'crypto';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class PatientDto extends UserDto {
   
   @IsString()
-  @IsUUID()
-  id: UUID;
+  id: string;
 
   @IsInt()
   age: number;

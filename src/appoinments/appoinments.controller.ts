@@ -2,13 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AppoinmentsService } from './appoinments.service';
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Appointments')
+@ApiBearerAuth()
 @Controller('appoinments')
 export class AppoinmentsController {
   constructor(private readonly appoinmentsService: AppoinmentsService) {}
 
+  
   @Post()
   create(@Body() appoinmentDto: AppoinmentDto) {
     return this.appoinmentsService.create(appoinmentDto);
@@ -24,11 +26,6 @@ export class AppoinmentsController {
     return this.appoinmentsService.findAllByUserId(userId);
   }
 
-/*   @Get('specific')
-  findSpecificAppointment(@Body() appointmentDto: AppoinmentDto) {
-    return this.appoinmentsService.findSpecificAppointment(appointmentDto);
-  } */
-
   @Patch(':id/status')
   updateStatus(@Param('id') id: string, @Body('status') status: string) {
     return this.appoinmentsService.updateStatus(id, status);
@@ -43,4 +40,9 @@ export class AppoinmentsController {
   remove(@Param('id') id: string) {
     return this.appoinmentsService.deleteAllByDocOrPatientId(id);
   }
+
+/*   @Get('specific')
+  findSpecificAppointment(@Body() appointmentDto: AppoinmentDto) {
+    return this.appoinmentsService.findSpecificAppointment(appointmentDto);
+  } */
 }

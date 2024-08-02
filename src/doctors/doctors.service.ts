@@ -82,23 +82,19 @@ export class DoctorsService {
 
   async findAll() {
     const query = `
-      SELECT 
-          u.name,
-          u.email,
-          array_agg(DISTINCT ds.specialty_id) AS specialties
-      FROM 
-          users u
-      JOIN 
-          doctors d ON u.id = d.user_id
-      JOIN 
-          doctor_specialties ds ON d.user_id = ds.doctor_id
-      LEFT JOIN 
-          doctor_availability da ON d.user_id = da.doctor_id
-      GROUP BY 
-          u.id
+    SELECT 
+    u.id, 
+    u.name, 
+    u.email, 
+    COALESCE(json_agg(s.title),'[]') AS specialties 
+    FROM users u 
+    JOIN doctor_specialties ds ON u.id = ds.doctor_id
+    JOIN specialties s ON ds.specialty_id = s.id
+    WHERE u.id IN (SELECT user_id FROM doctors)
+    GROUP BY u.id, u.name, u.email;
     `
     const result = await this.databaseService.query(query);
-    return result.rows[0];
+    return result.rows;
   }
 
 
@@ -136,16 +132,11 @@ export class DoctorsService {
           u.id,
           u.name,
           u.email
-      FROM 
-          users u
-      JOIN 
-          doctors d ON u.id = d.user_id
-      JOIN 
-          doctor_specialties ds ON d.user_id = ds.doctor_id
-      WHERE 
-          ds.specialty_id = $1
-      GROUP BY 
-          u.id;
+      FROM users u
+      JOIN doctors d ON u.id = d.user_id
+      JOIN doctor_specialties ds ON d.user_id = ds.doctor_id
+      WHERE ds.specialty_id = $1
+      GROUP BY u.id;
     `;
     const result = await this.databaseService.query(query, [specialtyId]);
     return result.rows;

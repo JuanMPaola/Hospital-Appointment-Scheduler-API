@@ -37,22 +37,44 @@ export class PatientsService {
   }
 
   async findAll() {
-    const query = 'SELECT * FROM patients';
+    const query =` 
+    SELECT u.id, u.email, u.name, p.phone, p.age, p.born
+    FROM patients p
+    JOIN users u ON u.id = p.user_id
+    `;
     const result = await this.databaseService.query(query);
     return result.rows;
   }
 
   async findOne(id: string) {
-    const query = 'SELECT * FROM patient WHERE id = $1';
+    const query = `
+    SELECT 
+    u.id, 
+    u.email, 
+    u.name, 
+    p.phone, 
+    p.age, 
+    p.born,
+    COALESCE(json_agg(json_build_object(
+        'date', a.date,
+        'time_range_id', a.time_range_id,
+        'doctor_id', a.doctor_id,
+        'status', a.status
+    )) FILTER (WHERE a.id IS NOT NULL), '[]') AS appointments 
+    FROM patients p
+    INNER JOIN users u ON p.user_id = u.id
+    LEFT JOIN appointments a ON p.user_id = a.patient_id
+    WHERE p.user_id = $1
+    GROUP BY u.id, u.email, u.name, p.phone, p.age, p.born;`;
     const result = await this.databaseService.query(query, [id]);
     return result.rows[0];
   }
 
   async update(id: string, patient: PatientDto) {
     const query = `
-      UPDATE patient
+      UPDATE patients
       SET name = $1, age = $2, email = $3, phone = $4, born = $5, username = $6, password = $7
-      WHERE id = $8
+      WHERE user_id = $8
       RETURNING *;
     `;
     const values = [
