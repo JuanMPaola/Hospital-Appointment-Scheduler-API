@@ -27,7 +27,7 @@ export class DoctorsController {
 
   @Get(':id/availability')
   findAvailability(@Param('id') id: string) {
-    return this.doctorsService.findAvailability(id);
+    return this.doctorsService.findWeekAvailability(id);
   }
   
 /*   @Post()

@@ -1,4 +1,4 @@
-import { activeUUIDQuery, createTablesQuery, insertBasicInfoQuery, deleteTablesQuery } from 'src/utils/querysDB';
+import { activeUUIDQuery, createTablesQuery, insertBasicInfoQuery, deleteTablesQuery } from './querysDB';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Client, PoolClient } from 'pg';
 import * as dotenv from 'dotenv';
@@ -11,12 +11,12 @@ export class DatabaseService implements OnModuleInit {
 
   async onModuleInit() {
     this.client = new Client({ 
-/*       connectionString: process.env.DATABASE_URL */
-      host: 'localhost',
-      port: 5432,
-      user: 'postgres',
-      password: 'asdasd123',
-      database: 'Hospital',
+    //  connectionString: process.env.DATABASE_URL
+      host: process.env.HOST,
+      port: process.env.LPORT,
+      user: process.env.USER,
+      password: process.env.PASSWORD,
+      database: process.env.DATABASE
     });
     await this.client.connect();
   }
@@ -24,7 +24,7 @@ export class DatabaseService implements OnModuleInit {
   // Function to create Tables if not exists, and to active UUID generative function.
   async createTables() {
     // Uncomment if you want to reset DB
-    // await this.client.query(deleteTablesQuery);
+    //await this.client.query(deleteTablesQuery);
   
     await this.client.query(activeUUIDQuery);
     await this.client.query(createTablesQuery);

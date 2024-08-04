@@ -12,4 +12,4 @@ ENV PORT=3000
 
 EXPOSE 3000
 
-CMD ["./wait-for-it.sh", "postgres:5432", "--", "npm", "run", "start:dev"]
+CMD ["npm", "run", "start:dev"]

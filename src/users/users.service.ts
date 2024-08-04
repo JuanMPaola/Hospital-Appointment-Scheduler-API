@@ -4,13 +4,18 @@ import { PatientDto } from 'src/patients/dto/patient.dto';
 import { DoctorDto } from 'src/doctors/dto/doctor.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DatabaseService } from '../database/database.service';
-import { DoctorsService } from 'src/doctors/doctors.service';
+import { ValidationService } from 'src/validation/validation.service';
 import { PatientsService } from 'src/patients/patients.service';
+import { DoctorsService } from 'src/doctors/doctors.service';
+import { createUserQuery, deleteUserQuery, getAllUsersQuery, getByEmailQuery, getRoleQuery } from './users.querys';
+
 
 @Injectable()
 export class UsersService {
   constructor(
+    
     private readonly databaseService: DatabaseService,
+    private readonly validationService: ValidationService,
     private readonly patientsService: PatientsService,
     private readonly doctorsService: DoctorsService
   ) { }
@@ -25,13 +30,6 @@ export class UsersService {
 
       // Start the transaction
       await this.databaseService.query('BEGIN');
-
-      // Query to insert into users table (returns ID)
-      const createUserQuery = `
-        INSERT INTO users (name, email, password, role)
-        VALUES ($1, $2, $3, $4)
-        RETURNING id;
-      `;
 
       // Extracting values from dto. Sending query and values to db
       const userValues = [
@@ -76,23 +74,19 @@ export class UsersService {
 
   async findAll() {
     try {
-      const getAllUsersQuery = `
-        SELECT * FROM users;
-      `;
       const result = await this.databaseService.query(getAllUsersQuery);
       return result.rows;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new Error('Could not get all users'), error;
     }
   }
 
   async findOneByEmail(email: string): Promise<UserDto | undefined> {
     try {
-      const getByEmailQuery = 'SELECT * FROM users WHERE email = $1;';
       const result = await this.databaseService.query(getByEmailQuery, [email]);
       return result.rows[0];
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new Error('Could not find users by email'), error;
     }
   }
 
@@ -109,13 +103,6 @@ export class UsersService {
       } else if (role === 'doctor') {
         await this.doctorsService.delete(id)
       }
-
-      // Query to delete user form users table
-      const deleteUserQuery = `
-        DELETE FROM users
-        WHERE id = $1
-        RETURNING *;
-      `;
       const result = await this.databaseService.query(deleteUserQuery, [id]);
 
       // End transaction
@@ -131,21 +118,10 @@ export class UsersService {
 
   async getRole(id: string) {
     try {
-      const getRoleQuery = `
-      SELECT role FROM users
-      WHERE id = $1
-      `
       const result = await this.databaseService.query(getRoleQuery, [id]);
-      /*
-      if (result.rowCount === 0) {
-        throw new NotFoundException(`User with id ${id} not found`);
-      }else 
-      */
-
       return result.rows[0].role;
-
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new Error('Error geting user role'), error;
     }
   }
 

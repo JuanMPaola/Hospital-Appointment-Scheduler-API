@@ -21,7 +21,7 @@ export const doctorExample = {
         password: "securepassword",
         role: "doctor",
         specialties: [1, 5, 7],
-        availability: {
+        week_availability: {
             "1": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
             "2": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
             "3": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
@@ -30,6 +30,22 @@ export const doctorExample = {
         }
     },
 };
+
+export const doctorExample2 = {
+    name: "Dr. Carlos Perez",
+    email: "carlitosh@example.com",
+    password: "anothersecurepassword",
+    role: "doctor",
+    specialties: [2, 3],
+    availability: {
+        "1": [9, 10, 11, 12, 13, 14, 15, 16],
+        "2": [9, 10, 11, 12, 13, 14, 15, 16],
+        "3": [9, 10, 11, 12, 13, 14, 15, 16],
+        "4": [13, 14, 15, 16, 17, 18],
+        "5": [13, 14, 15, 16, 17, 18]
+    }
+};
+
 
 export const appointmentExample = {
     summary: 'Example of DoctorDto',
@@ -47,7 +63,7 @@ export const patientLoginExample = {
     value: 
     {
         email: "jane.smith@example.com",
-        password: "securepassword"
+        password: "contraseña"
     }
 }
 export const doctorLoginExample = {
@@ -69,20 +85,6 @@ const patientExampleObject2 = {
     email: "juanma@example.com",
     born: new Date("2001-01-01T00:00:00Z"),
     role: "patient"
-};
-const doctorExampleObject2 = {
-    name: "Dr. Carlos Perez",
-    email: "carlitosh@example.com",
-    password: "anothersecurepassword",
-    role: "doctor",
-    specialties: [2, 3],
-    availability: {
-        "1": [9, 10, 11, 12, 13, 14, 15, 16],
-        "2": [9, 10, 11, 12, 13, 14, 15, 16],
-        "3": [9, 10, 11, 12, 13, 14, 15, 16],
-        "4": [13, 14, 15, 16, 17, 18],
-        "5": [13, 14, 15, 16, 17, 18]
-    }
 };
 const appointmentExampleObject1 = {
     doctor_id: "add uuid here",

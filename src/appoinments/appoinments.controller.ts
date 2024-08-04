@@ -2,7 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AppoinmentsService } from './appoinments.service';
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { appointmentExample } from 'src/utils/examples';
 
 @ApiTags('Appointments')
 @ApiBearerAuth()
@@ -10,10 +11,18 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class AppoinmentsController {
   constructor(private readonly appoinmentsService: AppoinmentsService) {}
 
-  
+  @ApiBody({
+    description: '',
+    examples: {Example1: appointmentExample},
+  })
   @Post()
   create(@Body() appoinmentDto: AppoinmentDto) {
     return this.appoinmentsService.create(appoinmentDto);
+  }
+
+  @Post('nearest/:specialtie')
+  nearestAppointment(@Param('specialtie') specialtieId: number){
+    return this.appoinmentsService.createNearest(specialtieId)
   }
 
   @Get()

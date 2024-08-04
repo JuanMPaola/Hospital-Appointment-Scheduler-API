@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { DoctorDto } from './dto/doctor.dto';
 import { DatabaseService } from 'src/database/database.service';
-import { AppoinmentsService } from 'src/appoinments/appoinments.service';
+import { createDoctorQuery, findAllDoctorsQuery, findDoctorByIdQuery, findDoctorBySpecialtieQuery, findeDoctorsWeekAvailability } from './doctors.querys';
+
 
 @Injectable()
 export class DoctorsService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly appointmentService: AppoinmentsService
   ) { }
 
   async create(doctor: DoctorDto) {
@@ -17,12 +17,6 @@ export class DoctorsService {
       // Start the transaction
       await this.databaseService.query('BEGIN');
 
-      // Insert into doctors table using the user_id
-      const createDoctorQuery = `
-        INSERT INTO doctors (user_id)
-        VALUES ($1)
-        RETURNING *;
-      `;
       const doctorResult = await this.databaseService.query(createDoctorQuery, [doctorId]);
 
 
@@ -37,9 +31,9 @@ export class DoctorsService {
 
 
       // Insert availability into doctor_availability
-      const { availability } = doctor;
-      if (availability) {
-        const availabilityEntries = Object.entries(availability);
+      const { week_availability } = doctor;
+      if (week_availability) {
+        const availabilityEntries = Object.entries(week_availability);
 
         const valuesArray: any[] = [];
         let valuesString = '';
@@ -54,7 +48,7 @@ export class DoctorsService {
         valuesString = valuesString.slice(0, -2);
 
         const insertAvailabilityQuery = `
-          INSERT INTO doctor_availability (doctor_id, day_id, time_range_id)
+          INSERT INTO doctor_weekly_availability (doctor_id, day_id, time_range_id)
           VALUES ${valuesString}
           RETURNING *;
         `;
@@ -81,87 +75,44 @@ export class DoctorsService {
 
 
   async findAll() {
-    const query = `
-    SELECT 
-    u.id, 
-    u.name, 
-    u.email, 
-    COALESCE(json_agg(s.title),'[]') AS specialties 
-    FROM users u 
-    JOIN doctor_specialties ds ON u.id = ds.doctor_id
-    JOIN specialties s ON ds.specialty_id = s.id
-    WHERE u.id IN (SELECT user_id FROM doctors)
-    GROUP BY u.id, u.name, u.email;
-    `
-    const result = await this.databaseService.query(query);
-    return result.rows;
+    try {
+      const result = await this.databaseService.query(findAllDoctorsQuery);
+      return result.rows;
+    } catch (error) {
+      throw new Error('Could not get all doctor'), error;
+    }
   }
 
 
   async findOne(id: string) {
-    const query = `
-      SELECT 
-          u.name,
-          u.email,
-          array_agg(DISTINCT ds.specialty_id) AS specialties,
-          json_agg(DISTINCT jsonb_build_object(
-              'day', da.day_id,
-              'time_range', da.time_range_id
-          )) AS availability
-      FROM 
-          users u
-      JOIN 
-          doctors d ON u.id = d.user_id
-      JOIN 
-          doctor_specialties ds ON d.user_id = ds.doctor_id
-      LEFT JOIN 
-          doctor_availability da ON d.user_id = da.doctor_id
-      WHERE 
-          u.id = $1
-      GROUP BY 
-          u.id
-      `
-    const result = await this.databaseService.query(query, [id]);
-    return result.rows[0];
+    try {
+      const result = await this.databaseService.query(findDoctorByIdQuery, [id]);
+      return result.rows[0];
+    } catch (error) {
+      throw new Error('Could not get all doctor'), error;
+    }
   }
 
 
   async findBySpecialty(specialtyId: number) {
-    const query = `
-      SELECT 
-          u.id,
-          u.name,
-          u.email
-      FROM users u
-      JOIN doctors d ON u.id = d.user_id
-      JOIN doctor_specialties ds ON d.user_id = ds.doctor_id
-      WHERE ds.specialty_id = $1
-      GROUP BY u.id;
-    `;
-    const result = await this.databaseService.query(query, [specialtyId]);
-    return result.rows;
+    try {
+      const result = await this.databaseService.query(findDoctorBySpecialtieQuery, [specialtyId]);
+      return result.rows;
+    } catch (error) {
+      throw new Error('Could not get doctors by specialtie'), error;
+    }
   }
 
 
-  async findAvailability(doctorId: string) {
-    const query = `
-      SELECT jsonb_object_agg(
-               day_id,
-               time_ranges
-             ) AS availability
-      FROM (
-          SELECT
-              da.day_id,
-              array_agg(da.time_range_id ORDER BY da.time_range_id) AS time_ranges
-          FROM doctor_availability da
-          WHERE da.doctor_id = $1
-          GROUP BY da.day_id
-      ) subquery;
-    `;
-    const result = await this.databaseService.query(query, [doctorId]);
-    return result.rows;
+  async findWeekAvailability(doctorId: string) {
+    try {
+      const result = await this.databaseService.query(findeDoctorsWeekAvailability, [doctorId]);
+      return result.rows;
+    } catch (error) {
+      throw new Error('Could not get doctors week availability'), error;
+    }
   }
-  
+
 
   async delete(userId: string) {
     try {
@@ -181,9 +132,9 @@ export class DoctorsService {
       WHERE doctor_id = $1;
       `
       await this.databaseService.query(deleteDoctorAvailability, [userId])
-      
-      // Get appointments - if there are not, can delete the doctor
-      await this.appointmentService.deleteAllByDocOrPatientId(userId);
+
+      // Get appointments - if there are not, can delete the doctor HERE VALIDATION MODULE ACTION
+      //await this.appointmentService.deleteAllByDocOrPatientId(userId);
 
       // Delete from doctos table
       const deleteDoctorQuery = `
@@ -205,7 +156,7 @@ export class DoctorsService {
       throw new Error('Could not delete doctor: ' + error.message);
     }
   }
-  
+
 
   update(id: number, doctorDto: DoctorDto) {
     return `This action updates a #${id} doctor`;

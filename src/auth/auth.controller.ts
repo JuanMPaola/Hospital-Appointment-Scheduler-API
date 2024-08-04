@@ -26,7 +26,7 @@ export class AuthController {
     
     const user = await this.authService.validateUser(authDto);
     if (!user){
-      return 'Invalid credentials'
+      return 'User not registered'
     }
     
     return this.authService.login(user);

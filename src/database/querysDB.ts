@@ -91,7 +91,7 @@ END $$;
         time_range VARCHAR(11) NOT NULL
       );
     
-      CREATE TABLE IF NOT EXISTS doctor_availability (
+      CREATE TABLE IF NOT EXISTS doctor_weekly_availability (
         id SERIAL PRIMARY KEY,
         doctor_id UUID NOT NULL,
         day_id INTEGER NOT NULL,
@@ -107,7 +107,7 @@ END $$;
         time_range_id INTEGER NOT NULL,
         doctor_id UUID NOT NULL,
         patient_id UUID NOT NULL,
-        status VARCHAR(255) NOT NULL,
+        status VARCHAR(255) DEFAULT 'pending',
         FOREIGN KEY (doctor_id) REFERENCES doctors(user_id),
         FOREIGN KEY (patient_id) REFERENCES patients(user_id),
         FOREIGN KEY (time_range_id) REFERENCES time_range(id)
@@ -175,14 +175,18 @@ END $$;
     END $$;
   `;
       
-export const deleteTablesQuery = `
-      DROP TABLE IF EXISTS doctor_availability;
-      DROP TABLE IF EXISTS days;
-      DROP TABLE IF EXISTS appointments;
-      DROP TABLE IF EXISTS time_range;
-      DROP TABLE IF EXISTS doctor_specialties;
-      DROP TABLE IF EXISTS specialties;
-      DROP TABLE IF EXISTS doctors;
-      DROP TABLE IF EXISTS patients;
-      DROP TABLE IF EXISTS users;
-   `;
+  export const deleteTablesQuery = `
+  DROP TABLE IF EXISTS appointments;
+  DROP TABLE IF EXISTS doctor_availability;
+  DROP TABLE IF EXISTS doctor_specialties;
+  DROP TABLE IF EXISTS doctor_weekly_availability;
+  DROP TABLE IF EXISTS days;
+  DROP TABLE IF EXISTS doctors;
+  DROP TABLE IF EXISTS time_range;
+  DROP TABLE IF EXISTS specialties;
+  DROP TABLE IF EXISTS patients;
+  DROP TABLE IF EXISTS users;
+  DROP TYPE IF EXISTS user_role;
+  DROP TYPE IF EXISTS specialty_title;
+  DROP TYPE IF EXISTS day_enum;
+  `;

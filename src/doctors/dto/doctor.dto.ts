@@ -12,5 +12,5 @@ export class DoctorDto extends UserDto {
     @IsObject()
     @IsNotEmpty()
     @ValidateNested()
-    availability: {[key: number]: number[] };
+    week_availability: {[key: number]: number[] };
   }

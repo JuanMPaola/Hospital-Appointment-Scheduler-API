@@ -4,7 +4,7 @@ import { UsersController } from './users.controller';
 import { DatabaseModule } from 'src/database/database.module';
 import { PatientsModule } from 'src/patients/patients.module';
 import { DoctorsModule } from 'src/doctors/doctors.module';
-import { AppoinmentsModule } from 'src/appoinments/appoinments.module';
+import { ValidationModule } from 'src/validation/validation.module';
 
 @Module({
   controllers: [UsersController],
@@ -13,6 +13,7 @@ import { AppoinmentsModule } from 'src/appoinments/appoinments.module';
     DatabaseModule,
     PatientsModule,
     DoctorsModule,
+    ValidationModule
   ],
   exports: [UsersService],
 })
