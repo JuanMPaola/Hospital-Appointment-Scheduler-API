@@ -120,13 +120,13 @@ END $$;
      -- Insert days if they don't already exist
      IF NOT EXISTS (SELECT 1 FROM days) THEN
         INSERT INTO days (day) VALUES 
+          ('Sunday'),  
           ('Monday'),
           ('Tuesday'),
           ('Wednesday'),
           ('Thursday'),
           ('Friday'),
-          ('Saturday'),
-          ('Sunday');
+          ('Saturday');
       END IF;
     
       -- Insert time ranges if they don't already exist

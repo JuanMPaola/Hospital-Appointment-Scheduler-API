@@ -16,10 +16,16 @@ SELECT * FROM appointments
 WHERE patient_id = $1 OR doctor_id = $1
 `;
 
-// Query to find a specific appointment
-export const findSpecificAppointmentQuery = `
+// Query to check if the doctor has an appointment at that time on the specified day
+export const findSpecificAppointmentDoctorQuery = `
 SELECT * FROM appointments
 WHERE doctor_id = $1 AND date = $2 AND time_range_id = $3
+`;
+
+// Query to check if the patient has an appointment at that time on the specified day
+export const findSpecificAppointmentPatientQuery = `
+SELECT * FROM appointments
+WHERE patient_id = $1 AND date = $2 AND time_range_id = $3
 `;
 
 // Query to delet all appointments of a user

@@ -69,3 +69,26 @@ FROM (
     GROUP BY dwa.day_id
 ) subquery;
 `;
+
+export const findDoctorBySpecialtiePlusAvailabilityQuery = `
+SELECT 
+    u.id,
+    u.name,
+    u.email,
+    jsonb_agg(DISTINCT jsonb_build_object('id', ds.specialty_id, 'title', s.title)) AS specialties,
+    jsonb_object_agg(da.day_id, da.time_ranges) AS weekly_availability
+FROM users u
+JOIN doctors d ON u.id = d.user_id
+JOIN doctor_specialties ds ON d.user_id = ds.doctor_id
+JOIN specialties s ON ds.specialty_id = s.id
+LEFT JOIN (
+    SELECT 
+        doctor_id,
+        day_id,
+        jsonb_agg(time_range_id ORDER BY time_range_id) AS time_ranges
+    FROM doctor_weekly_availability
+    GROUP BY doctor_id, day_id
+) da ON d.user_id = da.doctor_id
+WHERE ds.specialty_id = $1
+GROUP BY u.id;
+`;

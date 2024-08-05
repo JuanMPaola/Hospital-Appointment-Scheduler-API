@@ -20,9 +20,9 @@ export class AppoinmentsController {
     return this.appoinmentsService.create(appoinmentDto);
   }
 
-  @Post('nearest/:specialtie')
-  nearestAppointment(@Param('specialtie') specialtieId: number){
-    return this.appoinmentsService.createNearest(specialtieId)
+  @Post('nearest/:specialtie/:patientId')
+  nearestAppointment(@Param('specialtie') specialtieId: number, @Param('patientId') patientId: string){
+    return this.appoinmentsService.createNearest(specialtieId, patientId)
   }
 
   @Get()

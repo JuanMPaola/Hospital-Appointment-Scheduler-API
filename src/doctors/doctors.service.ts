@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DoctorDto } from './dto/doctor.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { createDoctorQuery, findAllDoctorsQuery, findDoctorByIdQuery, findDoctorBySpecialtieQuery, findeDoctorsWeekAvailability } from './doctors.querys';
+import { findAppointmentsByUserIdQuery } from 'src/appoinments/appoinmetns.querys';
 
 
 @Injectable()
@@ -104,7 +105,7 @@ export class DoctorsService {
   }
 
 
-  async findWeekAvailability(doctorId: string) {
+  async findAvailability(doctorId: string) {
     try {
       const result = await this.databaseService.query(findeDoctorsWeekAvailability, [doctorId]);
       return result.rows;
@@ -133,8 +134,8 @@ export class DoctorsService {
       `
       await this.databaseService.query(deleteDoctorAvailability, [userId])
 
-      // Get appointments - if there are not, can delete the doctor HERE VALIDATION MODULE ACTION
-      //await this.appointmentService.deleteAllByDocOrPatientId(userId);
+      // Get appointments - if there are not, can delete the doctor YOU NEED TO RE-THINK THIS PART
+      // await this.databaseService.query(findAppointmentsByUserIdQuery)
 
       // Delete from doctos table
       const deleteDoctorQuery = `
