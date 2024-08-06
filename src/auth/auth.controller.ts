@@ -6,7 +6,7 @@ import { PatientDto } from 'src/patients/dto/patient.dto';
 import { DoctorDto } from 'src/doctors/dto/doctor.dto';
 import { SkipAuth } from './skip-auth.decorator';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { patientExample, doctorExample, patientLoginExample, doctorLoginExample } from 'src/utils/examples';
+import { patientExample, doctorExample, patientLoginExample, doctorLoginExample, doctorExample2, patientExample2 } from 'src/utils/examples';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -35,7 +35,7 @@ export class AuthController {
   @SkipAuth()
   @ApiBody({
     description: '',
-    examples: {patient: patientExample, doctor: doctorExample},
+    examples: {patient: patientExample,patient2: patientExample2, doctor: doctorExample, doctor2: doctorExample2},
   })
   @Post('register')
   async register(@Body() patOrDoc: PatientDto & DoctorDto) {

@@ -11,6 +11,19 @@ export const patientExample = {
         role: "patient"
     },
 };
+export const patientExample2 = {
+    summary: 'Example of PatientDto 2',
+    value:
+    {
+        name: "Juan Manuel",
+        password: "contra",
+        age: 23,
+        phone: "123-456-7890",
+        email: "juanma@example.com",
+        born: new Date("2001-01-01T00:00:00Z"),
+        role: "patient"
+    }
+};
 
 export const doctorExample = {
     summary: 'Example of DoctorDto',
@@ -22,27 +35,30 @@ export const doctorExample = {
         role: "doctor",
         specialties: [1, 5, 7],
         week_availability: {
-            "1": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
             "2": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
             "3": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
             "4": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
-            "5": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]
+            "5": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
+            "6": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]
         }
     },
 };
-
 export const doctorExample2 = {
-    name: "Dr. Carlos Perez",
-    email: "carlitosh@example.com",
-    password: "anothersecurepassword",
-    role: "doctor",
-    specialties: [2, 3],
-    availability: {
-        "1": [9, 10, 11, 12, 13, 14, 15, 16],
-        "2": [9, 10, 11, 12, 13, 14, 15, 16],
-        "3": [9, 10, 11, 12, 13, 14, 15, 16],
-        "4": [13, 14, 15, 16, 17, 18],
-        "5": [13, 14, 15, 16, 17, 18]
+    summary: 'Example of DoctorDto 2',
+    value: 
+    {
+        name: "Dr. Carlos Perez",
+        email: "carlitosh@example.com",
+        password: "anothersecurepassword",
+        role: "doctor",
+        specialties: [1, 2, 3],
+        week_availability: {
+            "2": [9, 10, 11, 12, 13, 14, 15, 16],
+            "3": [9, 10, 11, 12, 13, 14, 15, 16],
+            "4": [9, 10, 11, 12, 13, 14, 15, 16],
+            "5": [13, 14, 15, 16, 17, 18],
+            "6": [13, 14, 15, 16, 17, 18]
+        }
     }
 };
 
@@ -77,15 +93,6 @@ export const doctorLoginExample = {
 
 
 /* 
-const patientExampleObject2 = {
-    name: "Juan Manuel",
-    password: "contra",
-    age: 23,
-    phone: "123-456-7890",
-    email: "juanma@example.com",
-    born: new Date("2001-01-01T00:00:00Z"),
-    role: "patient"
-};
 const appointmentExampleObject1 = {
     doctor_id: "add uuid here",
     patient_id: "add uuid here",

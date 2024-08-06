@@ -1,7 +1,7 @@
 // Query to insert data into appointment table
 export const createAppointmentQuery = `
-INSERT INTO appointments (doctor_id, patient_id, time_range_id, date, status)
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO appointments (doctor_id, patient_id, date, day_id, time_range_id, status)
+VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *
 `
 

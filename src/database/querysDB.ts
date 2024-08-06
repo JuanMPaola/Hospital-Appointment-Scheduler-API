@@ -103,13 +103,15 @@ END $$;
     
       CREATE TABLE IF NOT EXISTS appointments (
         id SERIAL PRIMARY KEY,
-        date DATE NOT NULL,
-        time_range_id INTEGER NOT NULL,
         doctor_id UUID NOT NULL,
         patient_id UUID NOT NULL,
+        date DATE NOT NULL,
+        day_id INTEGER NOT NULL,
+        time_range_id INTEGER NOT NULL,
         status VARCHAR(255) DEFAULT 'pending',
         FOREIGN KEY (doctor_id) REFERENCES doctors(user_id),
         FOREIGN KEY (patient_id) REFERENCES patients(user_id),
+        FOREIGN KEY (day_id) REFERENCES days(id),
         FOREIGN KEY (time_range_id) REFERENCES time_range(id)
       );
     `;

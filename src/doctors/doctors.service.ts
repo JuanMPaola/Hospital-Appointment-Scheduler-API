@@ -59,7 +59,7 @@ export class DoctorsService {
 
         await this.databaseService.query(insertAvailabilityQuery, valuesArray);
       } else {
-        throw new Error("Availability is undefined or null");
+        throw new Error("Week availability is undefined or null");
       }
 
       // End transaction
