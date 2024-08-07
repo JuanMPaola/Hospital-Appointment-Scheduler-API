@@ -19,7 +19,7 @@
 
 This document provides a detailed overview of the database structure used in the project.
 
-![Captura de pantalla 2024-07-25 140005](https://github.com/user-attachments/assets/0e235693-414c-40f0-aac1-0767c633ad88)
+![Captura de pantalla 2024-08-07 123145](https://github.com/user-attachments/assets/ba1af370-828a-424a-b746-34c24e0b52f8)
 
 # Tables
 
