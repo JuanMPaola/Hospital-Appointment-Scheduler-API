@@ -8,10 +8,7 @@
     - [Structure](documentation/database.md#structure)
     - [Tables](documentation/database.md#tables)
     - [Relations](documentation/database.md#relations)
-- [API Documentation]
-    - [Patients]
-    - [Doctors]
-    - [Appointments]
+- [API Documentation](documentation/api.md)
 - [Install](#install)
 - [Run](#run)
 

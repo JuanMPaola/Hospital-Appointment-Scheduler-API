@@ -1,7 +1,10 @@
 import { Controller, Get, Body, Patch, Param, Delete, Query, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { PatientDto } from 'src/patients/dto/patient.dto';
+import { DoctorDto } from 'src/doctors/dto/doctor.dto';
+import { doctorUpdateExample, patientUpdateExample } from 'src/utils/examples';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -23,13 +26,17 @@ export class UsersController {
     return user;
   }
   
+  @ApiBody({
+    description: '',
+    examples: {patient: patientUpdateExample, doctor: doctorUpdateExample},
+  })
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() user: PatientDto & DoctorDto) {
+    return this.usersService.update(id, user);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.delete(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
   }
 }

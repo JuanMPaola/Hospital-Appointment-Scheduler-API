@@ -5,6 +5,25 @@ VALUES ($1)
 RETURNING *;
 `;
 
+// Delete specialties
+export const deleteDoctorSpecialtiesQuery = `
+DELETE FROM doctor_specialties
+WHERE doctor_id = $1;
+`
+
+// Delete doctors weekly availability
+export const deleteDoctorWeeklyAvailability = `
+DELETE FROM doctor_weekly_availability
+WHERE doctor_id = $1;
+`
+
+// Deletes doctor
+export const deleteDoctorQuery = `
+DELETE FROM doctors
+WHERE user_id = $1
+RETURNING *;
+`;
+
 // Query to get all doctors
 export const findAllDoctorsQuery = `
 SELECT 

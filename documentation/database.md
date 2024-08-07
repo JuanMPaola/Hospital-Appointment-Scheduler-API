@@ -4,14 +4,11 @@
 
 - [Description](../README.MD#description)
 - [Technical requirements](../README.MD#technical-requirements)
-- [Database Documentation](documentation/database.md)
+- [Database Documentation](#content)
     - [Structure](#structure)
     - [Tables](#tables)
     - [Relations](#relations)
-- [API Documentation](#api-documentation)
-    - [Patients](#patients)
-    - [Doctors](#doctors)
-    - [Appointments](#appointments)
+- [API Documentation](api.md)
 - [Install](../README.MD#install)
 - [Run](../README.MD#run)
 

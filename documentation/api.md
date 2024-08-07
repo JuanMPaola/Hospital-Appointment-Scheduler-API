@@ -1,7 +1,40 @@
-# 4. API Documentation
+# Hospital Appointment Scheduler
 
-### Base URL
-    http://localhost:3000/api/v1
+# Content
+
+- [Description](../README.MD#description)
+- [Technical requirements](../README.MD#technical-requirements)
+- [Database Documentation](database.md)
+    - [Structure](database.md#structure)
+    - [Tables](database.md#tables)
+    - [Relations](database.md#relations)
+- [API Documentation](/api.md)
+- [Install](../README.MD#install)
+- [Run](../README.MD#run)
+
+
+# Swagger
+The API for the Hospital Appointment Scheduler is documented using Swagger. You can view and interact with the API documentation by running the application and navigating to the following URL:
+### Documentation URL
+    http://localhost:3000/apidocs
+
+# Authorize
+
+Many of the API endpoints are protected and require authentication. To access these endpoints, follow these steps:
+
+- In Auth endpoints register a User.
+
+- Log In: Use the credentials you registered with to log in.
+
+- Obtain Access Token: After logging in, you will receive an access token.
+
+- Authorize in Swagger:
+
+    - Click on the Authorize button, typically found in the top-right corner of the Swagger UI.
+    - Enter your access token in the input field and click the Authorize button.
+
+Once authorized, you will have access to all protected endpoints in the Swagger documentation.
+
 
 ## <span style="font-family: SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace; color: #E64C91; font-size: 1.5em;"> Patients
 

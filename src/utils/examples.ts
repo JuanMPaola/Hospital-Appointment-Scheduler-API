@@ -91,6 +91,35 @@ export const doctorLoginExample = {
     }
 }
 
+export const patientUpdateExample = {
+    summary: 'Example of Updated PatientDto',
+    value: {
+        name: "Jane Smith",
+        password: "newpassword", // Updated password
+        age: 35, // Updated age
+        phone: "987-654-3210", // Updated phone number
+        email: "jane.smith@example.com", // Email remains the same
+        born: new Date("1990-01-01T00:00:00Z"), // Birthdate remains the same
+    },
+}
+export const doctorUpdateExample = {
+    summary: 'Example of Updated DoctorDto',
+    value: {
+        name: "Dr. John Doe",
+        email: "john.doe@newdomain.com", // Updated email
+        password: "newsecurepassword", // Updated password
+        specialties: [2, 6, 8], // Updated specialties
+        week_availability: {
+            "2": [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // Updated availability
+            "3": [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32],
+            "4": [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32],
+            "5": [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32],
+            "6": [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
+        }
+    },
+}
+
+
 
 /* 
 const appointmentExampleObject1 = {

@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { PatientDto } from './dto/patient.dto';
 import { DatabaseService } from '../database/database.service';
 import { createPatientQuery, getAllPaitentsQuery, getPatientByIdQuery } from './patients.querys';
+import { deleteAppointmentsByUserIdQuery } from 'src/appoinments/appoinmetns.querys';
 
 @Injectable()
 export class PatientsService {
@@ -44,7 +45,38 @@ export class PatientsService {
    }
   }
 
-  async update(id: string, patient: PatientDto) {
+  
+  async delete(userId: string) {
+    try {
+      // Start the transaction
+      await this.databaseService.query('BEGIN');
+      
+      // Get appointments - if there are any, delete them first
+      await this.databaseService.query(deleteAppointmentsByUserIdQuery, [userId]);
+      
+      // Query to delete the patient
+      const deletePatientQuery = `
+      DELETE FROM patients 
+      WHERE user_id = $1 
+      RETURNING *;
+      `;
+      const result = await this.databaseService.query(deletePatientQuery, [userId]);
+      
+      if (result.rowCount === 0) {
+        throw new NotFoundException(`Patient with user_id ${userId} not found`);
+      }
+      
+      // End transaction
+      await this.databaseService.query('COMMIT');
+      return result.rows[0];
+    } catch (error) {
+      // Rollback the transaction
+      await this.databaseService.query('ROLLBACK');
+      throw new Error('Could not delete patient: ' + error.message);
+    }
+  }
+
+  async update(patient: PatientDto) {
     const query = `
       UPDATE patients
       SET name = $1, age = $2, email = $3, phone = $4, born = $5, username = $6, password = $7
@@ -58,39 +90,9 @@ export class PatientsService {
       patient.phone,
       patient.born,
       patient.password,
-      id,
+      patient.id,
     ];
     const result = await this.databaseService.query(query, values);
     return result.rows[0];
-  }
-
-  async delete(userId: string) {
-    try {
-      // Start the transaction
-      await this.databaseService.query('BEGIN');
-  
-      // Get appointments - if there are any, delete them first HERE VALIDATION MODULE ACTION
-      //await this.appointmentService.deleteAllByDocOrPatientId(userId);
-  
-      // Query to delete the patient
-      const deletePatientQuery = `
-        DELETE FROM patients 
-        WHERE user_id = $1 
-        RETURNING *;
-      `;
-      const result = await this.databaseService.query(deletePatientQuery, [userId]);
-  
-      if (result.rowCount === 0) {
-        throw new NotFoundException(`Patient with user_id ${userId} not found`);
-      }
-  
-      // End transaction
-      await this.databaseService.query('COMMIT');
-      return result.rows[0];
-    } catch (error) {
-      // Rollback the transaction
-      await this.databaseService.query('ROLLBACK');
-      throw new Error('Could not delete patient: ' + error.message);
-    }
   }
 }
