@@ -39,9 +39,11 @@ export class AppoinmentsService {
     try {
       // Get patient info
       const patient = await this.databaseService.query(getPatientByIdQuery, [patientId]);
+      if(!patient.rows[0]){
+        throw new Error ('Missing patient')
+      }
       // Get doctors by specialtie
       const doctors = await this.databaseService.query(findAllDoctorDataBySpecialityQuery, [specialtyId]);
-      // return doctors.rows;
       if (doctors.rows.length === 0) {
         return new InternalServerErrorException('There are no doctors of that speciality available')
       }
@@ -204,7 +206,7 @@ export class AppoinmentsService {
         // Iterate through all unique time ranges
         for (let i = 0; i < uniqueTimeRanges.length; i++) {
           const currentTimeRange = uniqueTimeRanges[i];
-          console.log(currentTimeRange);
+          console.log(patient);
           
           // Check if the patient already has an appointment at the current date and time range
           const patHasAppointment = patient.appointments && patient.appointments.some(appointment => {
