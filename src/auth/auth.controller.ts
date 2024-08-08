@@ -1,12 +1,12 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
-import { UsersService } from 'src/users/users.service';
-import { PatientDto } from 'src/patients/dto/patient.dto';
-import { DoctorDto } from 'src/doctors/dto/doctor.dto';
+import { UsersService } from '../users/users.service';
+import { PatientDto } from '../patients/dto/patient.dto';
+import { DoctorDto } from '../doctors/dto/doctor.dto';
 import { SkipAuth } from './skip-auth.decorator';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { patientExample, doctorExample, patientLoginExample, doctorLoginExample, doctorExample2, patientExample2 } from 'src/utils/examples';
+import { ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { patientExample, doctorExample, patientLoginExample, doctorLoginExample, doctorExample2, patientExample2, registeredExamples, loginResponseExample } from '../utils/examples';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -17,6 +17,7 @@ export class AuthController {
   ) {}
 
   @SkipAuth()
+  @ApiCreatedResponse(loginResponseExample)
   @ApiBody({
     description: '',
     examples: {patient: patientLoginExample, doctor: doctorLoginExample},
@@ -33,6 +34,7 @@ export class AuthController {
   }
 
   @SkipAuth()
+  @ApiCreatedResponse(registeredExamples)
   @ApiBody({
     description: '',
     examples: {patient: patientExample,patient2: patientExample2, doctor: doctorExample, doctor2: doctorExample2},

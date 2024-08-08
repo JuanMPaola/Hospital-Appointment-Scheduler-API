@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AppoinmentsService } from './appoinments.service';
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { appointmentExample } from 'src/utils/examples';
 
 @ApiTags('Appointments')
@@ -11,6 +11,10 @@ import { appointmentExample } from 'src/utils/examples';
 export class AppoinmentsController {
   constructor(private readonly appoinmentsService: AppoinmentsService) {}
 
+  @ApiCreatedResponse({
+    description: 'The record has been successfully created.',
+    //example: 
+  })
   @ApiBody({
     description: '',
     examples: {Example1: appointmentExample},

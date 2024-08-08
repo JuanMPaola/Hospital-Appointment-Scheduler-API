@@ -67,10 +67,10 @@ export const appointmentExample = {
     summary: 'Example of DoctorDto',
     value: 
     {
-        doctor_id: "add uuid here",
-        patient_id: "add uuid here",
+        doctor_id: "Doctor uuid here",
+        patient_id: "Patient uuid here",
         time_range_id: 1,
-        date: new Date("2024-07-22T08:00:00.000Z"),
+        date: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
         status: "pending"
     }
 };
@@ -119,7 +119,78 @@ export const doctorUpdateExample = {
     },
 }
 
+export const registeredExamples ={
+    status: 201,
+    description: 'The record has been successfully created.',
+    content: {
+      'application/json': {
+        examples: {
+          example1: {
+            summary: 'Patient example',
+            value: {
+                id: "deec3d0d-c07d-4e5c-a327-ed8f02124618",
+                name: "Jane Smith",
+                password: "contraseña",
+                age: 34,
+                phone: "123-456-7890",
+                email: "janee.smith@example.com",
+                born: "1990-01-01T00:00:00.000Z",
+                role: "patient"
+            }
+          },
+          example2: {
+            summary: 'Doctor example',
+            value: {
+                id: "11cf6df3-2d95-4cc5-954a-aa30b2b42bc6",
+              name: "Dr. John Doe",
+              email: "john.doe@example.com",
+              password: "securepassword",
+              role: "doctor",
+              specialties: [1, 5, 7],
+              week_availability: {
+                2: [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
+                3: [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
+                4: [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
+                5: [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
+                6: [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]
+              }
+            }
+          },
+        }
+      }
+    }
+  }
 
+  export const loginResponseExample = {
+    status: 200,
+    description: 'Successful login with access token',
+    content: {
+      'application/json': {
+        example:  {
+            access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImphbmUuc21pdGhAZXhhbXBsZS5jb20iLCJzdWIiOiIxNjdlNTFiMS01N2NjLTQ2MjAtODMzZS0zNTMzZDA4NzQ2NzkiLCJyb2xlIjoidXNlciJ9.RPjYfQIFRZhPMDsLws3qa5cmHTe0EM8df5K1ui1Z_0w"
+        }
+        
+      }
+    }
+  };
+
+  export const postAppointmentResponseExample = {
+    status: 201,
+    description: 'Appointment successfully created',
+    content: {
+      'application/json': {
+        example: {
+          id: 68,
+          doctor_id: "11cf6df3-2d95-4cc5-954a-aa30b2b42bc6",
+          patient_id: "167e51b1-57cc-4620-833e-3533d0874679",
+          date: "2024-07-22T03:00:00.000Z",
+          day_id: 2,
+          time_range_id: 1,
+          status: "pending"
+        }
+      }
+    }
+  };
 
 /* 
 const appointmentExampleObject1 = {

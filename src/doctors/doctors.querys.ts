@@ -74,11 +74,19 @@ GROUP BY u.id;
 `;
  
 // Get week availability of a doctor
-export const findeDoctorsWeekAvailability = `
-SELECT jsonb_object_agg(
-         day_id,
-         time_ranges
-       ) AS availability
+export const findeDoctorsWeekAvailabilityAndAppointments = `
+SELECT
+    jsonb_object_agg(
+        subquery.day_id,
+        subquery.time_ranges
+    ) AS weekly_availability,
+    COALESCE(
+        jsonb_agg(DISTINCT jsonb_build_object(
+            'date', a.date,
+            'day_id', a.day_id,
+            'time_range_id', a.time_range_id
+        )) FILTER (WHERE a.date IS NOT NULL AND a.status = 'pending'), '[]'::jsonb
+    ) AS appointments
 FROM (
     SELECT
         dwa.day_id,
@@ -86,8 +94,10 @@ FROM (
     FROM doctor_weekly_availability dwa
     WHERE dwa.doctor_id = $1
     GROUP BY dwa.day_id
-) subquery;
-`;
+) subquery
+LEFT JOIN appointments a ON subquery.day_id = a.day_id AND a.doctor_id = $1
+WHERE a.status = 'pending' OR a.status IS NULL;
+`
 
 export const findAllDoctorDataBySpecialityQuery = `
 SELECT 

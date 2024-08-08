@@ -154,14 +154,12 @@ This table tracks the weekly availability of doctors, specifying which days and 
 | `doctor_id` | uuid | Unique identifier for the doctor. References the `user_id` in the `doctors` table. |
 | `day_id` | integer | Identifier for the day of the week. References the `id` in the `days` table. |
 | `time_range_id` | integer | Identifier for the time range. References the `id` in the `time_range` table. |
-| `available` | boolean | Indicates whether the doctor is available during the specified day and time range. |
 ```sql
 CREATE TABLE IF NOT EXISTS doctor_weekly_availability (
   id SERIAL PRIMARY KEY,
   doctor_id UUID NOT NULL,
   day_id INTEGER NOT NULL,
   time_range_id INTEGER NOT NULL,
-  available BOOLEAN,
   FOREIGN KEY (doctor_id) REFERENCES doctors(user_id),
   FOREIGN KEY (day_id) REFERENCES days(id),
   FOREIGN KEY (time_range_id) REFERENCES time_range(id)

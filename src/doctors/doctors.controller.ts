@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
-import { DoctorDto } from './dto/doctor.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Doctors')

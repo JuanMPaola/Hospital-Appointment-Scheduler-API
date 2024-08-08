@@ -1,10 +1,9 @@
 import { Controller, Get, Body, Patch, Param, Delete, Query, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-import { PatientDto } from 'src/patients/dto/patient.dto';
-import { DoctorDto } from 'src/doctors/dto/doctor.dto';
-import { doctorUpdateExample, patientUpdateExample } from 'src/utils/examples';
+import { PatientDto } from '../patients/dto/patient.dto';
+import { DoctorDto } from '../doctors/dto/doctor.dto';
+import { doctorUpdateExample, patientUpdateExample } from '../utils/examples';
 
 @ApiTags('Users')
 @ApiBearerAuth()

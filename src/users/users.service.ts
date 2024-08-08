@@ -1,11 +1,9 @@
 import { Injectable, BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { UserDto } from './dto/user.dto';
-import { PatientDto } from 'src/patients/dto/patient.dto';
-import { DoctorDto } from 'src/doctors/dto/doctor.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { PatientDto } from '../patients/dto/patient.dto';
+import { DoctorDto } from '../doctors/dto/doctor.dto';
 import { DatabaseService } from '../database/database.service';
-import { PatientsService } from 'src/patients/patients.service';
-import { DoctorsService } from 'src/doctors/doctors.service';
+import { PatientsService } from '../patients/patients.service';
+import { DoctorsService } from '../doctors/doctors.service'
 import { createUserQuery, deleteUserQuery, getAllUsersQuery, getByEmailQuery, getRoleQuery, getUserById, updateUserQuery } from './users.querys';
 
 

@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { PatientDto } from './dto/patient.dto';
 import { DatabaseService } from '../database/database.service';
 import { createPatientQuery, getAllPaitentsQuery, getPatientByIdQuery } from './patients.querys';
-import { deleteAppointmentsByUserIdQuery } from 'src/appoinments/appoinmetns.querys';
+import { deleteAppointmentsByUserIdQuery } from '../appoinments/appoinmetns.querys';
 
 @Injectable()
 export class PatientsService {

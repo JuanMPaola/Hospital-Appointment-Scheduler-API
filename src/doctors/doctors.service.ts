@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DoctorDto } from './dto/doctor.dto';
-import { DatabaseService } from 'src/database/database.service';
-import { createDoctorQuery, deleteDoctorQuery, deleteDoctorSpecialtiesQuery, deleteDoctorWeeklyAvailability, findAllDoctorsQuery, findDoctorByIdQuery, findDoctorBySpecialtieQuery, findeDoctorsWeekAvailability } from './doctors.querys';
-import { deleteAppointmentsByUserIdQuery} from 'src/appoinments/appoinmetns.querys';
+import { DatabaseService } from '../database/database.service';
+import { createDoctorQuery, deleteDoctorQuery, deleteDoctorSpecialtiesQuery, deleteDoctorWeeklyAvailability, findAllDoctorsQuery, findDoctorByIdQuery, findDoctorBySpecialtieQuery, findeDoctorsWeekAvailabilityAndAppointments } from './doctors.querys';
+import { deleteAppointmentsByUserIdQuery} from '../appoinments/appoinmetns.querys';
 
 
 @Injectable()
@@ -96,7 +96,7 @@ export class DoctorsService {
 
   async findAvailability(doctorId: string) {
     try {
-      const result = await this.databaseService.query(findeDoctorsWeekAvailability, [doctorId]);
+      const result = await this.databaseService.query(findeDoctorsWeekAvailabilityAndAppointments, [doctorId]);
       return result.rows;
     } catch (error) {
       throw new Error('Could not get doctors week availability'), error;
