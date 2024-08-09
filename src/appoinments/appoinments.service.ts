@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
 import { DatabaseService } from 'src/database/database.service';
-import { bringAllAppointmentsQuery, createAppointmentQuery, findAppointmentsByUserIdQuery, deleteAppointmentsByUserIdQuery, updateAppointmentStatusQuery, updateAppointmentQuery, findSpecificAppointmentDoctorQuery, findSpecificAppointmentPatientQuery } from './appoinmetns.querys';
+import { bringAllAppointmentsQuery, createAppointmentQuery, findAppointmentsByUserIdQuery, deleteAppointmentsByUserIdQuery, updateAppointmentStatusQuery, updateAppointmentQuery, findSpecificAppointmentDoctorQuery, findSpecificAppointmentPatientQuery, deleteAppointmentById } from './appoinmetns.querys';
 import { findAllDoctorDataBySpecialityQuery, findeDoctorsWeekAvailabilityAndAppointments } from 'src/doctors/doctors.querys';
 import { getPatientByIdQuery } from 'src/patients/patients.querys';
 
@@ -14,7 +14,7 @@ export class AppoinmentsService {
 
   async create(appoinmentDto: AppoinmentDto) {
     try {
-      const appointmentData = await this.appointmentValidation(appoinmentDto)
+      await this.appointmentValidation(appoinmentDto)
 
       const dateObject = new Date(appoinmentDto.date);
       //Extracting values from dto
@@ -61,7 +61,7 @@ export class AppoinmentsService {
       const result = await this.databaseService.query(bringAllAppointmentsQuery)
       return result.rows;
     } catch (error) {
-
+      throw new InternalServerErrorException('Could not retrieve appointments: ' + error.message);
     }
   }
 
@@ -74,6 +74,15 @@ export class AppoinmentsService {
     }
   }
 
+  async delete(appointmentId: number){
+    try {
+      const result = await this.databaseService.query(deleteAppointmentById, [appointmentId]);
+      return result.rows[0];
+    } catch (error) {
+      throw Error('Could not delete appointment')
+    }
+  }
+
   async deleteAllByDocOrPatientId(userId: string) {
     try {
       await this.databaseService.query(deleteAppointmentsByUserIdQuery, [userId]);
@@ -82,10 +91,10 @@ export class AppoinmentsService {
     }
   }
 
-  async updateStatus(id: string, status: string) {
+  async cancel(id: string) {
     try {
 
-      const result = await this.databaseService.query(updateAppointmentStatusQuery, [status, id]);
+      const result = await this.databaseService.query(updateAppointmentStatusQuery, [id]);
 
       // If no result notify
       if (result.rowCount === 0) {
@@ -100,19 +109,22 @@ export class AppoinmentsService {
 
   async update(id: string, updateAppointmentDto: UpdateAppoinmentDto) {
     try {
+      //Validate info
+      await this.appointmentValidation(updateAppointmentDto);      
+      const dateObject = new Date(updateAppointmentDto.date);
+      //Extracting values from dto
       const updateValues = [
+        updateAppointmentDto.doctor_id,
         updateAppointmentDto.date,
+        this.getDayIdFromDate(dateObject),
         updateAppointmentDto.time_range_id,
         id
       ];
-
       const result = await this.databaseService.query(updateAppointmentQuery, updateValues);
-
       // If no result notify
-      if (result.rowCount === 0) {
+      if (result.rows.length === 0) {
         throw new NotFoundException(`Appointment with id ${id} not found`);
       }
-
       return result.rows[0];
     } catch (error) {
       throw new InternalServerErrorException('Could not update appointment: ' + error.message);
@@ -149,7 +161,7 @@ export class AppoinmentsService {
     }
   }
 
-  async appointmentValidation(appoinmentDto: AppoinmentDto) {
+  async appointmentValidation(appoinmentDto: AppoinmentDto | UpdateAppoinmentDto) {
     try {
       // If date is today or before, send error
       const today = new Date();
@@ -171,7 +183,7 @@ export class AppoinmentsService {
       const dayId = this.getDayIdFromDate(dateObject);
       const timeRangeId = appoinmentDto.time_range_id;
 
-      // Check if the doctor is available on the selected day and time range
+      // Check if the doctor works on the selected day and time range
       const availableTimeRanges = weekly_availability[dayId];
       if (!availableTimeRanges || !availableTimeRanges.includes(timeRangeId)) {
         throw new Error('Doctor is not available at the selected day and time');

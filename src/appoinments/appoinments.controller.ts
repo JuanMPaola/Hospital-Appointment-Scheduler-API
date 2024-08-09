@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AppoinmentsService } from './appoinments.service';
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
-import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { appointmentExample } from 'src/utils/examples';
+import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { appointmentExample, updateAppointmentExample } from 'src/utils/examples';
 
 @ApiTags('Appointments')
 @ApiBearerAuth()
@@ -42,19 +42,22 @@ export class AppoinmentsController {
     return this.appoinmentsService.findAllByUserId(userId);
   }
 
-  @Patch(':id/status')
-  updateStatus(@Param('id') id: string, @Body('status') status: string) {
-    return this.appoinmentsService.updateStatus(id, status);
+  @Patch('cancel/:id')
+  cancel(@Param('id') id: string) {
+    return this.appoinmentsService.cancel(id);
   }
 
+  
+  @ApiBody(updateAppointmentExample)
+  @ApiOkResponse(updateAppointmentExample)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAppointmentDto: UpdateAppoinmentDto) {
     return this.appoinmentsService.update(id, updateAppointmentDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.appoinmentsService.deleteAllByDocOrPatientId(id);
+  remove(@Param('id') id: number) {
+    return this.appoinmentsService.delete(id);
   }
 
 /*   @Get('specific')
