@@ -72,7 +72,7 @@ JOIN doctor_specialties ds ON d.user_id = ds.doctor_id
 WHERE ds.specialty_id = $1
 GROUP BY u.id;
 `;
- 
+
 // Get week availability of a doctor
 export const findeDoctorsWeekAvailabilityAndAppointments = `
 SELECT
@@ -128,3 +128,42 @@ LEFT JOIN appointments a ON d.user_id = a.doctor_id
 WHERE ds.specialty_id = $1
 GROUP BY u.id;
 `;
+
+
+export function createInsertSpecialtiesQuery(doctor) {
+    return `
+    INSERT INTO doctor_specialties (doctor_id, specialty_id)
+    VALUES ${doctor.specialties.map((_, index) => `($1, $${index + 2})`).join(', ')
+        }
+    RETURNING *;
+    `
+}
+
+export function createInsertAvailabilityQuery(
+    week_availability: { [key: number]: number[] }, 
+    doctorId: string
+  ) 
+  {
+    const availabilityEntries = Object.entries(week_availability);
+    const valuesArray: any[] = [];
+    let valuesString = '';
+    availabilityEntries.forEach(([dayId, timeRanges]) => {
+        timeRanges.forEach((timeRangeId) => {
+            valuesString += `($1, $${valuesArray.length + 2}, $${valuesArray.length + 3}), `;
+            valuesArray.push(dayId, timeRangeId);
+        });
+    });
+    // Remove the trailing comma and space
+    valuesString = valuesString.slice(0, -2);
+
+    // Insert the doctorId at the beginning of the valuesArray
+    valuesArray.unshift(doctorId);
+    return {
+        insertAvailabilityQuery: `
+      INSERT INTO doctor_weekly_availability (doctor_id, day_id, time_range_id)
+      VALUES ${valuesString}
+      RETURNING *;
+    `,
+        valuesArray: valuesArray
+    }
+}

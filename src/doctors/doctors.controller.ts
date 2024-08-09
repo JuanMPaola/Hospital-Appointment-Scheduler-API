@@ -1,9 +1,13 @@
 import { Controller, Get, Param, } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+
 
 @ApiTags('Doctors')
 @ApiBearerAuth()
+@ApiUnauthorizedResponse({
+  description: 'Unathorized Bearer Auth'
+})
 @Controller('doctors')
 export class DoctorsController {
   constructor(private readonly doctorsService: DoctorsService) {}

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DoctorDto } from './dto/doctor.dto';
 import { DatabaseService } from '../database/database.service';
-import { createDoctorQuery, deleteDoctorQuery, deleteDoctorSpecialtiesQuery, deleteDoctorWeeklyAvailability, findAllDoctorsQuery, findDoctorByIdQuery, findDoctorBySpecialtieQuery, findeDoctorsWeekAvailabilityAndAppointments } from './doctors.querys';
-import { deleteAppointmentsByUserIdQuery} from '../appoinments/appoinmetns.querys';
+import { createDoctorQuery, createInsertAvailabilityQuery, createInsertSpecialtiesQuery, deleteDoctorQuery, deleteDoctorSpecialtiesQuery, deleteDoctorWeeklyAvailability, findAllDoctorsQuery, findDoctorByIdQuery, findDoctorBySpecialtieQuery, findeDoctorsWeekAvailabilityAndAppointments } from './doctors.querys';
+import { deleteAppointmentsByUserIdQuery } from '../appoinments/appoinmetns.querys';
+import { UpdateDoctorDto } from './dto/update-doctor.dto';
 
 
 @Injectable()
@@ -13,40 +14,17 @@ export class DoctorsService {
 
   async create(doctor: DoctorDto) {
     const doctorId = doctor.id;
-
     try {
       // Start the transaction
       await this.databaseService.query('BEGIN');
       const doctorResult = await this.databaseService.query(createDoctorQuery, [doctorId]);
       // Insert specialties into doctor_specialties table
-      const insertSpecialtiesQuery = `
-        INSERT INTO doctor_specialties (doctor_id, specialty_id)
-        VALUES ${doctor.specialties.map((_, index) => `($1, $${index + 2})`).join(', ')
-        }
-        RETURNING *;
-      `;
+      const insertSpecialtiesQuery = createInsertSpecialtiesQuery(doctor);
       await this.databaseService.query(insertSpecialtiesQuery, [doctorId, ...doctor.specialties]);
       // Insert availability into doctor_availability
       const { week_availability } = doctor;
       if (week_availability) {
-        const availabilityEntries = Object.entries(week_availability);
-        const valuesArray: any[] = [];
-        let valuesString = '';
-        availabilityEntries.forEach(([dayId, timeRanges]) => {
-          timeRanges.forEach((timeRangeId) => {
-            valuesString += `($1, $${valuesArray.length + 2}, $${valuesArray.length + 3}), `;
-            valuesArray.push(dayId, timeRangeId);
-          });
-        });
-        // Remove the trailing comma and space
-        valuesString = valuesString.slice(0, -2);
-        const insertAvailabilityQuery = `
-          INSERT INTO doctor_weekly_availability (doctor_id, day_id, time_range_id)
-          VALUES ${valuesString}
-          RETURNING *;
-        `;
-        // Insert the doctorId at the beginning of the valuesArray
-        valuesArray.unshift(doctorId);
+        const {insertAvailabilityQuery, valuesArray} = createInsertAvailabilityQuery(week_availability, doctorId)
         await this.databaseService.query(insertAvailabilityQuery, valuesArray);
       } else {
         throw new Error("Week availability is undefined or null");
@@ -56,7 +34,6 @@ export class DoctorsService {
       return doctorResult.rows[0];
 
     } catch (error) {
-
       // Rollback the transaction to not store info is something go wrong in one of the querys
       await this.databaseService.query('ROLLBACK');
       throw new Error('Could not create doctor'), error;
@@ -126,7 +103,38 @@ export class DoctorsService {
     }
   }
 
-  update(doctorDto: DoctorDto) {
-    return ;
+  async update(doctor: UpdateDoctorDto) {
+    try {
+      // Start the transaction to ensure atomicity
+      await this.databaseService.query('BEGIN');
+  
+      // Delete existing specialties for the doctor
+      await this.databaseService.query(deleteDoctorSpecialtiesQuery, [doctor.id]);
+  
+      // Insert new specialties if provided
+      if (doctor.specialties && doctor.specialties.length > 0) {
+        const insertSpecialtiesQuery = createInsertSpecialtiesQuery(doctor);
+        await this.databaseService.query(insertSpecialtiesQuery, [doctor.id, ...doctor.specialties]);
+      }
+  
+      // Delete existing weekly availability for the doctor
+      await this.databaseService.query(deleteDoctorWeeklyAvailability, [doctor.id]);
+  
+      // Insert new weekly availability if provided
+      if (doctor.week_availability && Object.keys(doctor.week_availability).length > 0) {
+        const {insertAvailabilityQuery, valuesArray} = createInsertAvailabilityQuery(doctor.week_availability, doctor.id);
+        await this.databaseService.query(insertAvailabilityQuery, valuesArray);
+      }
+  
+      // Commit the transaction
+      await this.databaseService.query('COMMIT');
+  
+      // Return a success response or the updated doctor details, depending on your needs
+      return { id: doctor.id, ...doctor };
+    } catch (error) {
+      // Rollback the transaction if an error occurs
+      await this.databaseService.query('ROLLBACK');
+      throw new InternalServerErrorException('Could not update doctor', error.message);
+    }
   }
 }

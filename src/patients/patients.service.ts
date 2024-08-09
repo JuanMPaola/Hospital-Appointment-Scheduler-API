@@ -3,6 +3,7 @@ import { PatientDto } from './dto/patient.dto';
 import { DatabaseService } from '../database/database.service';
 import { createPatientQuery, getAllPaitentsQuery, getPatientByIdQuery } from './patients.querys';
 import { deleteAppointmentsByUserIdQuery } from '../appoinments/appoinmetns.querys';
+import { UpdatePatientDto } from './dto/update-patient.dto';
 
 @Injectable()
 export class PatientsService {
@@ -76,23 +77,30 @@ export class PatientsService {
     }
   }
 
-  async update(patient: PatientDto) {
-    const query = `
-      UPDATE patients
-      SET name = $1, age = $2, email = $3, phone = $4, born = $5, username = $6, password = $7
-      WHERE user_id = $8
-      RETURNING *;
-    `;
-    const values = [
-      patient.name,
-      patient.age,
-      patient.email,
-      patient.phone,
-      patient.born,
-      patient.password,
-      patient.id,
-    ];
-    const result = await this.databaseService.query(query, values);
-    return result.rows[0];
-  }
+  async update(patient: UpdatePatientDto) {
+    try {
+      await this.databaseService.query('BEGIN');
+
+      // Update the patients table
+      const patientQuery = `
+        UPDATE patients
+        SET age = $1, phone = $2, born = $3
+        WHERE user_id = $4
+        RETURNING *;
+      `;
+      const patientValues = [
+        patient.age,
+        patient.phone,
+        patient.born,
+        patient.id,
+      ];
+      const patientResult = await this.databaseService.query(patientQuery, patientValues);
+  
+      await this.databaseService.query('COMMIT');
+      return { id: patient.id, email: patient.email, password: patient.password, ...patientResult.rows[0], };
+    } catch (error) {
+      await this.databaseService.query('ROLLBACK');
+      throw new InternalServerErrorException('Could not update patient', error.message);
+    }
+  }  
 }

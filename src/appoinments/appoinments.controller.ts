@@ -2,11 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AppoinmentsService } from './appoinments.service';
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
-import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { appointmentExample } from 'src/utils/examples';
 
 @ApiTags('Appointments')
 @ApiBearerAuth()
+@ApiUnauthorizedResponse({
+  description: 'Unathorized Bearer Auth'
+})
 @Controller('appoinments')
 export class AppoinmentsController {
   constructor(private readonly appoinmentsService: AppoinmentsService) {}

@@ -5,6 +5,8 @@ import { DatabaseService } from '../database/database.service';
 import { PatientsService } from '../patients/patients.service';
 import { DoctorsService } from '../doctors/doctors.service'
 import { createUserQuery, deleteUserQuery, getAllUsersQuery, getByEmailQuery, getRoleQuery, getUserById, updateUserQuery } from './users.querys';
+import { UpdatePatientDto } from 'src/patients/dto/update-patient.dto';
+import { UpdateDoctorDto } from 'src/doctors/dto/update-doctor.dto';
 
 
 @Injectable()
@@ -109,7 +111,7 @@ export class UsersService {
     }
   }
 
-  async update(id: string, user: PatientDto & DoctorDto) {
+  async update(id: string, userPatch: UpdatePatientDto & UpdateDoctorDto) {
     try {
       // Start the transaction
       await this.databaseService.query('BEGIN');
@@ -118,35 +120,33 @@ export class UsersService {
       if (!user) {
         throw new NotFoundException('User not found');
       }
-      // Extracting values from dto
       const userValues = [
-        user.name,
-        user.email,
-        user.password,
-        user.role,
-        id
+        userPatch.name,
+        userPatch.email,
+        userPatch.password,
+        id,
       ];
-      // Update user in the users table
+      // Update user table
       await this.databaseService.query(updateUserQuery, userValues);
       // Update patient or doctor details based on role
       if (user.role === 'patient') {
-        const patientDto: PatientDto = {
-          ...user,
+        const patientDto: UpdatePatientDto = {
+          ...userPatch,
           id
         };
         await this.patientsService.update(patientDto);
       } else if (user.role === 'doctor') {
-        const doctorDto: DoctorDto = {
-          ...user,
+        const doctorDto: UpdateDoctorDto = {
+          ...userPatch,
           id
         };
         await this.doctorsService.update(doctorDto);
       } else {
         throw new BadRequestException('Invalid role or role data');
       }
-      // End transaction
+      // Commit the transaction
       await this.databaseService.query('COMMIT');
-      return { id, ...user };
+      return { id, ...userPatch };
     } catch (error) {
       // Rollback the transaction if something goes wrong
       await this.databaseService.query('ROLLBACK');
@@ -156,7 +156,9 @@ export class UsersService {
 
   async getRole(id: string) {
     try {
+
       const result = await this.databaseService.query(getRoleQuery, [id]);
+      console.log(result.rows[0])
       return result.rows[0].role;
     } catch (error) {
       throw new Error('Error geting user role'), error;

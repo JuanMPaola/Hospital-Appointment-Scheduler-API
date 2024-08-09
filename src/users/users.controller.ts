@@ -1,12 +1,15 @@
 import { Controller, Get, Body, Patch, Param, Delete, Query, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-import { PatientDto } from '../patients/dto/patient.dto';
-import { DoctorDto } from '../doctors/dto/doctor.dto';
+import { ApiBearerAuth, ApiBody, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { doctorUpdateExample, patientUpdateExample } from '../utils/examples';
+import { UpdatePatientDto } from 'src/patients/dto/update-patient.dto';
+import { UpdateDoctorDto } from 'src/doctors/dto/update-doctor.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
+@ApiUnauthorizedResponse({
+  description: 'Unathorized Bearer Auth'
+})
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -30,7 +33,7 @@ export class UsersController {
     examples: {patient: patientUpdateExample, doctor: doctorUpdateExample},
   })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() user: PatientDto & DoctorDto) {
+  update(@Param('id') id: string, @Body() user: UpdatePatientDto & UpdateDoctorDto) {
     return this.usersService.update(id, user);
   }
 
