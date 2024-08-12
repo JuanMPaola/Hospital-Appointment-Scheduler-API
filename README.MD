@@ -20,16 +20,17 @@ This project is a Hospital Appointment Scheduler API. It helps patients book app
 - Create doctor profiles
 - See patients registred
 - See doctors availables (all or by specialty)
-- Set appointments
-- Update appointment (48 hours in advance)
+- Set appointments (Earlier for tomorrow)
+- Update appointment 
 - Delete profiles or appointments
+and others..
 
 # Technical Requirements
 
-- TypeScript
-- NestJS
-- PostgreSQL
-- Docker
+![- TypeScript](https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg)
+![- NestJS](https://raw.githubusercontent.com/devicons/devicon/master/icons/nestjs/nestjs-original-wordmark.svg)
+![- Docker](https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original-wordmark.svg)
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" alt="postgresql" width="40" height="40"/>
 
 # Install
 

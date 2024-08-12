@@ -1,3 +1,4 @@
+// PATIENTS
 export const patientExample = {
   summary: 'Example of PatientDto',
   value:
@@ -24,7 +25,19 @@ export const patientExample2 = {
     role: "patient"
   }
 };
+export const patientUpdateExample = {
+  summary: 'Example of Updated PatientDto',
+  value: {
+    name: "Jane Smith",
+    password: "newpassword", // Updated password
+    age: 35, // Updated age
+    phone: "987-654-3210", // Updated phone number
+    email: "jane.smith@example.com", // Email remains the same
+    born: new Date("1990-01-01T00:00:00Z"), // Birthdate remains the same
+  },
+}
 
+// DOCTORS
 export const doctorExample = {
   summary: 'Example of DoctorDto',
   value:
@@ -62,6 +75,7 @@ export const doctorExample2 = {
   }
 };
 
+// AUTH
 export const patientLoginExample = {
   summary: 'Example for a patient login in',
   value:
@@ -77,17 +91,6 @@ export const doctorLoginExample = {
     email: "john.doe@example.com",
     password: "securepassword"
   }
-}
-export const patientUpdateExample = {
-  summary: 'Example of Updated PatientDto',
-  value: {
-    name: "Jane Smith",
-    password: "newpassword", // Updated password
-    age: 35, // Updated age
-    phone: "987-654-3210", // Updated phone number
-    email: "jane.smith@example.com", // Email remains the same
-    born: new Date("1990-01-01T00:00:00Z"), // Birthdate remains the same
-  },
 }
 export const doctorUpdateExample = {
   summary: 'Example of Updated DoctorDto',
@@ -161,6 +164,8 @@ export const loginResponseExample = {
   }
 };
 
+// APPOINTMENTS
+
 export const postAppointmentResponseExample = {
   status: 201,
   description: 'Appointment successfully created',
@@ -179,7 +184,7 @@ export const postAppointmentResponseExample = {
   }
 };
 
-export const updateAppointmentResponseExample =
+export const responseUpdateAppointmentResponseExample =
 {
   description: 'Appointment successfully updated',
   schema: {
@@ -222,22 +227,3 @@ export const updateAppointmentExample =
     }
   }
 };
-
-
-
-/* 
-const appointmentExampleObject1 = {
-    doctor_id: "add uuid here",
-    patient_id: "add uuid here",
-    time_range_id: 1,
-    date: new Date("2024-07-22T08:00:00.000Z"),
-    status: "pending"
-};
-const appointmentExampleObject2 = {
-    doctor_id: "add uuid here",
-    patient_id: "add uuid here",
-    time_range_id: 2,
-    date: new Date("2024-08-22T08:00:00.000Z"),
-    status: "confirmed"
-}; 
-*/
