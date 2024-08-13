@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DoctorsController } from './doctors.controller';
-import { DoctorsService } from './doctors.service';
-import { DatabaseModule } from '../database/database.module';
+import { DoctorsController } from '../doctors.controller';
+import { DoctorsService } from '../doctors.service';
+import { DatabaseModule } from '../../database/database.module';
 
 describe('DoctorsController', () => {
   let controller: DoctorsController;
-  let service : DoctorsService;
+  let service: DoctorsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,8 +26,28 @@ describe('DoctorsController', () => {
       expect(await controller.findAll()).toBe(result);
     });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+    it('should be defined', () => {
+      expect(controller).toBeDefined();
+    });
+
+    describe('findAll', () => {
+      it('should return a list of all users', () => {
+
+      })
+    })
+
+    describe('findOne', () => {
+      it('should return the user with the id sended', () => {
+
+      })
+    })
+
+    describe('findBySpecialty', () => {
+      it('should return all doctors associated with one specialty')
+    })
+
+    describe('findAvailability', () => {
+      it('should return a doctos weekly availability')
+    })
   });
-});
 })

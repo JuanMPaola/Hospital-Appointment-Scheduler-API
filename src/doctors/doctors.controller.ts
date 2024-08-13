@@ -32,13 +32,4 @@ export class DoctorsController {
   findAvailability(@Param('id') id: string) {
     return this.doctorsService.findAvailability(id);
   }
-  
-/*   @Post()
-  create(@Body() doctor: DoctorDto) {
-    return this.doctorsService.create(doctor);
-  }
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() doctorDto: DoctorDto) {
-    return this.doctorsService.update(+id, doctorDto);
-  } */
 }

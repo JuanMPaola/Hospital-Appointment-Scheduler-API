@@ -3,7 +3,7 @@ import { AppoinmentsService } from './appoinments.service';
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { appointmentExample, updateAppointmentExample } from 'src/utils/examples';
+import { appointmentExample, updateAppointmentExample } from '../utils/examples';
 
 @ApiTags('Appointments')
 @ApiBearerAuth()

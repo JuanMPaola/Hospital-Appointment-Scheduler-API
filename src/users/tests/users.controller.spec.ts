@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { DatabaseModule } from '../database/database.module';
-import { PatientsModule } from '../patients/patients.module';
-import { DoctorsModule } from '../doctors/doctors.module';
+import { UsersController } from '../users.controller';
+import { UsersService } from '../users.service';
+import { DatabaseModule } from '../../database/database.module';
+import { PatientsModule } from '../../patients/patients.module';
+import { DoctorsModule } from '../../doctors/doctors.module';
 
 describe('UsersController', () => {
   let controller: UsersController;

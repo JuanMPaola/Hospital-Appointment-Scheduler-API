@@ -20,14 +20,4 @@ export class PatientsController {
   findOne(@Param('id') id: string) {
     return this.patientsService.findOne(id);
   }
-
-/*   @Post()
-  create(@Body() patient: PatientDto) {
-    return this.patientsService.create(patient);
-  }    
-    @Put(':id')
-  update(@Param('id') id: string, @Body() patient: PatientDto) {
-    return this.patientsService.update(id, patient);
-  } 
-*/
 }

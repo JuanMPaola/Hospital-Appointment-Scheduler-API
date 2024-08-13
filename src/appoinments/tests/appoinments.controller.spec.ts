@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppoinmentsController } from './appoinments.controller';
-import { AppoinmentsService } from './appoinments.service';
+import { AppoinmentsController } from '../appoinments.controller';
+import { AppoinmentsService } from '../appoinments.service';
+import { DatabaseModule } from '../../database/database.module';
 
 describe('AppoinmentsController', () => {
   let controller: AppoinmentsController;
@@ -9,6 +10,7 @@ describe('AppoinmentsController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AppoinmentsController],
       providers: [AppoinmentsService],
+      imports: [DatabaseModule],
     }).compile();
 
     controller = module.get<AppoinmentsController>(AppoinmentsController);

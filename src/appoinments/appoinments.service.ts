@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
-import { DatabaseService } from 'src/database/database.service';
+import { DatabaseService } from '../database/database.service';
 import { bringAllAppointmentsQuery, createAppointmentQuery, findAppointmentsByUserIdQuery, deleteAppointmentsByUserIdQuery, updateAppointmentStatusQuery, updateAppointmentQuery, findSpecificAppointmentDoctorQuery, findSpecificAppointmentPatientQuery, deleteAppointmentById } from './appoinmetns.querys';
-import { findAllDoctorDataBySpecialityQuery, findeDoctorsWeekAvailabilityAndAppointments } from 'src/doctors/doctors.querys';
-import { getPatientByIdQuery } from 'src/patients/patients.querys';
+import { findAllDoctorDataBySpecialityQuery, findeDoctorsWeekAvailabilityAndAppointments } from '../doctors/doctors.querys';
+import { getPatientByIdQuery } from '../patients/patients.querys';
 
 @Injectable()
 export class AppoinmentsService {
