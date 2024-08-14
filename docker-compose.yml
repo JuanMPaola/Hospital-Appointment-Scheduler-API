@@ -9,13 +9,14 @@ services:
       DATABASE_URL: postgres://user:password@postgres:5432/db
       PORT: 3000
     ports:
-      - "8080:3000"
+      - "3000:3000"
 
   postgres:
     image: postgres:16.3
     ports:
       - "35000:5432"
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: asdasd123
+      POSTGRES_DB: hospital
+      POSTGRES_HOST: localhost

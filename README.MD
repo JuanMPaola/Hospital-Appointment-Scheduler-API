@@ -4,8 +4,7 @@
 
 - [Description](#description)
 - [Technology Stack](#technology-stack)
-- [Install](#install)
-- [Run](#run)
+- [Install and Run](#installation-and-running-the-project)
 - [Database Documentation](documentation/database.md)
     - [Structure](documentation/database.md#structure)
     - [Tables](documentation/database.md#tables)
@@ -50,33 +49,65 @@ This project is built with the following technologies:
 
 
 
-# Install
+## Installation and Running the Project
 
-To install this project, follow these steps:
+You have two options to run this project: **using Docker** (recommended) or **running it locally**.
 
-1. Clone the repository:
-    ```
+### Option 1: Run with Docker (Recommended)
+
+1. Ensure Docker and Docker Compose are installed on your machine.
+
+2. Clone the repository:
+    ```bash
     git clone https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API.git
     ```
-2. Navigate to the project directory:
-    ```
+
+3. Navigate to the project directory:
+    ```bash
     cd Hospital-Appointment-Scheduler-API
     ```
-3. Install dependencies:
+
+4. Run the application with Docker Compose:
+    ```bash
+    docker compose up
     ```
+
+5. The API will be available at:
+    ```
+    http://localhost:3000/api/v1
+    ```
+
+### Option 2: Run Locally
+
+1. Ensure PostgreSQL is running on your local machine.
+
+2. Clone the repository:
+    ```bash
+    git clone https://github.com/JuanMPaola/Hospital-Appointment-Scheduler-API.git
+    ```
+
+3. Navigate to the project directory:
+    ```bash
+    cd Hospital-Appointment-Scheduler-API
+    ```
+
+4. Install dependencies:
+    ```bash
     npm install
     ```
 
-# Run
-
-To run this project, follow these steps:
-
-1. Ensure PostgreSQL is running on your local machine.
-2. Run the application:
+5. Set up the environment variables by creating a `.env` file in the root directory:
+    ```env
+    DATABASE_URL=postgres://postgres:asdasd123@localhost:5432/Hospital
+    PORT=3000
     ```
+
+6. Run the application:
+    ```bash
     npm run start:dev
     ```
-3. The API will be available at:
+
+7. The API will be available at:
     ```
     http://localhost:3000/api/v1
     ```

@@ -2,15 +2,14 @@
 
 # Content
 
-- [Description](../README.MD#description)
-- [Technical requirements](../README.MD#technical-requirements)
+- [Description](../README.md#description)
+- [Technology Stack](../README.md#technology-stack)
+- [Install and Run](../README.md#installation-and-running-the-project)
 - [Database Documentation](#content)
     - [Structure](#structure)
     - [Tables](#tables)
     - [Relations](#relations)
-- [API Documentation](api.md)
-- [Install](../README.MD#install)
-- [Run](../README.MD#run)
+- [API Documentation](../api.md)
 
 # Structure
 

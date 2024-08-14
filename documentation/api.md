@@ -2,16 +2,14 @@
 
 # Content
 
-- [Description](../README.MD#description)
-- [Technical requirements](../README.MD#technical-requirements)
+- [Description](../README.md#description)
+- [Technology Stack](../README.md#technology-stack)
+- [Install and Run](../README.md#installation-and-running-the-project)
 - [Database Documentation](database.md)
     - [Structure](database.md#structure)
     - [Tables](database.md#tables)
     - [Relations](database.md#relations)
-- [API Documentation](/api.md)
-- [Install](../README.MD#install)
-- [Run](../README.MD#run)
-
+- [API Documentation](#content)
 
 # Swagger
 The API for the Hospital Appointment Scheduler is documented using Swagger. You can view and interact with the API documentation by running the application and navigating to the following URL:
