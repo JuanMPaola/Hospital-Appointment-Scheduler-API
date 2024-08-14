@@ -3,14 +3,15 @@
 # Content
 
 - [Description](#description)
-- [Technical requirements](#technical-requirements)
+- [Technology Stack](#technology-stack)
+- [Install](#install)
+- [Run](#run)
 - [Database Documentation](documentation/database.md)
     - [Structure](documentation/database.md#structure)
     - [Tables](documentation/database.md#tables)
     - [Relations](documentation/database.md#relations)
 - [API Documentation](documentation/api.md)
-- [Install](#install)
-- [Run](#run)
+
 
 # Description
 
@@ -25,15 +26,29 @@ This project is a Hospital Appointment Scheduler API. It helps patients book app
 - Delete profiles or appointments
 and others..
 
-# Technical Requirements
+# Technology Stack
 
-<p align="center">
-    <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="TypeScript" width="60" height="60" style="margin-right:20px;"/>
-    <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nestjs/nestjs-original-wordmark.svg" alt="NestJS" width="60" height="60" style="margin-right:20px;"/>
-     <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original-wordmark.svg" alt="Docker" width="60" height="60" style="margin-right:20px;"/>
-    <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" alt="PostgreSQL" width="60" height="60" style="margin-right:20px;"/>
-    <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/swagger/swagger-original-wordmark.svg" alt="PostgreSQL" width="60" height="60" style="margin-right:20px;"/>
+This project is built with the following technologies:
+
+<p>
+  <a href="https://skillicons.dev" title="TypeScript">
+    <img src="https://skillicons.dev/icons?i=typescript" width="48" alt="TypeScript">
+  </a>
+  <a href="https://skillicons.dev" title="NestJS">
+    <img src="https://skillicons.dev/icons?i=nestjs" width="48" alt="NestJS">
+  </a>
+  <a href="https://skillicons.dev" title="PostgreSQL">
+    <img src="https://skillicons.dev/icons?i=postgres" width="48" alt="PostgreSQL">
+  </a>
+  <a href="https://skillicons.dev" title="Docker">
+    <img src="https://skillicons.dev/icons?i=docker" width="48" alt="Docker">
+  </a>
+  <a href="https://skillicons.dev" title="Jest">
+    <img src="https://skillicons.dev/icons?i=jest" width="48" alt="Jest">
+  </a>
 </p>
+
+
 
 # Install
 

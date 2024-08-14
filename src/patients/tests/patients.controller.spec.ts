@@ -40,6 +40,9 @@ describe('PatientsController', () => {
   describe('findOne',()=>{
     it('should return the user with the id sended', ()=>{
 
+      jest.spyOn(controller, 'findOne').getMockImplementation();
+
+      expect(controller.findOne('uuid').then())
     })
   })
 });
