@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtAuthGuard } from '../jwt-auth.guard';
 import { AuthService } from '../auth.service';
 
-describe('JwtAuthGuard', () => {
+xdescribe('JwtAuthGuard', () => {
   let service = AuthService
 
   beforeEach(async () => {

@@ -3,12 +3,14 @@ import { AppoinmentsService } from './appoinments.service';
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { appointmentExample, updateAppointmentExample } from '../utils/examples';
+import { appointmentExample, updateAppointmentExample, updateAppointmentExampleBody } from '../utils/examples';
+import { unauthorizedResponseExample } from '../utils/examples/unauthorized.example';
 
 @ApiTags('Appointments')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
-  description: 'Unathorized Bearer Auth'
+  description: 'Unathorized Bearer Auth',
+  example: unauthorizedResponseExample
 })
 @Controller('appoinments')
 export class AppoinmentsController {
@@ -47,8 +49,10 @@ export class AppoinmentsController {
     return this.appoinmentsService.cancel(id);
   }
 
-  
-  @ApiBody(updateAppointmentExample)
+  @ApiBody({
+    description: '',
+    examples: {Example: updateAppointmentExampleBody},
+  })
   @ApiOkResponse(updateAppointmentExample)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAppointmentDto: UpdateAppoinmentDto) {

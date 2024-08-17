@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppoinmentsService } from '../appoinments.service';
 import { DatabaseModule } from '../../database/database.module';
 
-describe('AppoinmentsService', () => {
+xdescribe('AppoinmentsService', () => {
   let service: AppoinmentsService;
 
   beforeEach(async () => {

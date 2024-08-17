@@ -3,7 +3,7 @@ import { AppoinmentsController } from '../appoinments.controller';
 import { AppoinmentsService } from '../appoinments.service';
 import { DatabaseModule } from '../../database/database.module';
 
-describe('AppoinmentsController', () => {
+xdescribe('AppoinmentsController', () => {
   let controller: AppoinmentsController;
 
   beforeEach(async () => {

@@ -1,41 +1,4 @@
-// PATIENTS
-export const patientExample = {
-  summary: 'Example of PatientDto',
-  value:
-  {
-    name: "Jane Smith",
-    password: "contraseña",
-    age: 34,
-    phone: "123-456-7890",
-    email: "jane.smith@example.com",
-    born: new Date("1990-01-01T00:00:00Z"),
-    role: "patient"
-  },
-};
-export const patientExample2 = {
-  summary: 'Example of PatientDto 2',
-  value:
-  {
-    name: "Juan Manuel",
-    password: "contra",
-    age: 23,
-    phone: "123-456-7890",
-    email: "juanma@example.com",
-    born: new Date("2001-01-01T00:00:00Z"),
-    role: "patient"
-  }
-};
-export const patientUpdateExample = {
-  summary: 'Example of Updated PatientDto',
-  value: {
-    name: "Jane Smith",
-    password: "newpassword", // Updated password
-    age: 35, // Updated age
-    phone: "987-654-3210", // Updated phone number
-    email: "jane.smith@example.com", // Email remains the same
-    born: new Date("1990-01-01T00:00:00Z"), // Birthdate remains the same
-  },
-}
+
 
 // DOCTORS
 export const doctorExample = {
@@ -227,3 +190,14 @@ export const updateAppointmentExample =
     }
   }
 };
+
+export const updateAppointmentExampleBody = 
+{
+  summary: 'Example of UpdateAppointmentDto',
+  value: {
+    patient_id: "Patient uuid here",
+    doctor_id: "Doctor uuid here",
+    time_range_id: 20,
+    date: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString()
+  }
+}

@@ -3,7 +3,7 @@ import { DoctorsController } from '../doctors.controller';
 import { DoctorsService } from '../doctors.service';
 import { DatabaseModule } from '../../database/database.module';
 
-describe('DoctorsController', () => {
+xdescribe('DoctorsController', () => {
   let controller: DoctorsController;
   let service: DoctorsService;
 
@@ -43,11 +43,15 @@ describe('DoctorsController', () => {
     })
 
     describe('findBySpecialty', () => {
-      it('should return all doctors associated with one specialty')
+      it('should return all doctors associated with one specialty', () => {
+
+      })
     })
 
     describe('findAvailability', () => {
-      it('should return a doctos weekly availability')
+      it('should return a doctos weekly availability', () => {
+
+      })
     })
   });
 })

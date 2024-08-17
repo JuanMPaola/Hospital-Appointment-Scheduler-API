@@ -6,7 +6,8 @@ import { PatientDto } from '../patients/dto/patient.dto';
 import { DoctorDto } from '../doctors/dto/doctor.dto';
 import { SkipAuth } from './skip-auth.decorator';
 import { ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { patientExample, doctorExample, patientLoginExample, doctorLoginExample, doctorExample2, patientExample2, registeredExamples, loginResponseExample } from '../utils/examples';
+import { doctorExample, patientLoginExample, doctorLoginExample, doctorExample2, registeredExamples, loginResponseExample } from '../utils/examples';
+import { patientExample, patientExample2 } from '../utils/examples/patients.example'
 
 @ApiTags('Auth')
 @Controller('auth')
