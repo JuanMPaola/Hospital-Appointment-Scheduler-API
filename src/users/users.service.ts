@@ -19,11 +19,6 @@ export class UsersService {
 
   async create(user: PatientDto & DoctorDto) {
     try {
-      // Check if email is registered
-      const existingUser = await this.findOneByEmail(user.email);
-      if (existingUser) {
-        throw new BadRequestException('Email already registered');
-      }
       // Start the transaction
       await this.databaseService.query('BEGIN');
       // Extracting values from dto. Sending query and values to db
@@ -70,7 +65,7 @@ export class UsersService {
     }
   }
 
-  async findOneByEmail(email: string) {
+  async findByEmail(email: string) {
     try {
       const result = await this.databaseService.query(getByEmailQuery, [email]);
       return result.rows[0];

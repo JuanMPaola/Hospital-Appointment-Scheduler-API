@@ -3,10 +3,19 @@ import { PatientsService } from '../patients.service';
 import { findaAllPatientsResponseExample } from '../../utils/examples/patients.example';
 import { DatabaseService } from '../../database/database.service';
 import { PatientDto } from '../dto/patient.dto';
+import { deleteAppointmentsByUserIdQuery } from '../../appoinments/appoinmetns.querys';
+import { UpdatePatientDto } from '../dto/update-patient.dto';
+
+class MockDatabaseService extends DatabaseService {
+  query = jest.fn();
+  onModuleInit = jest.fn();
+  createTables = jest.fn();
+  getClient = jest.fn();
+}
 
 describe('PatientsService', () => {
   let service: PatientsService;
-  let databaseService: DatabaseService;
+  let databaseService: jest.Mocked<MockDatabaseService>; // Use the mocked type
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,15 +23,13 @@ describe('PatientsService', () => {
         PatientsService,
         {
           provide: DatabaseService,
-          useValue: {
-            query: jest.fn(),
-          },
+          useClass: MockDatabaseService, // Use the mock class here
         },
       ],
     }).compile();
 
     service = module.get<PatientsService>(PatientsService);
-    databaseService = module.get<DatabaseService>(DatabaseService);
+    databaseService = module.get<DatabaseService>(DatabaseService) as jest.Mocked<MockDatabaseService>;
   });
 
   it('should be defined', () => {
@@ -31,59 +38,109 @@ describe('PatientsService', () => {
 
   describe('create', () => {
     it('should create a patient in the database', async () => {
-      // Mock patient data
       const mockPatientDto: PatientDto = {
         id: '123',
-        name: "name",
-        email: "example@email.com",
-        password: "password",
+        name: "Jane Smith",
+        email: "jane.smith@example.com",
+        password: "password123",
         role: "patient",
         age: 30,
         phone: '123-456-7890',
         born: new Date('1990-01-01'),
       };
 
-      // Mock the database response
       const mockPatientResult = { rows: [{ id: '123', ...mockPatientDto }] };
       databaseService.query.mockResolvedValueOnce(mockPatientResult);
 
-      // Call the create method and check the result
       const result = await service.create(mockPatientDto);
       expect(result).toEqual(mockPatientResult.rows[0]);
 
-      // Ensure the query method is called with the right SQL and values
       expect(databaseService.query).toHaveBeenCalledWith(
-        expect.any(String), // The SQL query string (you could add the actual query here if needed)
+        expect.any(String),
         [mockPatientDto.id, mockPatientDto.age, mockPatientDto.phone, mockPatientDto.born]
       );
     });
   });
-});
 
   describe('findAll', () => {
     it('should return an array of patients', async () => {
-      const result = findaAllPatientsResponseExample;
-      jest.spyOn(service, 'findAll').mockResolvedValue(result);
-  
-      expect(await service.findAll()).toBe(result);
+      databaseService.query.mockResolvedValueOnce({ rows: findaAllPatientsResponseExample });
+
+      const result = await service.findAll();
+      expect(result).toEqual(findaAllPatientsResponseExample);
+
+      expect(databaseService.query).toHaveBeenCalledWith(expect.any(String));
     });
   });
 
-  describe('findOne',()=>{
-    it('should return the user with the id sended', async ()=>{
-      const result = { id: 'uuid', name: 'Test Patient' };
+  describe('findOne', () => {
+    it('should return the patient with the specified id', async () => {
+      const mockPatientId = 'uuid';
+      const mockPatient = { id: mockPatientId, name: 'Test Patient' };
 
-      jest.spyOn(service, 'findOne').mockResolvedValue(result);
+      databaseService.query.mockResolvedValueOnce({ rows: [mockPatient] });
 
-      expect(await service.findOne('uuid')).toBe(result);
-    })
+      const result = await service.findOne(mockPatientId);
+      expect(result).toEqual(mockPatient);
+
+      expect(databaseService.query).toHaveBeenCalledWith(expect.any(String), [mockPatientId]);
+    });
   });
 
-  describe('delete',()=>{
-
+  describe('delete', () => {
+    it('should delete the patient with the specified id', async () => {
+      const mockPatientId = 'uuid';
+      const mockDeleteResponse = { rows: [{ id: mockPatientId, name: 'Deleted Patient' }], rowCount: 1 };
+  
+      // Mocking the query method to return specific results for different queries
+      databaseService.query
+        .mockResolvedValueOnce({ rows: [] }) // Mock result for deleteAppointmentsByUserIdQuery
+        .mockResolvedValueOnce(mockDeleteResponse) // Mock result for the delete query
+        .mockResolvedValueOnce({}); // Mock result for COMMIT
+  
+      const result = await service.delete(mockPatientId);
+  
+      expect(result).toEqual(mockDeleteResponse.rows[0]);
+  
+      expect(databaseService.query).toHaveBeenCalledWith('BEGIN');
+      expect(databaseService.query).toHaveBeenCalledWith(deleteAppointmentsByUserIdQuery, [mockPatientId]);
+      expect(databaseService.query).toHaveBeenCalledWith(expect.stringContaining('DELETE FROM patients'), [mockPatientId]);
+      expect(databaseService.query).toHaveBeenCalledWith('COMMIT');
+    });
   });
-
-  describe('update',()=>{
-
+  
+  describe('update', () => {
+    it('should update the patient with the specified id', async () => {
+      const mockPatientDto: UpdatePatientDto = {
+        id: '123',
+        name: "Jane Smith",
+        email: "jane.smith@example.com",
+        password: "password123",
+        role: "patient",
+        age: 31,
+        phone: '123-456-7890',
+        born: new Date('1990-01-01'),
+      };
+  
+      const mockUpdateResponse = { rows: [{ ...mockPatientDto }] };
+  
+      // Mocking the query method to return a specific result for different queries
+      databaseService.query
+        .mockResolvedValueOnce({ rows: [] }) // Mock result for BEGIN
+        .mockResolvedValueOnce(mockUpdateResponse) // Mock result for the update query
+        .mockResolvedValueOnce({}); // Mock result for COMMIT
+  
+      const result = await service.update(mockPatientDto);
+      expect(result).toEqual({ id: mockPatientDto.id, email: mockPatientDto.email, password: mockPatientDto.password, ...mockUpdateResponse.rows[0] });
+  
+      expect(databaseService.query).toHaveBeenCalledWith('BEGIN');
+      expect(databaseService.query).toHaveBeenCalledWith(expect.stringContaining('UPDATE patients'), [
+        mockPatientDto.age,
+        mockPatientDto.phone,
+        mockPatientDto.born,
+        mockPatientDto.id,
+      ]);
+      expect(databaseService.query).toHaveBeenCalledWith('COMMIT');
+    });
   });
 });

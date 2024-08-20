@@ -6,8 +6,8 @@ import { PatientDto } from '../patients/dto/patient.dto';
 import { DoctorDto } from '../doctors/dto/doctor.dto';
 import { SkipAuth } from './skip-auth.decorator';
 import { ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { doctorExample, patientLoginExample, doctorLoginExample, doctorExample2, registeredExamples, loginResponseExample } from '../utils/examples';
-import { patientExample, patientExample2 } from '../utils/examples/patients.example'
+import { doctorLoginExample, loginResponseExample, patientLoginExample, registerDoctorExample, registerDoctorExample2, registeredResponseExamples, registerPatientExample, registerPatientExample2 } from '../utils/examples/auth.examples';
+
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -15,33 +15,39 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
-  ) {}
+  ) { }
 
+  @Post('login')
   @SkipAuth()
   @ApiCreatedResponse(loginResponseExample)
   @ApiBody({
     description: '',
-    examples: {patient: patientLoginExample, doctor: doctorLoginExample},
+    examples: { patient: patientLoginExample, doctor: doctorLoginExample },
   })
-  @Post('login')
   async login(@Body() authDto: AuthDto) {
-    
+    // Check if email is registered
     const user = await this.authService.validateUser(authDto);
-    if (!user){
-      return 'User not registered'
+    if (!user) {
+      throw new Error('User not registered');
     }
-    
+
     return this.authService.login(user);
   }
 
+  @Post('register')
   @SkipAuth()
-  @ApiCreatedResponse(registeredExamples)
+  @ApiCreatedResponse(registeredResponseExamples)
   @ApiBody({
     description: '',
-    examples: {patient: patientExample,patient2: patientExample2, doctor: doctorExample, doctor2: doctorExample2},
+    examples: { patient: registerPatientExample, patient2: registerPatientExample2, doctor: registerDoctorExample, doctor2: registerDoctorExample2 },
   })
-  @Post('register')
   async register(@Body() patOrDoc: PatientDto & DoctorDto) {
+    // Check if email is registered
+    const existingUser = await this.usersService.findByEmail(patOrDoc.email);
+    if (existingUser) {
+      throw new Error('Email already registered');
+    }
+
     return this.usersService.create(patOrDoc);
   }
 
