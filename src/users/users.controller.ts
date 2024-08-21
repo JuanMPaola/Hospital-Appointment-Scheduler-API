@@ -38,6 +38,7 @@ export class UsersController {
     return user;
   }
   
+  @Patch(':id')
   @ApiBody({
     description: '',
     examples: {patient: patientUpdateExample, doctor: doctorUpdateExample},
@@ -46,16 +47,15 @@ export class UsersController {
     description:'',
     example: updateUsersResponseExampel
   })
-  @Patch(':id')
   update(@Param('id') id: string, @Body() user: UpdatePatientDto & UpdateDoctorDto) {
     return this.usersService.update(id, user);
   }
-
+  
+  @Delete(':id')
   @ApiOkResponse({
     description:'',
     example: deleteUsersResponseExample
   })
-  @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.delete(id);
   }

@@ -20,6 +20,8 @@ SELECT
     u_doctor.email AS doctor_email,
     u_patient.name AS patient_name,
     u_patient.email AS patient_email,
+    u_doctor.id AS doctor_id,
+    u_patient.id AS patient_id,
     dr.day AS day,
     tr.time_range AS time_range
 FROM appointments a
