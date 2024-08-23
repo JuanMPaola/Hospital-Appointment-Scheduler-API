@@ -2,7 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppoinmentsController } from '../appoinments.controller';
 import { AppoinmentsService } from '../appoinments.service';
 import { DatabaseModule } from '../../database/database.module';
-import { cancelAppointmentResponseExample, getAppointmetnsResponseExample, getUserAppointmentsResponseExample, testingAppointmentExample } from '../../utils/examples/appointments.example';
+import { 
+  cancelAppointmentResponseExample, 
+  getAppointmetnsResponseExample, 
+  getUserAppointmentsResponseExample, 
+  postAppointmentsResponseExample, 
+  testingAppointmentExample 
+} from '../../utils/examples/appointments.example';
 
 describe('AppoinmentsController', () => {
   let controller: AppoinmentsController;
@@ -16,14 +22,14 @@ describe('AppoinmentsController', () => {
           provide: AppoinmentsService,
           useValue: {
             create: jest.fn(),
-            nearestAppoitnment: jest.fn(),
+            createNearest: jest.fn(),
             findAll: jest.fn(),
             findAllByUserId: jest.fn(),
             cancel: jest.fn(),
             update: jest.fn(),
-            remove: jest.fn(),
-          }
-        }
+            delete: jest.fn(),
+          },
+        },
       ],
       imports: [DatabaseModule],
     }).compile();
@@ -38,35 +44,95 @@ describe('AppoinmentsController', () => {
 
   describe('create', () => {
     it('should create an appointment', async () => {
-      const body = testingAppointmentExample;
-
       // Mock the service method to return the created appointment
-      jest.spyOn(service, 'create').mockResolvedValue(body);
+      jest.spyOn(service, 'create').mockResolvedValue(postAppointmentsResponseExample);
 
-      // Mock the findAll method to return an array containing the created appointment
-      jest.spyOn(service, 'findAll').mockResolvedValue([body]);
+      // Call the controller method
+      const response = await controller.create(testingAppointmentExample);
 
-      const response = await controller.create(body);
+      // Verify the service was called with the correct parameters
+      expect(service.create).toHaveBeenCalledWith(testingAppointmentExample);
 
-      const findAll = await controller.findAll();
-      const finded = findAll.some(appointment => JSON.stringify(appointment) === JSON.stringify(body));
-
-      expect(finded).toBe(true);
-      expect(response).toEqual(body);
+      // Verify the controller returns the expected result
+      expect(response).toEqual(postAppointmentsResponseExample);
     });
 
+    it('should handle errors thrown by the service', async () => {
+      const error = new Error('Error creating appointment');
+      
+      // Mock the service method to throw an error
+      jest.spyOn(service, 'create').mockRejectedValue(error);
+
+      // Call the controller method and expect it to throw the error
+      await expect(controller.create(testingAppointmentExample)).rejects.toThrow(error);
+
+      // Verify the service was called with the correct parameters
+      expect(service.create).toHaveBeenCalledWith(testingAppointmentExample);
+    });
   });
 
   describe('nearestAppointment', () => {
+    it('should create the nearest appointment for given specialtieId and patientId', async () => {
+      const specialtieId = 1;
+      const patientId = 'patient-uuid';
+      const mockAppointment = testingAppointmentExample;
 
+      // Mock the service method to return the mock appointment
+      jest.spyOn(service, 'createNearest').mockResolvedValue(mockAppointment);
+
+      // Call the controller method
+      const response = await controller.nearestAppointment(specialtieId, patientId);
+
+      // Verify the service was called with the correct parameters
+      expect(service.createNearest).toHaveBeenCalledWith(specialtieId, patientId);
+
+      // Verify the controller returns the expected result
+      expect(response).toEqual(mockAppointment);
+    });
+
+    it('should handle errors thrown by the service', async () => {
+      const specialtieId = 1;
+      const patientId = 'patient-uuid';
+      const error = new Error('Something went wrong');
+
+      // Mock the service method to throw an error
+      jest.spyOn(service, 'createNearest').mockRejectedValue(error);
+
+      // Call the controller method and expect it to throw the error
+      await expect(controller.nearestAppointment(specialtieId, patientId)).rejects.toThrow(error);
+
+      // Verify the service was called with the correct parameters
+      expect(service.createNearest).toHaveBeenCalledWith(specialtieId, patientId);
+    });
   });
 
   describe('findAll', () => {
     it('should return an array of appointments', async () => {
       const result = getAppointmetnsResponseExample;
+
+      // Mock the service method to return the example data
       jest.spyOn(service, 'findAll').mockResolvedValue(result);
-      expect(await controller.findAll()).toBe(result);
-    })
+
+      // Call the controller method and verify the response
+      const response = await controller.findAll();
+      expect(response).toEqual(result);
+
+      // Verify the service was called
+      expect(service.findAll).toHaveBeenCalled();
+    });
+
+    it('should handle errors thrown by the service', async () => {
+      const error = new Error('Error fetching appointments');
+
+      // Mock the service method to throw an error
+      jest.spyOn(service, 'findAll').mockRejectedValue(error);
+
+      // Call the controller method and expect it to throw the error
+      await expect(controller.findAll()).rejects.toThrow(error);
+
+      // Verify the service was called
+      expect(service.findAll).toHaveBeenCalled();
+    });
   });
 
   describe('findAllByUserId', () => {
@@ -77,57 +143,142 @@ describe('AppoinmentsController', () => {
       // Mock the service method to return the example data
       jest.spyOn(service, 'findAllByUserId').mockResolvedValue(mockAppointments);
 
+      // Call the controller method and verify the response
       const result = await controller.findAllByUserId(userId);
+      expect(result).toEqual(mockAppointments);
 
-      // Check if at least one appointment includes the userId as doctor_id or patient_id
+      // Check if the user is involved in the appointments
       const hasDoctorId = result.some(appointment => appointment.doctor_id === userId);
       const hasPatientId = result.some(appointment => appointment.patient_id === userId);
 
       expect(hasDoctorId || hasPatientId).toBe(true);
+
+      // Verify the service was called with the correct parameters
+      expect(service.findAllByUserId).toHaveBeenCalledWith(userId);
+    });
+
+    it('should handle errors thrown by the service', async () => {
+      const userId = '0718c6b8-b8e8-46e5-92f0-102da331e11c';
+      const error = new Error('Error fetching appointments by user ID');
+
+      // Mock the service method to throw an error
+      jest.spyOn(service, 'findAllByUserId').mockRejectedValue(error);
+
+      // Call the controller method and expect it to throw the error
+      await expect(controller.findAllByUserId(userId)).rejects.toThrow(error);
+
+      // Verify the service was called with the correct parameters
+      expect(service.findAllByUserId).toHaveBeenCalledWith(userId);
     });
   });
 
   describe('cancel', () => {
     it('should change status to canceled', async () => {
-      const body = testingAppointmentExample; // The appointment you are working with
-
-      // Mock the creation and cancellation of an appointment
-      jest.spyOn(service, 'create').mockResolvedValue(body);
-      jest.spyOn(service, 'cancel').mockResolvedValue({
-        ...body,
+      const appointmentId = 'appointment-uuid';
+      const canceledAppointment = {
+        ...testingAppointmentExample,
         status: 'canceled',
-      });
+      };
 
-      // Mock findAll to return the updated status appointment
-      jest.spyOn(service, 'findAll').mockResolvedValue([
-        {
-          ...body,
-          status: 'canceled',
-        },
-      ]);
+      // Mock the service method to return the canceled appointment
+      jest.spyOn(service, 'cancel').mockResolvedValue(canceledAppointment);
 
-      // Create the appointment
-      const response = await controller.create(body);
+      // Call the controller method and verify the response
+      const response = await controller.cancel(appointmentId);
+      expect(response).toEqual(canceledAppointment);
 
-      // Cancel the appointment (use actual IDs or data needed for your implementation)
-      await controller.cancel(response.id); // Assume you pass an ID or relevant data to cancel
+      // Verify the service was called with the correct parameters
+      expect(service.cancel).toHaveBeenCalledWith(appointmentId);
+    });
 
-      // Retrieve all appointments
-      const findAll = await controller.findAll();
-      
-      // Check if the canceled appointment's status is 'canceled'
-      const canceledAppointment = findAll.find(appointment => appointment.id === response.id);
-      
-      expect(canceledAppointment).toBeDefined();
-      expect(canceledAppointment.status).toBe('canceled');
+    it('should handle errors thrown by the service', async () => {
+      const appointmentId = 'appointment-uuid';
+      const error = new Error('Error canceling appointment');
+
+      // Mock the service method to throw an error
+      jest.spyOn(service, 'cancel').mockRejectedValue(error);
+
+      // Call the controller method and expect it to throw the error
+      await expect(controller.cancel(appointmentId)).rejects.toThrow(error);
+
+      // Verify the service was called with the correct parameters
+      expect(service.cancel).toHaveBeenCalledWith(appointmentId);
     });
   });
 
   describe('update', () => {
+    it('should update an appointment', async () => {
+      const appointmentId = 'appointment-uuid';
+      const updateData = {
+        patient_id: "Patient uuid here",
+        doctor_id: "Doctor uuid here",
+        time_range_id: 20,
+        date: new Date(new Date().setDate(new Date().getDate() + 2)),
+      }
+      const updatedAppointment = {
+        ...testingAppointmentExample,
+        ...updateData,
+      };
 
+      // Mock the service method to return the updated appointment
+      jest.spyOn(service, 'update').mockResolvedValue(updatedAppointment);
+
+      // Call the controller method and verify the response
+      const response = await controller.update(appointmentId, updateData);
+      expect(response).toEqual(updatedAppointment);
+
+      // Verify the service was called with the correct parameters
+      expect(service.update).toHaveBeenCalledWith(appointmentId, updateData);
+    });
+
+    it('should handle errors thrown by the service', async () => {
+      const appointmentId = 'appointment-uuid';
+      const updateData = {
+        patient_id: "Patient uuid here",
+        doctor_id: "Doctor uuid here",
+        time_range_id: 20,
+        date: new Date(new Date().setDate(new Date().getDate() + 2)),
+      }
+      const error = new Error('Error updating appointment');
+
+      // Mock the service method to throw an error
+      jest.spyOn(service, 'update').mockRejectedValue(error);
+
+      // Call the controller method and expect it to throw the error
+      await expect(controller.update(appointmentId, updateData)).rejects.toThrow(error);
+
+      // Verify the service was called with the correct parameters
+      expect(service.update).toHaveBeenCalledWith(appointmentId, updateData);
+    });
   });
 
   describe('remove', () => {
+    it('should remove an appointment', async () => {
+      const appointmentId = 4;
 
+      // Mock the service method to return a successful removal
+      jest.spyOn(service, 'delete').mockResolvedValue({ deleted: true });
+
+      // Call the controller method and verify the response
+      const response = await controller.remove(appointmentId);
+      expect(response).toEqual({ deleted: true });
+
+      // Verify the service was called with the correct parameters
+      expect(service.delete).toHaveBeenCalledWith(appointmentId);
+    });
+
+    it('should handle errors thrown by the service', async () => {
+      const appointmentId = 4;
+      const error = new Error('Error removing appointment');
+
+      // Mock the service method to throw an error
+      jest.spyOn(service, 'delete').mockRejectedValue(error);
+
+      // Call the controller method and expect it to throw the error
+      await expect(controller.remove(appointmentId)).rejects.toThrow(error);
+
+      // Verify the service was called with the correct parameters
+      expect(service.delete).toHaveBeenCalledWith(appointmentId);
+    });
   });
 });

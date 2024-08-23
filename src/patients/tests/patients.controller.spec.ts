@@ -6,22 +6,24 @@ import { findaAllPatientsResponseExample } from '../../utils/examples/patients.e
 
 describe('PatientsController', () => {
   let controller: PatientsController;
+  let service: PatientsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PatientsController],
       providers: [
-      {
-        provide: PatientsService,
-        useValue: {
-          findAll: jest.fn().mockResolvedValue([]),
-          findOne: jest.fn().mockImplementation((id: string) => Promise.resolve({ id, name: 'Test Patient' })),
+        {
+          provide: PatientsService,
+          useValue: {
+            findAll: jest.fn(),
+            findOne: jest.fn(),
+          },
         },
-      },
-    ],
-      imports: [DatabaseModule]
+      ],
+      imports: [DatabaseModule],
     }).compile();
 
+    service = module.get<PatientsService>(PatientsService);
     controller = module.get<PatientsController>(PatientsController);
   });
 
@@ -32,19 +34,33 @@ describe('PatientsController', () => {
   describe('findAll', () => {
     it('should return an array of patients', async () => {
       const result = findaAllPatientsResponseExample;
-      jest.spyOn(controller, 'findAll').mockResolvedValue(result);
-  
+      jest.spyOn(service, 'findAll').mockResolvedValue(result);
+
       expect(await controller.findAll()).toBe(result);
+    });
+
+    it('should handle errors thrown by the service', async () => {
+      const error = new Error('Error finding the patients');
+      jest.spyOn(service, 'findAll').mockRejectedValue(error);
+
+      await expect(controller.findAll()).rejects.toThrow(error);
     });
   });
 
-  describe('findOne',()=>{
-    it('should return the user with the id sended', async ()=>{
-      const result = { id: 'uuid', name: 'Test Patient' };
+  describe('findOne', () => {
+    it('should return the patient with the given id', async () => {
+      const id = 'uuid';
+      const result = { id, name: 'Test Patient' };
+      jest.spyOn(service, 'findOne').mockResolvedValue(result);
 
-      jest.spyOn(controller, 'findOne').mockResolvedValue(result);
+      expect(await controller.findOne(id)).toBe(result);
+    });
 
-      expect(await controller.findOne('uuid')).toBe(result);
-    })
-  })
+    it('should handle errors thrown by the service', async () => {
+      const error = new Error('Error finding the patient');
+      jest.spyOn(service, 'findOne').mockRejectedValue(error);
+
+      await expect(controller.findOne('uuid')).rejects.toThrow(error);
+    });
+  });
 });

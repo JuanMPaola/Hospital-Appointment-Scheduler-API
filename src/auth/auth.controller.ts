@@ -47,7 +47,7 @@ export class AuthController {
     if (existingUser) {
       throw new Error('Email already registered');
     }
-
+    
     return this.usersService.create(patOrDoc);
   }
 
