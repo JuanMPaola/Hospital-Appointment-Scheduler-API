@@ -58,7 +58,7 @@ export const deleteUsersResponseExample = {
     "role": "patient"
 }
 
-export const updateUsersResponseExampel = {
+export const updateUsersResponseExample = {
     "id": "47531d2c-c079-43c1-a6b8-e6142d26dd1b",
     "name": "Jane Smith",
     "password": "newpassword",

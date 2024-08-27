@@ -4,7 +4,7 @@ import { UsersService } from './users.service';
 import { UpdatePatientDto } from '../patients/dto/update-patient.dto';
 import { UpdateDoctorDto } from '../doctors/dto/update-doctor.dto';
 import { unauthorizedResponseExample } from '../utils/examples/unauthorized.example';
-import { deleteUsersResponseExample, getUserByEmailResponseExample, getUsersResponseExample, updateUsersResponseExampel, doctorUpdateExample,patientUpdateExample } from '../utils/examples/users.example';
+import { deleteUsersResponseExample, getUserByEmailResponseExample, getUsersResponseExample, updateUsersResponseExample, doctorUpdateExample,patientUpdateExample } from '../utils/examples/users.example';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -45,10 +45,14 @@ export class UsersController {
   })
   @ApiOkResponse({
     description:'',
-    example: updateUsersResponseExampel
+    example: updateUsersResponseExample
   })
-  update(@Param('id') id: string, @Body() user: UpdatePatientDto & UpdateDoctorDto) {
-    return this.usersService.update(id, user);
+  async update(@Param('id') id: string, @Body() userPatch: UpdatePatientDto & UpdateDoctorDto) {
+    const user = await this.usersService.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return this.usersService.update(id, userPatch);
   }
   
   @Delete(':id')
@@ -56,7 +60,11 @@ export class UsersController {
     description:'',
     example: deleteUsersResponseExample
   })
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
+    const user = await this.usersService.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     return this.usersService.delete(id);
   }
 }

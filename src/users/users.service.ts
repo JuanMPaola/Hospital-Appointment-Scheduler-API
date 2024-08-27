@@ -74,7 +74,7 @@ export class UsersService {
     }
   }
 
-  async findOneById(id:string){
+  async findById(id:string){
     try {
       const result = await this.databaseService.query(getUserById, [id]);
       return result.rows[0];
@@ -111,7 +111,7 @@ export class UsersService {
       // Start the transaction
       await this.databaseService.query('BEGIN');
       // Check if the user exists
-      const user = await this.findOneById(id);
+      const user = await this.findById(id);
       if (!user) {
         throw new NotFoundException('User not found');
       }

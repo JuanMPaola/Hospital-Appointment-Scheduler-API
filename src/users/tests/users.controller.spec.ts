@@ -5,9 +5,10 @@ import {
   deleteUsersResponseExample,
   getUserByEmailResponseExample,
   getUsersResponseExample,
-  updateUsersResponseExampel,
 } from '../../utils/examples/users.example';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
+import { DoctorDto } from 'src/doctors/dto/doctor.dto';
+import { PatientDto } from 'src/patients/dto/patient.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -24,6 +25,7 @@ describe('UsersController', () => {
             findByEmail: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
+            findById: jest.fn(),
           },
         },
       ],
@@ -66,67 +68,49 @@ describe('UsersController', () => {
     });
   });
 
- /*  describe('update', () => {
+  describe('update', () => {
+    const id = '1';
+    const updateDto : DoctorDto & PatientDto = {
+      id: 'some-doctor-id',
+      name: 'Dr. John Doe',
+      password: 'securepassword',
+      age: 45,
+      phone: '987-654-3210',
+      email: 'john.doe@example.com',
+      born: new Date('1979-05-15T00:00:00Z'),
+      role: 'doctor',
+      specialties: [1, 2],
+      week_availability: {
+        1: [9, 10, 11],
+        3: [14, 15, 16],
+      },
+    };
+
     it('should update and return the user', async () => {
-      const id = '1';
-      const updateDto = {
-        id: id,
-        name: 'Jane Smith',
-        password: 'newpassword',
-        email: 'jane.smith@example.com',
-        age: 35,
-        phone: '987-654-3210',
-        born: new Date('1990-01-01T00:00:00.000Z'),
-      };
-      const result = updateUsersResponseExampel;
-      jest.spyOn(service, 'update').mockResolvedValue(result);
-      expect(await controller.update(id, updateDto)).toBe(result);
+      jest.spyOn(service, 'findById').mockResolvedValue(updateDto)
+      jest.spyOn(service, 'update').mockResolvedValue(updateDto);
+      expect(await controller.update(id, updateDto)).toBe(updateDto);
     });
 
     it('should throw NotFoundException if the user to update is not found', async () => {
-      const id = '1';
-      const updateDto = {
-        id: id,
-        name: 'Jane Smith',
-        password: 'newpassword',
-        email: 'jane.smith@example.com',
-        age: 35,
-        phone: '987-654-3210',
-        born: new Date('1990-01-01T00:00:00.000Z'),
-      };
-      jest.spyOn(service, 'update').mockResolvedValue(null);
+      jest.spyOn(service, 'findById').mockResolvedValue(undefined)
       await expect(controller.update(id, updateDto)).rejects.toThrow(NotFoundException);
     });
-
-    it('should handle BadRequestException if update fails due to invalid data', async () => {
-      const id = '1';
-      const updateDto = {
-        id: id,
-        name: 'Jane Smith',
-        password: 'newpassword',
-        email: 'jane.smith@example.com',
-        age: 35,
-        phone: '987-654-3210',
-        born: new Date('1990-01-01T00:00:00.000Z'),
-      };
-      const error = new BadRequestException('Invalid data provided');
-      jest.spyOn(service, 'update').mockRejectedValue(error);
-      await expect(controller.update(id, updateDto)).rejects.toThrow(BadRequestException);
-    });
-  }); */
+  });
 
   describe('remove', () => {
     const id = '1';
+
     it('should delete and return the user', async () => {
       const result = deleteUsersResponseExample;
+      jest.spyOn(service, 'findById').mockResolvedValue({id, name: "finded"})
       jest.spyOn(service, 'delete').mockResolvedValue(result);
       expect(await controller.remove(id)).toBe(result);
     });
 
-    it('should handle errors thrown by the service', async () => {
-      const error = new Error('Error deleting user');
-      jest.spyOn(service, 'delete').mockRejectedValue(error);
-      await expect(controller.remove(id)).rejects.toThrow(error);
+    it('should throw NotFoundException if the user to delete is not found', async () => {
+      jest.spyOn(service, 'findById').mockResolvedValue(undefined);
+      await expect(controller.remove(id)).rejects.toThrow(NotFoundException);
     });
   });
 });

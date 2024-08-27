@@ -32,3 +32,9 @@ INNER JOIN users u ON p.user_id = u.id
 LEFT JOIN appointments a ON p.user_id = a.patient_id
 WHERE p.user_id = $1
 GROUP BY u.id, u.email, u.name, p.phone, p.age, p.born;`;
+
+export const deletePatientQuery = `
+DELETE FROM patients 
+WHERE user_id = $1 
+RETURNING *;
+     `;

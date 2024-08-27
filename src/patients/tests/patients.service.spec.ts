@@ -36,18 +36,19 @@ describe('PatientsService', () => {
     expect(service).toBeDefined();
   });
 
+  const mockPatientDto: PatientDto = {
+    id: '123',
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    password: "password123",
+    role: "patient",
+    age: 30,
+    phone: '123-456-7890',
+    born: new Date('1990-01-01'),
+  };
+
   describe('create', () => {
     it('should create a patient in the database', async () => {
-      const mockPatientDto: PatientDto = {
-        id: '123',
-        name: "Jane Smith",
-        email: "jane.smith@example.com",
-        password: "password123",
-        role: "patient",
-        age: 30,
-        phone: '123-456-7890',
-        born: new Date('1990-01-01'),
-      };
 
       const mockPatientResult = { rows: [{ id: '123', ...mockPatientDto }] };
       databaseService.query.mockResolvedValueOnce(mockPatientResult);
@@ -89,22 +90,22 @@ describe('PatientsService', () => {
 
   describe('delete', () => {
     it('should delete the patient with the specified id', async () => {
-      const mockPatientId = 'uuid';
-      const mockDeleteResponse = { rows: [{ id: mockPatientId, name: 'Deleted Patient' }], rowCount: 1 };
+      const mockPatientId = mockPatientDto.id;
+      const mockDeleteResponse = { rowCount: 1, rows: [mockPatientDto] };
   
-      // Mocking the query method to return specific results for different queries
       databaseService.query
-        .mockResolvedValueOnce({ rows: [] }) // Mock result for deleteAppointmentsByUserIdQuery
-        .mockResolvedValueOnce(mockDeleteResponse) // Mock result for the delete query
-        .mockResolvedValueOnce({}); // Mock result for COMMIT
+        .mockResolvedValueOnce({ command: 'BEGIN' })
+        .mockResolvedValueOnce({command: 'DELETE'})
+        .mockResolvedValueOnce(mockDeleteResponse) 
+        .mockResolvedValueOnce({ command: 'COMMIT' });
   
       const result = await service.delete(mockPatientId);
   
       expect(result).toEqual(mockDeleteResponse.rows[0]);
-  
+
       expect(databaseService.query).toHaveBeenCalledWith('BEGIN');
-      expect(databaseService.query).toHaveBeenCalledWith(deleteAppointmentsByUserIdQuery, [mockPatientId]);
-      expect(databaseService.query).toHaveBeenCalledWith(expect.stringContaining('DELETE FROM patients'), [mockPatientId]);
+      expect(databaseService.query).toHaveBeenCalledWith(deleteAppointmentsByUserIdQuery, [mockPatientId]); // Verifica la consulta para eliminar citas
+      expect(databaseService.query).toHaveBeenCalledWith(expect.stringContaining('DELETE'), [mockPatientId]);
       expect(databaseService.query).toHaveBeenCalledWith('COMMIT');
     });
   });
@@ -126,9 +127,9 @@ describe('PatientsService', () => {
   
       // Mocking the query method to return a specific result for different queries
       databaseService.query
-        .mockResolvedValueOnce({ rows: [] }) // Mock result for BEGIN
-        .mockResolvedValueOnce(mockUpdateResponse) // Mock result for the update query
-        .mockResolvedValueOnce({}); // Mock result for COMMIT
+        .mockResolvedValueOnce({ rows: [] })
+        .mockResolvedValueOnce(mockUpdateResponse) 
+        .mockResolvedValueOnce({}); 
   
       const result = await service.update(mockPatientDto);
       expect(result).toEqual({ id: mockPatientDto.id, email: mockPatientDto.email, password: mockPatientDto.password, ...mockUpdateResponse.rows[0] });

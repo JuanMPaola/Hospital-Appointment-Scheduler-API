@@ -85,7 +85,7 @@ This table contains the different specialties that doctors can have.
 | Parameter | Type | Description |
 | --- | --- | --- |
 | `id` | integer | Unique identifier for the specialty. |
-| `title` | specialty_title | The title of the specialty. Possible values include: `Anesthesiology`, `Cardiology`, `Dermatology`, `Emergency Medicine`, `Family Medicine`, `Internal Medicine`, `Medical Genetics`, `Neurology`, `Nuclear Medicine`, `Obstetrics and Gynecology`, `Ophthalmology`, `Orthopedic Surgery`, `Otolaryngology (ENT)`, `Pathology`, `Pediatrics`, `Physical Medicine and Rehabilitation`, `Plastic Surgery`, `Psychiatry`, `Radiation Oncology`, `Radiology`, `Surgery`, `Urology`. |
+| `title` | specialty_title | The title of the specialty. (e.g., `Anesthesiology`, `Cardiology`, `Dermatology`, `Emergency Medicine`, etc.) |
 
 ```sql
 CREATE TABLE IF NOT EXISTS specialties (

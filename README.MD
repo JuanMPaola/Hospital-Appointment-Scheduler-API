@@ -19,9 +19,9 @@ This project is a Hospital Appointment Scheduler API. It helps patients book app
 - Create patient profiles
 - Create doctor profiles
 - See patients registred
-- See doctors availables (all or by specialty)
-- Set appointments (Earlier for tomorrow)
-- Update appointment 
+- See doctors availables (All or by specialty)
+- Set appointments (Anytime or nearest starting from tomorrow)
+- Update or cancel appointments 
 - Delete profiles or appointments
 and others..
 
@@ -49,11 +49,11 @@ This project is built with the following technologies:
 
 
 
-## Installation and Running the Project
+# Installation and Running the Project
 
 You have two options to run this project: **using Docker** (recommended) or **running it locally**.
 
-### Option 1: Run with Docker (Recommended)
+## Option 1: Run with Docker (Recommended)
 
 1. Ensure Docker and Docker Compose are installed on your machine.
 
@@ -77,7 +77,7 @@ You have two options to run this project: **using Docker** (recommended) or **ru
     http://localhost:3000/api/v1
     ```
 
-### Option 2: Run Locally
+## Option 2: Run Locally
 
 1. Ensure PostgreSQL is running on your local machine.
 
@@ -98,8 +98,7 @@ You have two options to run this project: **using Docker** (recommended) or **ru
 
 5. Set up the environment variables by creating a `.env` file in the root directory:
     ```env
-    DATABASE_URL=postgres://postgres:asdasd123@localhost:5432/Hospital
-    PORT=3000
+    DATABASE_URL=postgres://<your_postgres_user>:<your_postgres_password>@localhost:5432/<your_database_name>
     ```
 
 6. Run the application:
@@ -107,7 +106,11 @@ You have two options to run this project: **using Docker** (recommended) or **ru
     npm run start:dev
     ```
 
-7. The API will be available at:
+7. The API will be available in swagger at:
+    ```
+    http://localhost:3000/apidocs
+    ```
+    And the base url is:
     ```
     http://localhost:3000/api/v1
     ```
