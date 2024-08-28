@@ -6,7 +6,7 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgres://user:password@postgres:5432/db
+      DATABASE_URL: postgres://user:password@postgres:5432/hospital
       PORT: 3000
     ports:
       - "3000:3000"
@@ -16,7 +16,7 @@ services:
     ports:
       - "35000:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: asdasd123
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: hospital
-      POSTGRES_HOST: localhost
+      POSTGRES_HOST: postgres

@@ -5,17 +5,12 @@ import { DatabaseService } from '../../database/database.service';
 import { PatientDto } from '../dto/patient.dto';
 import { deleteAppointmentsByUserIdQuery } from '../../appoinments/appoinmetns.querys';
 import { UpdatePatientDto } from '../dto/update-patient.dto';
+import { MockDatabaseService } from '../../../test/mockDatabaseService';
 
-class MockDatabaseService extends DatabaseService {
-  query = jest.fn();
-  onModuleInit = jest.fn();
-  createTables = jest.fn();
-  getClient = jest.fn();
-}
 
 describe('PatientsService', () => {
   let service: PatientsService;
-  let databaseService: jest.Mocked<MockDatabaseService>; // Use the mocked type
+  let databaseService: jest.Mocked<MockDatabaseService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -23,7 +18,7 @@ describe('PatientsService', () => {
         PatientsService,
         {
           provide: DatabaseService,
-          useClass: MockDatabaseService, // Use the mock class here
+          useClass: MockDatabaseService,
         },
       ],
     }).compile();
