@@ -17,18 +17,18 @@ export class DoctorsService {
     try {
       // Start the transaction
       await this.databaseService.query('BEGIN');
+
       const doctorResult = await this.databaseService.query(createDoctorQuery, [doctorId]);
+      console.log(doctorResult)
       // Insert specialties into doctor_specialties table
       const insertSpecialtiesQuery = createInsertSpecialtiesQuery(doctor);
       await this.databaseService.query(insertSpecialtiesQuery, [doctorId, ...doctor.specialties]);
+
       // Insert availability into doctor_availability
       const { week_availability } = doctor;
-      if (week_availability) {
-        const {insertAvailabilityQuery, valuesArray} = createInsertAvailabilityQuery(week_availability, doctorId)
-        await this.databaseService.query(insertAvailabilityQuery, valuesArray);
-      } else {
-        throw new Error("Week availability is undefined or null");
-      }
+      const { insertAvailabilityQuery, valuesArray } = createInsertAvailabilityQuery(week_availability, doctorId)
+      await this.databaseService.query(insertAvailabilityQuery, valuesArray);
+
       // End transaction
       this.databaseService.query('COMMIT');
       return doctorResult.rows[0];
@@ -56,7 +56,7 @@ export class DoctorsService {
       const result = await this.databaseService.query(findDoctorByIdQuery, [id]);
       return result.rows[0];
     } catch (error) {
-      throw new Error('Could not get all doctor'), error;
+      throw new Error('Could not get doctor'), error;
     }
   }
 
@@ -107,28 +107,28 @@ export class DoctorsService {
     try {
       // Start the transaction to ensure atomicity
       await this.databaseService.query('BEGIN');
-  
+
       // Delete existing specialties for the doctor
       await this.databaseService.query(deleteDoctorSpecialtiesQuery, [doctor.id]);
-  
+
       // Insert new specialties if provided
       if (doctor.specialties && doctor.specialties.length > 0) {
         const insertSpecialtiesQuery = createInsertSpecialtiesQuery(doctor);
         await this.databaseService.query(insertSpecialtiesQuery, [doctor.id, ...doctor.specialties]);
       }
-  
+
       // Delete existing weekly availability for the doctor
       await this.databaseService.query(deleteDoctorWeeklyAvailability, [doctor.id]);
-  
+
       // Insert new weekly availability if provided
       if (doctor.week_availability && Object.keys(doctor.week_availability).length > 0) {
-        const {insertAvailabilityQuery, valuesArray} = createInsertAvailabilityQuery(doctor.week_availability, doctor.id);
+        const { insertAvailabilityQuery, valuesArray } = createInsertAvailabilityQuery(doctor.week_availability, doctor.id);
         await this.databaseService.query(insertAvailabilityQuery, valuesArray);
       }
-  
+
       // Commit the transaction
       await this.databaseService.query('COMMIT');
-  
+
       // Return a success response or the updated doctor details, depending on your needs
       return { id: doctor.id, ...doctor };
     } catch (error) {
