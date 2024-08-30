@@ -6,7 +6,7 @@ import { PatientDto } from '../patients/dto/patient.dto';
 import { DoctorDto } from '../doctors/dto/doctor.dto';
 import { SkipAuth } from './skip-auth.decorator';
 import { ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { doctorLoginExample, loginResponseExample, patientLoginExample, registerDoctorExample, registerDoctorExample2, registeredResponseExamples, registerPatientExample, registerPatientExample2 } from '../utils/examples/auth.examples';
+import { SWAGGERloginExamples, SWAGGERloginResponseExample, SWAGGERregisterExamples, SWAGGERregisterResponseExamples } from '../utils/examples/auth.examples';
 
 
 @ApiTags('Auth')
@@ -19,16 +19,14 @@ export class AuthController {
 
   @Post('login')
   @SkipAuth()
-  @ApiCreatedResponse(loginResponseExample)
-  @ApiBody({
-    description: '',
-    examples: { patient: patientLoginExample, doctor: doctorLoginExample },
-  })
+  @ApiCreatedResponse(SWAGGERloginResponseExample)
+  @ApiBody(SWAGGERloginExamples)
   async login(@Body() authDto: AuthDto) {
     // Check if email is registered
     const user = await this.authService.validateUser(authDto);
+    console.log(user)
     if (!user) {
-      throw new Error('User not registered');
+      return ('User not registered');
     }
 
     return this.authService.login(user);
@@ -36,16 +34,13 @@ export class AuthController {
 
   @Post('register')
   @SkipAuth()
-  @ApiCreatedResponse(registeredResponseExamples)
-  @ApiBody({
-    description: '',
-    examples: { patient: registerPatientExample, patient2: registerPatientExample2, doctor: registerDoctorExample, doctor2: registerDoctorExample2 },
-  })
+  @ApiCreatedResponse(SWAGGERregisterResponseExamples)
+  @ApiBody(SWAGGERregisterExamples)
   async register(@Body() patOrDoc: PatientDto & DoctorDto) {
     // Check if email is registered
     const existingUser = await this.usersService.findByEmail(patOrDoc.email);
     if (existingUser) {
-      throw new Error('Email already registered');
+      return ('Email already registered');
     }
     
     return this.usersService.create(patOrDoc);
