@@ -24,9 +24,6 @@ export class DatabaseService implements OnModuleInit {
     await this.client.query(activeUUIDQuery);
     await this.client.query(createTablesQuery);
     await this.client.query(insertBasicInfoQuery);
-    //console.log('Tables created successfully');
-
-      
   }
 
   //Function that sent queries to db

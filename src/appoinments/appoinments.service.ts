@@ -74,23 +74,6 @@ export class AppoinmentsService {
     }
   }
 
-  async delete(appointmentId: number){
-    try {
-      const result = await this.databaseService.query(deleteAppointmentById, [appointmentId]);
-      return result.rows[0];
-    } catch (error) {
-      throw Error('Could not delete appointment')
-    }
-  }
-
-  async deleteAllByDocOrPatientId(userId: string) {
-    try {
-      await this.databaseService.query(deleteAppointmentsByUserIdQuery, [userId]);
-    } catch (error) {
-      throw new Error('Could not delete appointments: ' + error.message);
-    }
-  }
-
   async cancel(id: string) {
     try {
 
@@ -130,6 +113,17 @@ export class AppoinmentsService {
       throw new InternalServerErrorException('Could not update appointment: ' + error.message);
     }
   }
+
+  async delete(appointmentId: number){
+    try {
+      const result = await this.databaseService.query(deleteAppointmentById, [appointmentId]);
+      return result.rows[0];
+    } catch (error) {
+      throw Error('Could not delete appointment')
+    }
+  }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
   async findSpecificAppointmentPatient(patient_id: string, date: Date, time_range_id: number) {
     try {

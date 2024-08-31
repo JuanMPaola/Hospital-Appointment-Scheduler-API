@@ -25,7 +25,7 @@ describe('DoctorsService', () => {
     databaseService = module.get<DatabaseService>(DatabaseService) as jest.Mocked<MockDatabaseService>;
   });
 
-  const doctorExample = { id: "exampleid", ...registerDoctorExample.value }
+  const doctorExample = { id: "exampleid", ...registerDoctorExample}
 
   it('should be defined', () => {
     expect(service).toBeDefined();

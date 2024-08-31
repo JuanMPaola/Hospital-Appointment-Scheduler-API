@@ -7,7 +7,7 @@ export const doctorLoginExample = {
   password: "securepassword"
 }
 
-export const SWAGGERloginExamples = {
+export const swaggerLoginExamples = {
   description: '',
   examples: {
     patient: {
@@ -22,10 +22,10 @@ export const SWAGGERloginExamples = {
   },
 }
 
-export const loginResponseExample = {
+export const loginResponseExample :{access_token: string} = {
   access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImphbmUuc21pdGhAZXhhbXBsZS5jb20iLCJzdWIiOiIxNjdlNTFiMS01N2NjLTQ2MjAtODMzZS0zNTMzZDA4NzQ2NzkiLCJyb2xlIjoidXNlciJ9.RPjYfQIFRZhPMDsLws3qa5cmHTe0EM8df5K1ui1Z_0w"
 }
-export const SWAGGERloginResponseExample = {
+export const swaggerLoginResponseExample = {
   status: 200,
   description: 'Successful login with access token',
   content: {
@@ -85,7 +85,7 @@ export const registerPatientExample2 = {
   role: "patient"
 }
 
-export const SWAGGERregisterExamples = {
+export const swaggerRegisterExamples = {
   description: '',
   examples: {
     patient: {
@@ -132,7 +132,7 @@ export const doctorRegisterResponseExample = {
   }
 }
 
-export const SWAGGERregisterResponseExamples = {
+export const swaggerRegisterResponseExamples = {
   status: 201,
   description: 'The record has been successfully created.',
   content: {

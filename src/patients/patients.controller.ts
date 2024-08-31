@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { PatientsService } from './patients.service';
 import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { findaAllPatientsResponseExample, findOnePatientResponseExample } from '../utils/examples/patients.example';
+import { findOnePatientResponseExample, swaggerFindAllPatientsResponseExample, swaggerFindOnePatientResponseExample } from '../utils/examples/patients.example';
 import { unauthorizedResponseExample } from '../utils/examples/unauthorized.example';
 
 @ApiTags('Patients')
@@ -15,20 +15,14 @@ export class PatientsController {
   constructor(private readonly patientsService: PatientsService) {}
 
   @Get()
-  @ApiOkResponse({
-    description:'',
-    example: findaAllPatientsResponseExample
-  })
+  @ApiOkResponse(swaggerFindAllPatientsResponseExample)
   findAll() {
     return this.patientsService.findAll();
   }
 
   @Get(':id')
-  @ApiOkResponse({
-    description:'',
-    example: findOnePatientResponseExample
-  })
+  @ApiOkResponse(swaggerFindOnePatientResponseExample)
   findOne(@Param('id') id: string) {
     return this.patientsService.findOne(id);
   }
-}
+};

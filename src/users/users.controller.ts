@@ -4,7 +4,7 @@ import { UsersService } from './users.service';
 import { UpdatePatientDto } from '../patients/dto/update-patient.dto';
 import { UpdateDoctorDto } from '../doctors/dto/update-doctor.dto';
 import { unauthorizedResponseExample } from '../utils/examples/unauthorized.example';
-import { deleteUsersResponseExample, getUserByEmailResponseExample, getUsersResponseExample, updateUsersResponseExample, doctorUpdateExample,patientUpdateExample } from '../utils/examples/users.example';
+import { swaggerGetUsersResponseExample, swaggerGetUserByEmailResponseExample, swaggerUserUpdateExample, swaggerUserUpdateResponseExample, swaggerDeleteUserResponseExample } from '../utils/examples/users.example';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -17,19 +17,13 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @ApiOkResponse({
-    description:'',
-    example: getUsersResponseExample
-  })
+  @ApiOkResponse(swaggerGetUsersResponseExample)
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get('find-by-email')
-  @ApiOkResponse({
-    description:'',
-    example: getUserByEmailResponseExample
-  })
+  @ApiOkResponse(swaggerGetUserByEmailResponseExample)
   async findByEmail(@Query('email') email: string) {
     const user = await this.usersService.findByEmail(email);
     if (!user) {
@@ -39,14 +33,8 @@ export class UsersController {
   }
   
   @Patch(':id')
-  @ApiBody({
-    description: '',
-    examples: {patient: patientUpdateExample, doctor: doctorUpdateExample},
-  })
-  @ApiOkResponse({
-    description:'',
-    example: updateUsersResponseExample
-  })
+  @ApiBody(swaggerUserUpdateExample)
+  @ApiOkResponse(swaggerUserUpdateResponseExample)
   async update(@Param('id') id: string, @Body() userPatch: UpdatePatientDto & UpdateDoctorDto) {
     const user = await this.usersService.findById(id);
     if (!user) {
@@ -56,10 +44,7 @@ export class UsersController {
   }
   
   @Delete(':id')
-  @ApiOkResponse({
-    description:'',
-    example: deleteUsersResponseExample
-  })
+  @ApiOkResponse(swaggerDeleteUserResponseExample)
   async remove(@Param('id') id: string) {
     const user = await this.usersService.findById(id);
     if (!user) {

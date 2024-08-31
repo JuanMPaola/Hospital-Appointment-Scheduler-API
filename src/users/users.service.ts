@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException, NotFoundException, ConflictException } from '@nestjs/common';
 import { PatientDto } from '../patients/dto/patient.dto';
 import { DoctorDto } from '../doctors/dto/doctor.dto';
 import { DatabaseService } from '../database/database.service';
@@ -65,21 +65,56 @@ export class UsersService {
     }
   }
 
-  async findByEmail(email: string) {
-    try {
-      const result = await this.databaseService.query(getByEmailQuery, [email]);
-      return result.rows[0];
-    } catch (error) {
-      throw new Error('Could not find user by email'), error;
-    }
-  }
-
-  async findById(id:string){
+  async findById(id: string) {
     try {
       const result = await this.databaseService.query(getUserById, [id]);
       return result.rows[0];
     } catch (error) {
       throw new Error('Could not find user by id'), error;
+    }
+  }
+
+  async update(id: string, userPatch: UpdatePatientDto & UpdateDoctorDto) {
+    try {
+      // Start the transaction
+      await this.databaseService.query('BEGIN');
+      // Get the user
+      const user = await this.findById(id);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      const userValues = [
+        userPatch.name,
+        userPatch.email,
+        userPatch.password,
+        id,
+      ];
+      // Update user table
+      await this.databaseService.query(updateUserQuery, userValues);
+
+      // Update patient or doctor details based on role
+      if (user.role === 'patient') {
+        const patientDto: UpdatePatientDto = {
+          ...userPatch,
+          id
+        };
+        await this.patientsService.update(patientDto);
+      } else if (user.role === 'doctor') {
+        const doctorDto: UpdateDoctorDto = {
+          ...userPatch,
+          id
+        };
+        await this.doctorsService.update(doctorDto);
+      } else {
+        throw new BadRequestException('Invalid role or role data');
+      }
+      // Commit the transaction
+      await this.databaseService.query('COMMIT');
+      return { id, ...userPatch };
+    } catch (error) {
+      // Rollback the transaction if something goes wrong
+      await this.databaseService.query('ROLLBACK');
+      throw new InternalServerErrorException('Could not update user', error.message);
     }
   }
 
@@ -106,46 +141,12 @@ export class UsersService {
     }
   }
 
-  async update(id: string, userPatch: UpdatePatientDto & UpdateDoctorDto) {
+  async findByEmail(email: string) {
     try {
-      // Start the transaction
-      await this.databaseService.query('BEGIN');
-      // Check if the user exists
-      const user = await this.findById(id);
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-      const userValues = [
-        userPatch.name,
-        userPatch.email,
-        userPatch.password,
-        id,
-      ];
-      // Update user table
-      await this.databaseService.query(updateUserQuery, userValues);
-      // Update patient or doctor details based on role
-      if (user.role === 'patient') {
-        const patientDto: UpdatePatientDto = {
-          ...userPatch,
-          id
-        };
-        await this.patientsService.update(patientDto);
-      } else if (user.role === 'doctor') {
-        const doctorDto: UpdateDoctorDto = {
-          ...userPatch,
-          id
-        };
-        await this.doctorsService.update(doctorDto);
-      } else {
-        throw new BadRequestException('Invalid role or role data');
-      }
-      // Commit the transaction
-      await this.databaseService.query('COMMIT');
-      return { id, ...userPatch };
+      const result = await this.databaseService.query(getByEmailQuery, [email]);
+      return result.rows[0];
     } catch (error) {
-      // Rollback the transaction if something goes wrong
-      await this.databaseService.query('ROLLBACK');
-      throw new InternalServerErrorException('Could not update user', error.message);
+      throw new Error('Error searching user by email'), error;
     }
   }
 

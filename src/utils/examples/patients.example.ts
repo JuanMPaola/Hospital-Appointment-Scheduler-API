@@ -15,7 +15,12 @@ export const findaAllPatientsResponseExample = [
         "age": 23,
         "born": "2001-01-01T03:00:00.000Z"
     }
-]
+];
+
+export const swaggerFindAllPatientsResponseExample = {
+  description:'',
+  example: findaAllPatientsResponseExample
+};
 
 export const findOnePatientResponseExample = {
     "id": "47531d2c-c079-43c1-a6b8-e6142d26dd1b",
@@ -38,4 +43,9 @@ export const findOnePatientResponseExample = {
         "status": "pending"
       }
     ]
-  }
+  };
+
+  export const swaggerFindOnePatientResponseExample = {
+    description:'',
+    example: findOnePatientResponseExample
+  };

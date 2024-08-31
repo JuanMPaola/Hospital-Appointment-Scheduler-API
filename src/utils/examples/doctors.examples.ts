@@ -21,6 +21,11 @@ export const findAllDoctorsResponseExample = [
     }
   ]
 
+  export const swaggerFindAllDoctorsResponseExample = {
+    description:'',
+    example: findAllDoctorsResponseExample
+  }
+
   export const findOneDoctorResponseExample = {
     "name": "Dr. John Doe",
     "email": "john.doe@example.com",
@@ -32,6 +37,11 @@ export const findAllDoctorsResponseExample = [
       "5": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
       "6": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]
     }
+  }
+
+  export const swaggerFindOneDoctorResponseExample = {
+    description:'',
+    example: findOneDoctorResponseExample
   }
 
   export const findBySpecialtyResponseExample = [
@@ -47,6 +57,11 @@ export const findAllDoctorsResponseExample = [
     }
   ]
 
+  export const swaggerFindBySpecialtyResponseExample = {
+    description:'',
+    example: findBySpecialtyResponseExample
+  }
+
   export const findAvailabilityResponseExample = [
     {
       "weekly_availability": {
@@ -59,4 +74,9 @@ export const findAllDoctorsResponseExample = [
       "appointments": []
     }
   ]
+
+  export const swaggerFindAvailabilityResponseExample = {
+    description:'',
+    example: findAvailabilityResponseExample
+  }
   

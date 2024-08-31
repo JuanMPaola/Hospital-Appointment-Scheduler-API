@@ -11,16 +11,22 @@ export class AuthService {
   ) {}
 
   async validateUser({email, password}: AuthDto): Promise<UserDto | null>{
-    const user = await this.usersService.findByEmail(email);
-
-    if(user && user.password === password){
-      return user;
+    try {
+      
+      const user = await this.usersService.findByEmail(email);
+  
+      if(user && user.password === password){
+        return user;
+      }
+  
+      return null;
+    } catch (error) {
+      throw new Error('Error finding user');
     }
-
-    return null;
   }
 
   async login(user: UserDto){
+    
     const payload = { email: user.email, sub: user.id, role:user.role}
 
     return {

@@ -3,10 +3,9 @@ import { AppoinmentsController } from '../appoinments.controller';
 import { AppoinmentsService } from '../appoinments.service';
 import { DatabaseModule } from '../../database/database.module';
 import { 
-  cancelAppointmentResponseExample, 
   getAppointmetnsResponseExample, 
   getUserAppointmentsResponseExample, 
-  postAppointmentsResponseExample, 
+  postAppointmentResponseExample, 
   testingAppointmentExample 
 } from '../../utils/examples/appointments.example';
 
@@ -45,7 +44,7 @@ describe('AppoinmentsController', () => {
   describe('create', () => {
     it('should create an appointment', async () => {
       // Mock the service method to return the created appointment
-      jest.spyOn(service, 'create').mockResolvedValue(postAppointmentsResponseExample);
+      jest.spyOn(service, 'create').mockResolvedValue(postAppointmentResponseExample);
 
       // Call the controller method
       const response = await controller.create(testingAppointmentExample);
@@ -54,7 +53,7 @@ describe('AppoinmentsController', () => {
       expect(service.create).toHaveBeenCalledWith(testingAppointmentExample);
 
       // Verify the controller returns the expected result
-      expect(response).toEqual(postAppointmentsResponseExample);
+      expect(response).toEqual(postAppointmentResponseExample);
     });
 
     it('should handle errors thrown by the service', async () => {

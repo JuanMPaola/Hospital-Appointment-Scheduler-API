@@ -19,7 +19,7 @@ export class DoctorsService {
       await this.databaseService.query('BEGIN');
 
       const doctorResult = await this.databaseService.query(createDoctorQuery, [doctorId]);
-      console.log(doctorResult)
+
       // Insert specialties into doctor_specialties table
       const insertSpecialtiesQuery = createInsertSpecialtiesQuery(doctor);
       await this.databaseService.query(insertSpecialtiesQuery, [doctorId, ...doctor.specialties]);

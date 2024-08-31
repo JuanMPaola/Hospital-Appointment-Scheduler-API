@@ -4,6 +4,7 @@ import { AuthService } from '../auth.service';
 import { UsersService } from '../../users/users.service';
 import { DoctorDto } from '../../doctors/dto/doctor.dto';
 import { PatientDto } from 'src/patients/dto/patient.dto';
+import { NotFoundException } from '@nestjs/common';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -74,15 +75,13 @@ describe('AuthController', () => {
       expect(await controller.login(loginBody)).toBe(loginResult);
     });
 
-    it('should throw an error if the user is not registered', async () => {
+    it('should throw NotFoundException if the user is not registered', async () => {
       const loginBody = {
         email: 'unregistered@example.com',
         password: 'wrongpassword',
       };
-
-      jest.spyOn(authService, 'login').mockRejectedValue(new Error('User not registered'));
-
-      await expect(controller.login(loginBody)).rejects.toThrow('User not registered');
+      jest.spyOn(authService, 'validateUser').mockResolvedValue(null);
+      await expect(controller.login(loginBody)).rejects.toThrow(NotFoundException);
     });
   });
 

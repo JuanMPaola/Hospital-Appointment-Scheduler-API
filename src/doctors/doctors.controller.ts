@@ -2,7 +2,7 @@ import { Controller, Get, Param, } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
 import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { unauthorizedResponseExample } from '../utils/examples/unauthorized.example';
-import { findAllDoctorsResponseExample, findAvailabilityResponseExample, findBySpecialtyResponseExample, findOneDoctorResponseExample } from '../utils/examples/doctors.examples';
+import { findAvailabilityResponseExample, findBySpecialtyResponseExample, findOneDoctorResponseExample, swaggerFindAllDoctorsResponseExample, swaggerFindAvailabilityResponseExample, swaggerFindBySpecialtyResponseExample, swaggerFindOneDoctorResponseExample } from '../utils/examples/doctors.examples';
 
 
 @ApiTags('Doctors')
@@ -17,37 +17,25 @@ export class DoctorsController {
 
 
   @Get()
-  @ApiOkResponse({
-    description:'',
-    example: findAllDoctorsResponseExample
-  })
+  @ApiOkResponse(swaggerFindAllDoctorsResponseExample)
   findAll() {
     return this.doctorsService.findAll();
   }
 
   @Get(':id')
-  @ApiOkResponse({
-    description:'',
-    example: findOneDoctorResponseExample
-  })
+  @ApiOkResponse(swaggerFindOneDoctorResponseExample)
   findOne(@Param('id') id: string) {
     return this.doctorsService.findOne(id);
   }
 
   @Get('specialty/:specialtyId')
-  @ApiOkResponse({
-    description:'',
-    example: findBySpecialtyResponseExample
-  })
+  @ApiOkResponse(swaggerFindBySpecialtyResponseExample)
   findBySpecialty(@Param('specialtyId') specialtyId: number) {
     return this.doctorsService.findBySpecialty(specialtyId);
   }
 
   @Get(':id/availability')
-  @ApiOkResponse({
-    description:'',
-    example: findAvailabilityResponseExample
-  })
+  @ApiOkResponse(swaggerFindAvailabilityResponseExample)
   findAvailability(@Param('id') id: string) {
     return this.doctorsService.findAvailability(id);
   }
