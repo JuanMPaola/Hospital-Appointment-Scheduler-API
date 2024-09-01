@@ -8,7 +8,7 @@ jobs:
 
     services:
       docker:
-        image: docker: 20.10.7
+        image: docker:20.10.7
         options: --privileged
         ports:
           -3000:3000
