@@ -1,16 +1,37 @@
-import { Controller, Get, Body, Patch, Param, Delete, Query, NotFoundException } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  NotFoundException,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UpdatePatientDto } from '../patients/dto/update-patient.dto';
 import { UpdateDoctorDto } from '../doctors/dto/update-doctor.dto';
 import { unauthorizedResponseExample } from '../utils/examples/unauthorized.example';
-import { swaggerGetUsersResponseExample, swaggerGetUserByEmailResponseExample, swaggerUserUpdateExample, swaggerUserUpdateResponseExample, swaggerDeleteUserResponseExample } from '../utils/examples/users.example';
+import {
+  swaggerGetUsersResponseExample,
+  swaggerGetUserByEmailResponseExample,
+  swaggerUserUpdateExample,
+  swaggerUserUpdateResponseExample,
+  swaggerDeleteUserResponseExample,
+} from '../utils/examples/users.example';
 
 @ApiTags('Users')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
   description: 'Unathorized Bearer Auth',
-  example: unauthorizedResponseExample
+  example: unauthorizedResponseExample,
 })
 @Controller('users')
 export class UsersController {
@@ -31,18 +52,21 @@ export class UsersController {
     }
     return user;
   }
-  
+
   @Patch(':id')
   @ApiBody(swaggerUserUpdateExample)
   @ApiOkResponse(swaggerUserUpdateResponseExample)
-  async update(@Param('id') id: string, @Body() userPatch: UpdatePatientDto & UpdateDoctorDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() userPatch: UpdatePatientDto & UpdateDoctorDto,
+  ) {
     const user = await this.usersService.findById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
     return this.usersService.update(id, userPatch);
   }
-  
+
   @Delete(':id')
   @ApiOkResponse(swaggerDeleteUserResponseExample)
   async remove(@Param('id') id: string) {

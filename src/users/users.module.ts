@@ -8,11 +8,7 @@ import { DoctorsModule } from '../doctors/doctors.module';
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
-  imports: [
-    DatabaseModule,
-    PatientsModule,
-    DoctorsModule,
-  ],
+  imports: [DatabaseModule, PatientsModule, DoctorsModule],
   exports: [UsersService],
 })
 export class UsersModule {}

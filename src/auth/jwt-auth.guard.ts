@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException} from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthService } from './auth.service';
 import { SKIP_AUTH_KEY } from './skip-auth.decorator';
@@ -11,7 +16,10 @@ export class JwtAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const skipAuth = this.reflector.get<boolean>(SKIP_AUTH_KEY, context.getHandler());
+    const skipAuth = this.reflector.get<boolean>(
+      SKIP_AUTH_KEY,
+      context.getHandler(),
+    );
     if (skipAuth) {
       return true; // Skip authentication for routes with @SkipAuth
     }
@@ -34,7 +42,6 @@ export class JwtAuthGuard implements CanActivate {
 
     return true;
   }
-
 
   private extractTokenFromHeader(request: Request): string | null {
     const authHeader = request.headers['authorization'];

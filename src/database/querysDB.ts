@@ -116,7 +116,7 @@ END $$;
       );
     `;
 
-    export const insertBasicInfoQuery = `
+export const insertBasicInfoQuery = `
     DO $$
     BEGIN
      -- Insert days if they don't already exist
@@ -176,8 +176,8 @@ END $$;
       END IF;
     END $$;
   `;
-      
-  export const deleteTablesQuery = `
+
+export const deleteTablesQuery = `
   DROP TABLE IF EXISTS appointments;
   DROP TABLE IF EXISTS doctor_availability;
   DROP TABLE IF EXISTS doctor_specialties;

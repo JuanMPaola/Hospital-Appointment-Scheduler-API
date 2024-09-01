@@ -2,13 +2,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppoinmentsService } from '../appoinments.service';
 import { DatabaseService } from '../../database/database.service';
 import { MockDatabaseService } from '../../../test/mockDatabaseService';
-import { cancelAppointmentResponseExample, getAppointmetnsResponseExample, getUserAppointmentsResponseExample, postAppointmentExample, postAppointmentResponseExample, testingAppointmentExample } from '../../utils/examples/appointments.example';
+import {
+  cancelAppointmentResponseExample,
+  getAppointmetnsResponseExample,
+  getUserAppointmentsResponseExample,
+  postAppointmentExample,
+  postAppointmentResponseExample,
+  testingAppointmentExample,
+} from '../../utils/examples/appointments.example';
 import { deleteAppointmentById } from '../appoinmetns.querys';
 
 describe('AppoinmentsService', () => {
   let service: AppoinmentsService;
   let databaseService: jest.Mocked<MockDatabaseService>;
-
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,14 +22,15 @@ describe('AppoinmentsService', () => {
         AppoinmentsService,
         {
           provide: DatabaseService,
-          useClass: MockDatabaseService
-        }
+          useClass: MockDatabaseService,
+        },
       ],
-
     }).compile();
 
     service = module.get<AppoinmentsService>(AppoinmentsService);
-    databaseService = module.get<DatabaseService>(DatabaseService) as jest.Mocked<MockDatabaseService>;
+    databaseService = module.get<DatabaseService>(
+      DatabaseService,
+    ) as jest.Mocked<MockDatabaseService>;
   });
 
   it('should be defined', () => {
@@ -32,15 +39,19 @@ describe('AppoinmentsService', () => {
 
   describe('create', () => {
     it('should return the appointment created', async () => {
-      databaseService.query.mockResolvedValueOnce(postAppointmentResponseExample);
+      databaseService.query.mockResolvedValueOnce(
+        postAppointmentResponseExample,
+      );
       const result = await databaseService.query(postAppointmentExample);
       expect(result).toBe(postAppointmentResponseExample);
     });
   });
 
   describe('createNearest', () => {
-    it('should return an appointment', async () =>{
-      databaseService.query.mockResolvedValueOnce(postAppointmentResponseExample);
+    it('should return an appointment', async () => {
+      databaseService.query.mockResolvedValueOnce(
+        postAppointmentResponseExample,
+      );
       const result = await databaseService.query(postAppointmentExample);
       expect(result).toBe(postAppointmentResponseExample);
     });
@@ -48,15 +59,19 @@ describe('AppoinmentsService', () => {
 
   describe('findAll', () => {
     it('should return an array of appointments', async () => {
-      databaseService.query.mockResolvedValueOnce(getAppointmetnsResponseExample);
-      const result  = await databaseService.query();
+      databaseService.query.mockResolvedValueOnce(
+        getAppointmetnsResponseExample,
+      );
+      const result = await databaseService.query();
       expect(result).toBe(getAppointmetnsResponseExample);
     });
   });
 
   describe('findAllByUserId', () => {
     it('should return an array of appointments', async () => {
-      databaseService.query.mockResolvedValueOnce(postAppointmentResponseExample);
+      databaseService.query.mockResolvedValueOnce(
+        postAppointmentResponseExample,
+      );
       const result = await databaseService.query(postAppointmentExample);
       expect(result).toBe(postAppointmentResponseExample);
     });
@@ -66,24 +81,34 @@ describe('AppoinmentsService', () => {
       const mockAppointments = getUserAppointmentsResponseExample;
 
       // Mock the service method to return the example data
-      jest.spyOn(service, 'findAllByUserId').mockResolvedValue(mockAppointments);
+      jest
+        .spyOn(service, 'findAllByUserId')
+        .mockResolvedValue(mockAppointments);
 
       const result = await service.findAllByUserId(userId);
 
       // Check if at least one appointment includes the userId as doctor_id or patient_id
-      const hasDoctorId = result.some(appointment => appointment.doctor_id === userId);
-      const hasPatientId = result.some(appointment => appointment.patient_id === userId);
+      const hasDoctorId = result.some(
+        (appointment) => appointment.doctor_id === userId,
+      );
+      const hasPatientId = result.some(
+        (appointment) => appointment.patient_id === userId,
+      );
 
       expect(hasDoctorId || hasPatientId).toBe(true);
     });
   });
 
   describe('cancel', () => {
-    it('should return an appointment', async () =>{
-      databaseService.query.mockResolvedValueOnce(cancelAppointmentResponseExample);
-      const result = await databaseService.query(cancelAppointmentResponseExample);
+    it('should return an appointment', async () => {
+      databaseService.query.mockResolvedValueOnce(
+        cancelAppointmentResponseExample,
+      );
+      const result = await databaseService.query(
+        cancelAppointmentResponseExample,
+      );
       expect(result).toBe(cancelAppointmentResponseExample);
-    })
+    });
 
     it('should change status to canceled', async () => {
       const body = testingAppointmentExample;
@@ -111,7 +136,9 @@ describe('AppoinmentsService', () => {
       const findAll = await service.findAll();
 
       // Check if the canceled appointment's status is 'canceled'
-      const canceledAppointment = findAll.find(appointment => appointment.id === response.id);
+      const canceledAppointment = findAll.find(
+        (appointment) => appointment.id === response.id,
+      );
 
       expect(canceledAppointment).toBeDefined();
       expect(canceledAppointment.status).toBe('canceled');
@@ -128,6 +155,8 @@ describe('AppoinmentsService', () => {
     const result = await service.delete(appointmentId);
 
     expect(result).toEqual(deletedAppointment);
-    expect(databaseService.query).toHaveBeenCalledWith(deleteAppointmentById, [appointmentId]);
+    expect(databaseService.query).toHaveBeenCalledWith(deleteAppointmentById, [
+      appointmentId,
+    ]);
   });
 });

@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtAuthGuard } from '../jwt-auth.guard'; 
+import { JwtAuthGuard } from '../jwt-auth.guard';
 import { AuthService } from '../auth.service';
 import { Reflector } from '@nestjs/core';
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 
 describe('JwtAuthGuard', () => {
   let guard: JwtAuthGuard;
-  let authService: AuthService;
+
   let reflector: Reflector;
 
   beforeEach(async () => {
@@ -29,7 +29,6 @@ describe('JwtAuthGuard', () => {
     }).compile();
 
     guard = module.get<JwtAuthGuard>(JwtAuthGuard);
-    authService = module.get<AuthService>(AuthService);
     reflector = module.get<Reflector>(Reflector);
   });
 
@@ -63,6 +62,8 @@ describe('JwtAuthGuard', () => {
       }),
     } as unknown as ExecutionContext;
 
-    await expect(guard.canActivate(mockContext)).rejects.toThrow(UnauthorizedException);
+    await expect(guard.canActivate(mockContext)).rejects.toThrow(
+      UnauthorizedException,
+    );
   });
 });

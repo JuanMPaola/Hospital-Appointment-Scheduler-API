@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DatabaseService } from './database.service';
 import { Client } from 'pg';
-import { activeUUIDQuery, createTablesQuery, insertBasicInfoQuery } from './querysDB';
+import {
+  activeUUIDQuery,
+  createTablesQuery,
+  insertBasicInfoQuery,
+} from './querysDB';
 
 jest.mock('pg', () => {
   const mClient = {

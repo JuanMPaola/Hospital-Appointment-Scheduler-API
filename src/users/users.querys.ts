@@ -8,7 +8,7 @@ WHERE email = $1;
 export const getUserById = `
 SELECT * FROM users
 WHERE id = $1;
-`
+`;
 
 // Query to get all users
 export const getAllUsersQuery = `
@@ -19,7 +19,7 @@ SELECT * FROM users;
 export const getRoleQuery = `
 SELECT role FROM users
 WHERE id = $1
-`
+`;
 
 // Query to delete user form users table
 export const deleteUserQuery = `

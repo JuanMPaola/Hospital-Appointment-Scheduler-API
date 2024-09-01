@@ -8,24 +8,24 @@ describe('DoctorsService', () => {
   let service: DoctorsService;
   let databaseService: jest.Mocked<MockDatabaseService>;
 
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DoctorsService,
         {
           provide: DatabaseService,
-          useClass: MockDatabaseService
-        }
-
+          useClass: MockDatabaseService,
+        },
       ],
     }).compile();
 
     service = module.get<DoctorsService>(DoctorsService);
-    databaseService = module.get<DatabaseService>(DatabaseService) as jest.Mocked<MockDatabaseService>;
+    databaseService = module.get<DatabaseService>(
+      DatabaseService,
+    ) as jest.Mocked<MockDatabaseService>;
   });
 
-  const doctorExample = { id: "exampleid", ...registerDoctorExample}
+  const doctorExample = { id: 'exampleid', ...registerDoctorExample };
 
   it('should be defined', () => {
     expect(service).toBeDefined();
@@ -35,15 +35,14 @@ describe('DoctorsService', () => {
     it('should create a doctor in database', async () => {
       databaseService.query
         .mockResolvedValueOnce({ command: 'BEGIN' })
-        .mockResolvedValueOnce({ rows: [{user_id: doctorExample.id}] })
-        .mockResolvedValueOnce({ command: 'INSERT'})
-        .mockResolvedValueOnce({ command: 'INSERT'})
+        .mockResolvedValueOnce({ rows: [{ user_id: doctorExample.id }] })
+        .mockResolvedValueOnce({ command: 'INSERT' })
+        .mockResolvedValueOnce({ command: 'INSERT' })
         .mockResolvedValueOnce({ command: 'COMMIT' });
       const result = await service.create(doctorExample);
 
-      expect(result).toEqual({user_id: doctorExample.id});
-    })
-
+      expect(result).toEqual({ user_id: doctorExample.id });
+    });
   });
 
   describe('findAll', () => {
@@ -54,7 +53,6 @@ describe('DoctorsService', () => {
     });
   });
 
-
   describe('findOne', () => {
     it('should return a doctor with the respective id', async () => {
       databaseService.query.mockResolvedValueOnce({ rows: [doctorExample] });
@@ -64,7 +62,7 @@ describe('DoctorsService', () => {
   });
 
   describe('delete', () => {
-    it('should return delete the doctor with the respective id', async () =>{
+    it('should return delete the doctor with the respective id', async () => {
       databaseService.query
         .mockResolvedValueOnce({ command: 'BEGIN' })
         .mockResolvedValueOnce({ command: 'DELETE' })
@@ -72,13 +70,11 @@ describe('DoctorsService', () => {
         .mockResolvedValueOnce({ command: 'DELETE' })
         .mockResolvedValueOnce({ rows: [doctorExample] })
         .mockResolvedValueOnce({ command: 'COMMIT' });
-        
-        const result = await service.delete(doctorExample.id);
 
-        expect(result).toEqual(doctorExample);
-    })
+      const result = await service.delete(doctorExample.id);
 
-
+      expect(result).toEqual(doctorExample);
+    });
   });
 
   describe('update', () => {
@@ -86,9 +82,9 @@ describe('DoctorsService', () => {
       databaseService.query
         .mockResolvedValueOnce({ command: 'BEGIN' })
         .mockResolvedValueOnce({ command: 'DELETE' })
-        .mockResolvedValueOnce({ command: 'INSERT' }) 
-        .mockResolvedValueOnce({ command: 'DELETE' }) 
-        .mockResolvedValueOnce({ command: 'INSERT' }) 
+        .mockResolvedValueOnce({ command: 'INSERT' })
+        .mockResolvedValueOnce({ command: 'DELETE' })
+        .mockResolvedValueOnce({ command: 'INSERT' })
         .mockResolvedValueOnce({ command: 'COMMIT' });
 
       const result = await service.update(doctorExample);
@@ -96,5 +92,4 @@ describe('DoctorsService', () => {
       expect(result).toEqual({ id: doctorExample.id, ...doctorExample });
     });
   });
-
 });

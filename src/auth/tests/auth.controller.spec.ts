@@ -81,7 +81,9 @@ describe('AuthController', () => {
         password: 'wrongpassword',
       };
       jest.spyOn(authService, 'validateUser').mockResolvedValue(null);
-      await expect(controller.login(loginBody)).rejects.toThrow(NotFoundException);
+      await expect(controller.login(loginBody)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -123,12 +125,16 @@ describe('AuthController', () => {
       jest.spyOn(usersService, 'findByEmail').mockResolvedValue(null);
 
       // Spy on create method
-      const createSpy = jest.spyOn(usersService, 'create').mockResolvedValue(registeredDoctor);
+      const createSpy = jest
+        .spyOn(usersService, 'create')
+        .mockResolvedValue(registeredDoctor);
 
       const result = await controller.register(registrationBody);
 
       // Ensure findByEmail was called with the correct email
-      expect(usersService.findByEmail).toHaveBeenCalledWith(registrationBody.email);
+      expect(usersService.findByEmail).toHaveBeenCalledWith(
+        registrationBody.email,
+      );
 
       // Ensure create was called with the correct arguments
       expect(createSpy).toHaveBeenCalledWith(registrationBody);

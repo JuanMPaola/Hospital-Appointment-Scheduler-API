@@ -9,13 +9,13 @@ RETURNING *;
 export const deleteDoctorSpecialtiesQuery = `
 DELETE FROM doctor_specialties
 WHERE doctor_id = $1;
-`
+`;
 
 // Delete doctors weekly availability
 export const deleteDoctorWeeklyAvailability = `
 DELETE FROM doctor_weekly_availability
 WHERE doctor_id = $1;
-`
+`;
 
 // Deletes doctor
 export const deleteDoctorQuery = `
@@ -36,7 +36,7 @@ JOIN doctor_specialties ds ON u.id = ds.doctor_id
 JOIN specialties s ON ds.specialty_id = s.id
 WHERE u.id IN (SELECT user_id FROM doctors)
 GROUP BY u.id, u.name, u.email;
-`
+`;
 
 // Find doctor by id
 export const findDoctorByIdQuery = `
@@ -58,7 +58,7 @@ LEFT JOIN (
 ) da ON d.user_id = da.doctor_id
 WHERE u.id = $1
 GROUP BY u.id, u.name, u.email;
-`
+`;
 
 // Get doctors by specialtie
 export const findDoctorBySpecialtieQuery = `
@@ -97,7 +97,7 @@ FROM (
 ) subquery
 LEFT JOIN appointments a ON subquery.day_id = a.day_id AND a.doctor_id = $1
 WHERE a.status = 'pending' OR a.status IS NULL;
-`
+`;
 
 export const findAllDoctorDataBySpecialityQuery = `
 SELECT 
@@ -129,41 +129,40 @@ WHERE ds.specialty_id = $1
 GROUP BY u.id;
 `;
 
-
 export function createInsertSpecialtiesQuery(doctor) {
-    return `
+  return `
     INSERT INTO doctor_specialties (doctor_id, specialty_id)
-    VALUES ${doctor.specialties.map((_, index) => `($1, $${index + 2})`).join(', ')
-        }
+    VALUES ${doctor.specialties
+      .map((_, index) => `($1, $${index + 2})`)
+      .join(', ')}
     RETURNING *;
-    `
+    `;
 }
 
 export function createInsertAvailabilityQuery(
-    week_availability: { [key: number]: number[] }, 
-    doctorId: string
-  ) 
-  {
-    const availabilityEntries = Object.entries(week_availability);
-    const valuesArray: any[] = [];
-    let valuesString = '';
-    availabilityEntries.forEach(([dayId, timeRanges]) => {
-        timeRanges.forEach((timeRangeId) => {
-            valuesString += `($1, $${valuesArray.length + 2}, $${valuesArray.length + 3}), `;
-            valuesArray.push(dayId, timeRangeId);
-        });
+  week_availability: { [key: number]: number[] },
+  doctorId: string,
+) {
+  const availabilityEntries = Object.entries(week_availability);
+  const valuesArray: any[] = [];
+  let valuesString = '';
+  availabilityEntries.forEach(([dayId, timeRanges]) => {
+    timeRanges.forEach((timeRangeId) => {
+      valuesString += `($1, $${valuesArray.length + 2}, $${valuesArray.length + 3}), `;
+      valuesArray.push(dayId, timeRangeId);
     });
-    // Remove the trailing comma and space
-    valuesString = valuesString.slice(0, -2);
+  });
+  // Remove the trailing comma and space
+  valuesString = valuesString.slice(0, -2);
 
-    // Insert the doctorId at the beginning of the valuesArray
-    valuesArray.unshift(doctorId);
-    return {
-        insertAvailabilityQuery: `
+  // Insert the doctorId at the beginning of the valuesArray
+  valuesArray.unshift(doctorId);
+  return {
+    insertAvailabilityQuery: `
       INSERT INTO doctor_weekly_availability (doctor_id, day_id, time_range_id)
       VALUES ${valuesString}
       RETURNING *;
     `,
-        valuesArray: valuesArray
-    }
+    valuesArray: valuesArray,
+  };
 }

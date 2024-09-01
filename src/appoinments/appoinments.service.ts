@@ -1,20 +1,34 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { AppoinmentDto } from './dto/appoinment.dto';
 import { UpdateAppoinmentDto } from './dto/update-appoinment.dto';
 import { DatabaseService } from '../database/database.service';
-import { bringAllAppointmentsQuery, createAppointmentQuery, findAppointmentsByUserIdQuery, deleteAppointmentsByUserIdQuery, updateAppointmentStatusQuery, updateAppointmentQuery, findSpecificAppointmentDoctorQuery, findSpecificAppointmentPatientQuery, deleteAppointmentById } from './appoinmetns.querys';
-import { findAllDoctorDataBySpecialityQuery, findeDoctorsWeekAvailabilityAndAppointments } from '../doctors/doctors.querys';
+import {
+  bringAllAppointmentsQuery,
+  createAppointmentQuery,
+  findAppointmentsByUserIdQuery,
+  updateAppointmentStatusQuery,
+  updateAppointmentQuery,
+  findSpecificAppointmentDoctorQuery,
+  findSpecificAppointmentPatientQuery,
+  deleteAppointmentById,
+} from './appoinmetns.querys';
+import {
+  findAllDoctorDataBySpecialityQuery,
+  findeDoctorsWeekAvailabilityAndAppointments,
+} from '../doctors/doctors.querys';
 import { getPatientByIdQuery } from '../patients/patients.querys';
 
 @Injectable()
 export class AppoinmentsService {
-  constructor(
-    private readonly databaseService: DatabaseService,
-  ) { }
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async create(appoinmentDto: AppoinmentDto) {
     try {
-      await this.appointmentValidation(appoinmentDto)
+      await this.appointmentValidation(appoinmentDto);
 
       const dateObject = new Date(appoinmentDto.date);
       //Extracting values from dto
@@ -24,60 +38,89 @@ export class AppoinmentsService {
         appoinmentDto.date,
         this.getDayIdFromDate(dateObject),
         appoinmentDto.time_range_id,
-        appoinmentDto.status
-      ]
+        appoinmentDto.status,
+      ];
 
       // Send the query and values to db
-      const appoinmentResult = await this.databaseService.query(createAppointmentQuery, appoinmentValues)
+      const appoinmentResult = await this.databaseService.query(
+        createAppointmentQuery,
+        appoinmentValues,
+      );
       return appoinmentResult.rows[0];
     } catch (error) {
-      throw new InternalServerErrorException('Could not create appointment', error.message);
+      throw new InternalServerErrorException(
+        'Could not create appointment',
+        error.message,
+      );
     }
   }
 
   async createNearest(specialtyId: number, patientId: string) {
     try {
       // Get patient info
-      const patient = await this.databaseService.query(getPatientByIdQuery, [patientId]);
+      const patient = await this.databaseService.query(getPatientByIdQuery, [
+        patientId,
+      ]);
       if (!patient.rows[0]) {
-        throw new Error('Missing patient')
+        throw new Error('Missing patient');
       }
       // Get doctors by specialtie
-      const doctors = await this.databaseService.query(findAllDoctorDataBySpecialityQuery, [specialtyId]);
+      const doctors = await this.databaseService.query(
+        findAllDoctorDataBySpecialityQuery,
+        [specialtyId],
+      );
       if (doctors.rows.length === 0) {
-        return new InternalServerErrorException('There are no doctors of that speciality available')
+        return new InternalServerErrorException(
+          'There are no doctors of that speciality available',
+        );
       }
-      const nearestAppointment = await this.searchNearest(doctors.rows, patient.rows[0]);
+      const nearestAppointment = await this.searchNearest(
+        doctors.rows,
+        patient.rows[0],
+      );
 
       return this.create(nearestAppointment);
-
     } catch (error) {
-      throw new InternalServerErrorException('Error creating nearest appointment', error.message);
+      throw new InternalServerErrorException(
+        'Error creating nearest appointment',
+        error.message,
+      );
     }
   }
 
   async findAll() {
     try {
-      const result = await this.databaseService.query(bringAllAppointmentsQuery)
+      const result = await this.databaseService.query(
+        bringAllAppointmentsQuery,
+      );
       return result.rows;
     } catch (error) {
-      throw new InternalServerErrorException('Could not retrieve appointments: ' + error.message);
+      throw new InternalServerErrorException(
+        'Could not retrieve appointments: ' + error.message,
+      );
     }
   }
 
   async findAllByUserId(userId: string) {
     try {
-      const result = await this.databaseService.query(findAppointmentsByUserIdQuery, [userId]);
+      const result = await this.databaseService.query(
+        findAppointmentsByUserIdQuery,
+        [userId],
+      );
       return result.rows;
     } catch (error) {
-      throw new InternalServerErrorException('Could not retrieve appointments: ' + error.message);
+      throw new InternalServerErrorException(
+        'Could not retrieve appointments: ' + error.message,
+      );
     }
   }
 
   async cancel(id: string) {
     try {
-
-      const result = await this.databaseService.query(updateAppointmentStatusQuery, [id]);
+      const result = await this.databaseService.query(
+        updateAppointmentStatusQuery,
+        [id],
+      );
 
       // If no result notify
       if (result.rowCount === 0) {
@@ -86,14 +129,16 @@ export class AppoinmentsService {
 
       return result.rows[0];
     } catch (error) {
-      throw new InternalServerErrorException('Could not update appointment status: ' + error.message);
+      throw new InternalServerErrorException(
+        'Could not update appointment status: ' + error.message,
+      );
     }
   }
 
   async update(id: string, updateAppointmentDto: UpdateAppoinmentDto) {
     try {
       //Validate info
-      await this.appointmentValidation(updateAppointmentDto);      
+      await this.appointmentValidation(updateAppointmentDto);
       const dateObject = new Date(updateAppointmentDto.date);
       //Extracting values from dto
       const updateValues = [
@@ -101,61 +146,80 @@ export class AppoinmentsService {
         updateAppointmentDto.date,
         this.getDayIdFromDate(dateObject),
         updateAppointmentDto.time_range_id,
-        id
+        id,
       ];
-      const result = await this.databaseService.query(updateAppointmentQuery, updateValues);
+      const result = await this.databaseService.query(
+        updateAppointmentQuery,
+        updateValues,
+      );
       // If no result notify
       if (result.rows.length === 0) {
         throw new NotFoundException(`Appointment with id ${id} not found`);
       }
       return result.rows[0];
     } catch (error) {
-      throw new InternalServerErrorException('Could not update appointment: ' + error.message);
+      throw new InternalServerErrorException(
+        'Could not update appointment: ' + error.message,
+      );
     }
   }
 
-  async delete(appointmentId: number){
+  async delete(appointmentId: number) {
     try {
-      const result = await this.databaseService.query(deleteAppointmentById, [appointmentId]);
+      const result = await this.databaseService.query(deleteAppointmentById, [
+        appointmentId,
+      ]);
       return result.rows[0];
     } catch (error) {
-      throw Error('Could not delete appointment')
+      throw Error('Could not delete appointment');
     }
   }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  async findSpecificAppointmentPatient(patient_id: string, date: Date, time_range_id: number) {
+  async findSpecificAppointmentPatient(
+    patient_id: string,
+    date: Date,
+    time_range_id: number,
+  ) {
     try {
-      const appointmentValues = [
-        patient_id,
-        date,
-        time_range_id,
-      ];
+      const appointmentValues = [patient_id, date, time_range_id];
 
-      const result = await this.databaseService.query(findSpecificAppointmentPatientQuery, appointmentValues);
+      const result = await this.databaseService.query(
+        findSpecificAppointmentPatientQuery,
+        appointmentValues,
+      );
       return result.rows[0];
     } catch (error) {
-      throw new InternalServerErrorException('Error finding specific appointment for patient: ' + error.message);
+      throw new InternalServerErrorException(
+        'Error finding specific appointment for patient: ' + error.message,
+      );
     }
   }
 
-  async findSpecificAppointmentDoctor(doctor_id: string, date: Date, time_range_id: number) {
+  async findSpecificAppointmentDoctor(
+    doctor_id: string,
+    date: Date,
+    time_range_id: number,
+  ) {
     try {
-      const appointmentValues = [
-        doctor_id,
-        date,
-        time_range_id,
-      ];
+      const appointmentValues = [doctor_id, date, time_range_id];
 
-      const result = await this.databaseService.query(findSpecificAppointmentDoctorQuery, appointmentValues);
+      const result = await this.databaseService.query(
+        findSpecificAppointmentDoctorQuery,
+        appointmentValues,
+      );
       return result.rows[0];
     } catch (error) {
-      throw new InternalServerErrorException('Error finding specific appointment for doctor: ' + error.message);
+      throw new InternalServerErrorException(
+        'Error finding specific appointment for doctor: ' + error.message,
+      );
     }
   }
 
-  async appointmentValidation(appoinmentDto: AppoinmentDto | UpdateAppoinmentDto) {
+  async appointmentValidation(
+    appoinmentDto: AppoinmentDto | UpdateAppoinmentDto,
+  ) {
     try {
       // If date is today or before, send error
       const today = new Date();
@@ -169,7 +233,10 @@ export class AppoinmentsService {
       }
 
       // Check if doctor is available at that time range
-      const doctorData = await this.databaseService.query(findeDoctorsWeekAvailabilityAndAppointments, [appoinmentDto.doctor_id]);
+      const doctorData = await this.databaseService.query(
+        findeDoctorsWeekAvailabilityAndAppointments,
+        [appoinmentDto.doctor_id],
+      );
 
       const { weekly_availability, appointments } = doctorData.rows[0];
 
@@ -186,35 +253,40 @@ export class AppoinmentsService {
       // Check if the doctor already has an appointment at the selected time range and date
       const conflictingAppointment = appointments.find(
         (appointment) =>
-          new Date(appointment.date).toDateString() === dateObject.toDateString() &&
-          appointment.time_range_id === timeRangeId
+          new Date(appointment.date).toDateString() ===
+            dateObject.toDateString() &&
+          appointment.time_range_id === timeRangeId,
       );
 
       if (conflictingAppointment) {
-        throw new Error('Doctor already has an appointment at the selected time');
+        throw new Error(
+          'Doctor already has an appointment at the selected time',
+        );
       }
 
       // Check if the patient has an appointment at that time range and date
       const patientAppointment = await this.findSpecificAppointmentPatient(
         appoinmentDto.patient_id,
         dateObject,
-        appoinmentDto.time_range_id
+        appoinmentDto.time_range_id,
       );
 
       if (patientAppointment) {
-        throw new Error('Patient already has an appointment at the selected time');
+        throw new Error(
+          'Patient already has an appointment at the selected time',
+        );
       }
-
     } catch (error) {
-      throw new InternalServerErrorException('Error during appointment validation: ' + error.message);
+      throw new InternalServerErrorException(
+        'Error during appointment validation: ' + error.message,
+      );
     }
   }
 
-
   async searchNearest(doctors, patient) {
     const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + 1);  // Starts from tomorrow
-    let day_id = (currentDate.getDay()) % 7 + 1;     // Get day_id
+    currentDate.setDate(currentDate.getDate() + 1); // Starts from tomorrow
+    let day_id = (currentDate.getDay() % 7) + 1; // Get day_id
     let found = false;
     let appointmentObject: AppoinmentDto;
     const maxDaysToCheck = 30; // to prevent infinite loop
@@ -222,13 +294,17 @@ export class AppoinmentsService {
 
     while (!found && daysChecked < maxDaysToCheck) {
       // Filter doctors who are available on the current day_id
-      const availableDoctors = doctors.filter(doctor => doctor.weekly_availability[day_id] && doctor.weekly_availability[day_id].length > 0);
+      const availableDoctors = doctors.filter(
+        (doctor) =>
+          doctor.weekly_availability[day_id] &&
+          doctor.weekly_availability[day_id].length > 0,
+      );
       const timeRanges = new Set<number>();
 
       if (availableDoctors.length > 0) {
-        availableDoctors.forEach(doctor => {
+        availableDoctors.forEach((doctor) => {
           // Add all time ranges into timeRanges set
-          doctor.weekly_availability[day_id].forEach(tm => {
+          doctor.weekly_availability[day_id].forEach((tm) => {
             timeRanges.add(tm);
           });
         });
@@ -241,21 +317,35 @@ export class AppoinmentsService {
           const currentTimeRange = uniqueTimeRanges[i];
 
           // Check if the patient already has an appointment at the current date and time range
-          const patHasAppointment = patient.appointments && patient.appointments.some(appointment => {
-            return appointment.date === currentDate.toISOString().split('T')[0] && appointment.time_range_id === currentTimeRange;
-          });
+          const patHasAppointment =
+            patient.appointments &&
+            patient.appointments.some((appointment) => {
+              return (
+                appointment.date === currentDate.toISOString().split('T')[0] &&
+                appointment.time_range_id === currentTimeRange
+              );
+            });
 
           if (patHasAppointment) {
             continue; // Skip if the patient already has an appointment
           }
 
           for (const doctor of availableDoctors) {
-            if (!doctor.weekly_availability[day_id] || !doctor.weekly_availability[day_id].includes(currentTimeRange)) continue; // Skip if the time range is not available
+            if (
+              !doctor.weekly_availability[day_id] ||
+              !doctor.weekly_availability[day_id].includes(currentTimeRange)
+            )
+              continue; // Skip if the time range is not available
 
             // Check if the doctor already has an appointment at the date and time range
-            const docHasAppointment = doctor.appointments && doctor.appointments.some(appointment => {
-              return appointment.day_id === day_id && appointment.time_range_id === currentTimeRange;
-            });
+            const docHasAppointment =
+              doctor.appointments &&
+              doctor.appointments.some((appointment) => {
+                return (
+                  appointment.day_id === day_id &&
+                  appointment.time_range_id === currentTimeRange
+                );
+              });
 
             if (!docHasAppointment) {
               // If no appointment exists, set the appointment object and flag as found
@@ -264,7 +354,7 @@ export class AppoinmentsService {
                 patient_id: patient.id,
                 date: currentDate,
                 time_range_id: currentTimeRange,
-                status: 'pending'
+                status: 'pending',
               };
               found = true;
               break; // Exit the loop once an appointment is found
@@ -297,7 +387,7 @@ export class AppoinmentsService {
       3: 4, // Wednesday
       4: 5, // Thursday
       5: 6, // Friday
-      6: 7  // Saturday
+      6: 7, // Saturday
     };
 
     // Get the day index from the date (0 for Sunday, 1 for Monday, etc.)

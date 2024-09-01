@@ -9,7 +9,14 @@ import { DoctorsModule } from './doctors/doctors.module';
 import { AppoinmentsModule } from './appoinments/appoinments.module';
 
 @Module({
-  imports: [PatientsModule, DatabaseModule, DoctorsModule, UsersModule, AuthModule, AppoinmentsModule],
+  imports: [
+    PatientsModule,
+    DatabaseModule,
+    DoctorsModule,
+    UsersModule,
+    AuthModule,
+    AppoinmentsModule,
+  ],
   providers: [
     {
       provide: APP_GUARD,

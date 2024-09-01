@@ -1,15 +1,18 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PatientDto } from './dto/patient.dto';
 import { DatabaseService } from '../database/database.service';
-import { createPatientQuery, deletePatientQuery, getAllPaitentsQuery, getPatientByIdQuery } from './patients.querys';
+import {
+  createPatientQuery,
+  deletePatientQuery,
+  getAllPaitentsQuery,
+  getPatientByIdQuery,
+} from './patients.querys';
 import { deleteAppointmentsByUserIdQuery } from '../appoinments/appoinmetns.querys';
 import { UpdatePatientDto } from './dto/update-patient.dto';
 
 @Injectable()
 export class PatientsService {
-  constructor(
-    private readonly databaseService: DatabaseService,
-  ) { }
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async create(patient: PatientDto) {
     try {
@@ -18,13 +21,16 @@ export class PatientsService {
         patient.id,
         patient.age,
         patient.phone,
-        patient.born
+        patient.born,
       ];
       // Send query and values
-      const patientResult = await this.databaseService.query(createPatientQuery, patientValues);
+      const patientResult = await this.databaseService.query(
+        createPatientQuery,
+        patientValues,
+      );
       return patientResult.rows[0];
     } catch (error) {
-      throw new Error('Could not create patient'), error;
+      throw (new Error('Could not create patient'), error);
     }
   }
 
@@ -33,34 +39,39 @@ export class PatientsService {
       const result = await this.databaseService.query(getAllPaitentsQuery);
       return result.rows;
     } catch (error) {
-      throw new Error('Could not get patients'), error;
+      throw (new Error('Could not get patients'), error);
     }
   }
 
   async findOne(id: string) {
     try {
-      const result = await this.databaseService.query(getPatientByIdQuery, [id]);
+      const result = await this.databaseService.query(getPatientByIdQuery, [
+        id,
+      ]);
       return result.rows[0];
     } catch (error) {
-      throw new Error('Could not get patient'), error;
+      throw (new Error('Could not get patient'), error);
     }
   }
-
 
   async delete(userId: string) {
     try {
       // Start the transaction
-      const uno = await this.databaseService.query('BEGIN');
+      await this.databaseService.query('BEGIN');
 
       // Get appointments - if there are any, delete them first
-      const dos = await this.databaseService.query(deleteAppointmentsByUserIdQuery, [userId]);
+      await this.databaseService.query(deleteAppointmentsByUserIdQuery, [
+        userId,
+      ]);
 
       // Query to delete the patient
-      const result = await this.databaseService.query(deletePatientQuery, [userId]);
+      const result = await this.databaseService.query(deletePatientQuery, [
+        userId,
+      ]);
 
       // End transaction
       await this.databaseService.query('COMMIT');
-      return /* {message: "User deleted", data:  */result.rows[0]/* } */;
+      return /* {message: "User deleted", data:  */ result.rows[0] /* } */;
     } catch (error) {
       // Rollback the transaction
       await this.databaseService.query('ROLLBACK');
@@ -85,13 +96,24 @@ export class PatientsService {
         patient.born,
         patient.id,
       ];
-      const patientResult = await this.databaseService.query(patientQuery, patientValues);
+      const patientResult = await this.databaseService.query(
+        patientQuery,
+        patientValues,
+      );
 
       await this.databaseService.query('COMMIT');
-      return { id: patient.id, email: patient.email, password: patient.password, ...patientResult.rows[0], };
+      return {
+        id: patient.id,
+        email: patient.email,
+        password: patient.password,
+        ...patientResult.rows[0],
+      };
     } catch (error) {
       await this.databaseService.query('ROLLBACK');
-      throw new InternalServerErrorException('Could not update patient', error.message);
+      throw new InternalServerErrorException(
+        'Could not update patient',
+        error.message,
+      );
     }
   }
 }

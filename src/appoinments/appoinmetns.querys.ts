@@ -3,12 +3,12 @@ export const createAppointmentQuery = `
 INSERT INTO appointments (doctor_id, patient_id, date, day_id, time_range_id, status)
 VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *
-`
+`;
 
 // Query to get all appointments
 export const bringAllAppointmentsQuery = `
 SELECT * FROM appointments 
-`
+`;
 
 // Query to get allappointments of a user
 export const findAppointmentsByUserIdQuery = `
@@ -32,11 +32,11 @@ LEFT JOIN time_range tr ON a.time_range_id = tr.id
 WHERE a.patient_id = $1 OR a.doctor_id = $1
 `;
 
-export const deleteAppointmentById =`
+export const deleteAppointmentById = `
 DELETE FROM appointments
 WHERE id = $1
 RETURNING *;
-`
+`;
 
 // Query to check if the doctor has an appointment at that time on the specified day
 export const findSpecificAppointmentDoctorQuery = `

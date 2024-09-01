@@ -64,13 +64,15 @@ describe('UsersController', () => {
     it('should throw NotFoundException if user not found', async () => {
       const email = 'notfound@example.com';
       jest.spyOn(service, 'findByEmail').mockResolvedValue(null);
-      await expect(controller.findByEmail(email)).rejects.toThrow(NotFoundException);
+      await expect(controller.findByEmail(email)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('update', () => {
     const id = '1';
-    const updateDto : DoctorDto & PatientDto = {
+    const updateDto: DoctorDto & PatientDto = {
       id: 'some-doctor-id',
       name: 'Dr. John Doe',
       password: 'securepassword',
@@ -87,14 +89,16 @@ describe('UsersController', () => {
     };
 
     it('should update and return the user', async () => {
-      jest.spyOn(service, 'findById').mockResolvedValue(updateDto)
+      jest.spyOn(service, 'findById').mockResolvedValue(updateDto);
       jest.spyOn(service, 'update').mockResolvedValue(updateDto);
       expect(await controller.update(id, updateDto)).toBe(updateDto);
     });
 
     it('should throw NotFoundException if the user to update is not found', async () => {
-      jest.spyOn(service, 'findById').mockResolvedValue(undefined)
-      await expect(controller.update(id, updateDto)).rejects.toThrow(NotFoundException);
+      jest.spyOn(service, 'findById').mockResolvedValue(undefined);
+      await expect(controller.update(id, updateDto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -103,7 +107,7 @@ describe('UsersController', () => {
 
     it('should delete and return the user', async () => {
       const result = deleteUsersResponseExample;
-      jest.spyOn(service, 'findById').mockResolvedValue({id, name: "finded"})
+      jest.spyOn(service, 'findById').mockResolvedValue({ id, name: 'finded' });
       jest.spyOn(service, 'delete').mockResolvedValue(result);
       expect(await controller.remove(id)).toBe(result);
     });

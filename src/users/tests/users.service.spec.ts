@@ -4,7 +4,10 @@ import { PatientsService } from '../../patients/patients.service';
 import { DoctorsService } from '../../doctors/doctors.service';
 import { DatabaseService } from '../../database/database.service';
 import { MockDatabaseService } from '../../../test/mockDatabaseService';
-import { getUserByEmailResponseExample, getUsersResponseExample } from '../../utils/examples/users.example';
+import {
+  getUserByEmailResponseExample,
+  getUsersResponseExample,
+} from '../../utils/examples/users.example';
 import { DoctorDto } from '../../doctors/dto/doctor.dto';
 import { PatientDto } from '../../patients/dto/patient.dto';
 
@@ -21,14 +24,16 @@ describe('UsersService', () => {
         DoctorsService,
         {
           provide: DatabaseService,
-          useClass: MockDatabaseService
-        }
+          useClass: MockDatabaseService,
+        },
       ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
     doctorsService = module.get<DoctorsService>(DoctorsService);
-    databaseService = module.get<DatabaseService>(DatabaseService) as jest.Mocked<MockDatabaseService>;
+    databaseService = module.get<DatabaseService>(
+      DatabaseService,
+    ) as jest.Mocked<MockDatabaseService>;
   });
 
   it('should be defined', () => {
@@ -64,23 +69,27 @@ describe('UsersService', () => {
       const result = await service.create(example);
       expect(result).toEqual({ id: example.id, ...example });
     });
-  })
+  });
 
   describe('findAll', () => {
     it('should return an array of users', async () => {
-      databaseService.query.mockResolvedValueOnce({ rows: getUsersResponseExample })
+      databaseService.query.mockResolvedValueOnce({
+        rows: getUsersResponseExample,
+      });
       const result = await service.findAll();
       expect(result).toBe(getUsersResponseExample);
-    })
-  })
+    });
+  });
 
   describe('findById', () => {
     it('should return the user with the same id', async () => {
-      databaseService.query.mockResolvedValueOnce({ rows: [getUserByEmailResponseExample] });
+      databaseService.query.mockResolvedValueOnce({
+        rows: [getUserByEmailResponseExample],
+      });
       const result = await service.findById(getUserByEmailResponseExample.id);
       expect(result).toBe(getUserByEmailResponseExample);
-    })
-  })
+    });
+  });
 
   describe('update', () => {
     it('should update and return user', async () => {
@@ -95,8 +104,8 @@ describe('UsersService', () => {
       // Await the service update method and check the result
       const result = await service.update(example.id, example);
       expect(result).toEqual({ id: example.id, ...example });
-    })
-  })
+    });
+  });
 
   describe('delete', () => {
     it('should delete and return the user', async () => {
@@ -109,13 +118,11 @@ describe('UsersService', () => {
       databaseService.query
         .mockResolvedValueOnce({ command: 'BEGIN' })
         .mockResolvedValueOnce({ rows: [{ id: userId }] })
-        .mockResolvedValueOnce({ command: 'COMMIT' }); 
-
+        .mockResolvedValueOnce({ command: 'COMMIT' });
 
       const result = await service.delete(userId);
 
       expect(result).toEqual({ id: userId });
-    })
-  })
-
+    });
+  });
 });

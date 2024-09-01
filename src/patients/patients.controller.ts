@@ -1,14 +1,22 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { PatientsService } from './patients.service';
-import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { findOnePatientResponseExample, swaggerFindAllPatientsResponseExample, swaggerFindOnePatientResponseExample } from '../utils/examples/patients.example';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import {
+  swaggerFindAllPatientsResponseExample,
+  swaggerFindOnePatientResponseExample,
+} from '../utils/examples/patients.example';
 import { unauthorizedResponseExample } from '../utils/examples/unauthorized.example';
 
 @ApiTags('Patients')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
   description: 'Unathorized Bearer Auth',
-  example: unauthorizedResponseExample
+  example: unauthorizedResponseExample,
 })
 @Controller('patients')
 export class PatientsController {
@@ -25,4 +33,4 @@ export class PatientsController {
   findOne(@Param('id') id: string) {
     return this.patientsService.findOne(id);
   }
-};
+}

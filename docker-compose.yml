@@ -12,7 +12,7 @@ services:
       - "3000:3000"
 
   postgres:
-    image: postgres:16.3
+    image: postgres:latest
     ports:
       - "35000:5432"
     environment:

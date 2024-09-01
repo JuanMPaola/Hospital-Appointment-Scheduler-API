@@ -1,20 +1,28 @@
-import { Controller, Get, Param, } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
-import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { unauthorizedResponseExample } from '../utils/examples/unauthorized.example';
-import { findAvailabilityResponseExample, findBySpecialtyResponseExample, findOneDoctorResponseExample, swaggerFindAllDoctorsResponseExample, swaggerFindAvailabilityResponseExample, swaggerFindBySpecialtyResponseExample, swaggerFindOneDoctorResponseExample } from '../utils/examples/doctors.examples';
-
+import {
+  swaggerFindAllDoctorsResponseExample,
+  swaggerFindAvailabilityResponseExample,
+  swaggerFindBySpecialtyResponseExample,
+  swaggerFindOneDoctorResponseExample,
+} from '../utils/examples/doctors.examples';
 
 @ApiTags('Doctors')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
   description: 'Unathorized Bearer Auth',
-  example: unauthorizedResponseExample
+  example: unauthorizedResponseExample,
 })
 @Controller('doctors')
 export class DoctorsController {
   constructor(private readonly doctorsService: DoctorsService) {}
-
 
   @Get()
   @ApiOkResponse(swaggerFindAllDoctorsResponseExample)

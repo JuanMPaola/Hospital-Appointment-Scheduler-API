@@ -2,11 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DoctorsController } from '../doctors.controller';
 import { DoctorsService } from '../doctors.service';
 import { DatabaseModule } from '../../database/database.module';
-import { 
-  findAllDoctorsResponseExample, 
-  findAvailabilityResponseExample, 
-  findBySpecialtyResponseExample, 
-  findOneDoctorResponseExample 
+import {
+  findAllDoctorsResponseExample,
+  findAvailabilityResponseExample,
+  findBySpecialtyResponseExample,
+  findOneDoctorResponseExample,
 } from '../../utils/examples/doctors.examples';
 
 describe('DoctorsController', () => {
@@ -80,12 +80,14 @@ describe('DoctorsController', () => {
       const specialtyId = 1;
       const error = new Error('Specialty not found');
       jest.spyOn(service, 'findBySpecialty').mockRejectedValue(error);
-      await expect(controller.findBySpecialty(specialtyId)).rejects.toThrow(error);
+      await expect(controller.findBySpecialty(specialtyId)).rejects.toThrow(
+        error,
+      );
     });
   });
 
   describe('findAvailability', () => {
-    it('should return a doctor\'s weekly availability', async () => {
+    it("should return a doctor's weekly availability", async () => {
       const id = '1';
       const result = findAvailabilityResponseExample;
       jest.spyOn(service, 'findAvailability').mockResolvedValue(result);

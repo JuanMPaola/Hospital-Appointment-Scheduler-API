@@ -6,7 +6,7 @@ export const createPatientQuery = `
 `;
 
 // Query to get all patients
-export const getAllPaitentsQuery =` 
+export const getAllPaitentsQuery = ` 
 SELECT u.id, u.email, u.name, p.phone, p.age, p.born
 FROM patients p
 JOIN users u ON u.id = p.user_id
