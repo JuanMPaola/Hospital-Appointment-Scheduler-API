@@ -6,10 +6,9 @@ import { DoctorsService } from '../../doctors/doctors.service';
 import { PatientsService } from '../../patients/patients.service';
 import { UsersService } from '../../users/users.service';
 import { getUserByEmailResponseExample } from '../../utils/examples/users.example';
-import { loginResponseExample } from '../../utils/examples/auth.examples';
-import { verify } from '../jwl';
+import * as jwt from '../jwt';
 
-jest.mock('../jwl');
+jest.mock('../jwt');
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -54,13 +53,56 @@ describe('AuthService', () => {
       });
       expect(result).toBe(null);
     });
+
+    it('should throw an error if there is an issue finding the user', async () => {
+      jest
+        .spyOn(service, 'validateUser')
+        .mockRejectedValue(new Error('Error finding user'));
+
+      const { email, password } = getUserByEmailResponseExample;
+
+      await expect(service.validateUser({ email, password })).rejects.toThrow(
+        'Error finding user',
+      );
+    });
   });
 
   describe('login', () => {
     it('should return the access token if login is successful', async () => {
-      jest.spyOn(service, 'login').mockResolvedValue(loginResponseExample);
-      const result = await service.login(getUserByEmailResponseExample);
-      expect(result).toEqual(loginResponseExample);
+      const signSpy = jest.spyOn(jwt, 'sign');
+      signSpy.mockReturnValue('valid_access_token');
+
+      const user = getUserByEmailResponseExample;
+      const result = await service.login(user);
+
+      expect(result).toEqual({
+        access_token: 'valid_access_token',
+      });
+    });
+
+    it('should throw an error if user data is incomplete (no email)', async () => {
+      const invalidUser = { ...getUserByEmailResponseExample, email: null };
+
+      await expect(service.login(invalidUser)).rejects.toThrow(
+        'Invalid user data',
+      );
+    });
+
+    it('should throw an error if token generation fails', async () => {
+      const signSpy = jest.spyOn(jwt, 'sign');
+      signSpy.mockImplementation(() => {
+        throw new Error('Token generation failed');
+      });
+
+      const user = getUserByEmailResponseExample;
+
+      await expect(service.login(user)).rejects.toThrow(
+        'Token generation failed',
+      );
+    });
+
+    it('should throw an error if the user object is null', async () => {
+      await expect(service.login(null)).rejects.toThrow('Invalid user data');
     });
   });
 
@@ -74,7 +116,7 @@ describe('AuthService', () => {
       };
 
       // Mock the verify function to return a decoded token
-      (verify as jest.Mock).mockReturnValue(decodedToken);
+      (jwt.verify as jest.Mock).mockReturnValue(decodedToken);
 
       const result = await service.verifyToken(validToken);
       expect(result).toEqual(decodedToken);
@@ -84,7 +126,7 @@ describe('AuthService', () => {
       const invalidToken = 'invalid.token.here';
 
       // Mock the verify function to throw an error
-      (verify as jest.Mock).mockImplementation(() => {
+      (jwt.verify as jest.Mock).mockImplementation(() => {
         throw new Error('Invalid token');
       });
 

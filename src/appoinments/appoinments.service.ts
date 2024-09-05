@@ -76,10 +76,7 @@ export class AppoinmentsService {
           'There are no doctors of that speciality available',
         );
       }
-      const nearestAppointment = searchNearest(
-        doctors.rows,
-        patient.rows[0],
-      );
+      const nearestAppointment = searchNearest(doctors.rows, patient.rows[0]);
 
       return this.create(nearestAppointment);
     } catch (error) {
@@ -140,7 +137,10 @@ export class AppoinmentsService {
   async update(id: string, updateAppointmentDto: UpdateAppoinmentDto) {
     try {
       //Validate info
-      const appoinment = await this.databaseService.query(findAppointmentByIdQuery, [id])
+      const appoinment = await this.databaseService.query(
+        findAppointmentByIdQuery,
+        [id],
+      );
       if (appoinment.rows.length === 0) {
         throw new NotFoundException(`Appointment with id ${id} not found`);
       }
@@ -226,45 +226,45 @@ export class AppoinmentsService {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const dateObject = new Date(appoinmentDto.date);
-  
+
       if (dateObject <= today) {
         throw new Error('Appointment must be tomorrow or later');
       }
-  
+
       const doctorData = await this.databaseService.query(
         findeDoctorsWeekAvailabilityAndAppointments,
         [appoinmentDto.doctor_id],
       );
-  
+
       const { weekly_availability, appointments } = doctorData.rows[0];
-  
+
       const dayId = getDayIdFromDate(dateObject);
       const timeRangeId = appoinmentDto.time_range_id;
-  
+
       const availableTimeRanges = weekly_availability[dayId];
       if (!availableTimeRanges || !availableTimeRanges.includes(timeRangeId)) {
         throw new Error('Doctor is not available at the selected day and time');
       }
-  
+
       const conflictingAppointment = appointments.find(
         (appointment) =>
           new Date(appointment.date).toDateString() ===
             dateObject.toDateString() &&
           appointment.time_range_id === timeRangeId,
       );
-  
+
       if (conflictingAppointment) {
         throw new Error(
           'Doctor already has an appointment at the selected time',
         );
       }
-  
+
       const patientAppointment = await this.findSpecificAppointmentPatient(
         appoinmentDto.patient_id,
         dateObject,
         appoinmentDto.time_range_id,
       );
-  
+
       if (patientAppointment) {
         throw new Error(
           'Patient already has an appointment at the selected time',

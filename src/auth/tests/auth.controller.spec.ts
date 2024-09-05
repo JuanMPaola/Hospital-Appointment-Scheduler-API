@@ -120,7 +120,6 @@ describe('AuthController', () => {
   };
   describe('register', () => {
     it('should return the doctor values if registration was successful', async () => {
-
       // Ensure findByEmail returns null to simulate no existing user
       jest.spyOn(usersService, 'findByEmail').mockResolvedValue(null);
 
@@ -141,11 +140,12 @@ describe('AuthController', () => {
 
       // Ensure the result is the registered doctor
       expect(result).toEqual(registeredDoctor);
-
     });
-    
+
     it('should throw NotFoundException if the user is not registered', async () => {
-      jest.spyOn(usersService, 'findByEmail').mockResolvedValue(registeredDoctor);
+      jest
+        .spyOn(usersService, 'findByEmail')
+        .mockResolvedValue(registeredDoctor);
       await expect(controller.register(registrationBody)).rejects.toThrow(
         ConflictException,
       );

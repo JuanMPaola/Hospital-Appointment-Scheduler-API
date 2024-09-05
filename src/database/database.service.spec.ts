@@ -67,4 +67,53 @@ describe('DatabaseService', () => {
     expect(mockClient.query).toHaveBeenCalledWith(createTablesQuery);
     expect(mockClient.query).toHaveBeenCalledWith(insertBasicInfoQuery);
   });
+
+  // New tests to improve branch coverage
+
+  it('should delete tables if reset is true', async () => {
+    // Simulate the scenario where the reset variable is true
+    const deleteTablesQuery = 'DROP TABLE IF EXISTS users'; // Add this to your querysDB file
+
+    jest.spyOn(service, 'createTables').mockImplementation(async () => {
+      const reset = true; // Set reset to true in the test
+      if (reset) {
+        await mockClient.query(deleteTablesQuery); // Mock delete tables query
+      }
+      await mockClient.query(activeUUIDQuery);
+      await mockClient.query(createTablesQuery);
+      await mockClient.query(insertBasicInfoQuery);
+    });
+
+    await service.createTables();
+
+    expect(mockClient.query).toHaveBeenCalledWith(deleteTablesQuery);
+    expect(mockClient.query).toHaveBeenCalledWith(activeUUIDQuery);
+    expect(mockClient.query).toHaveBeenCalledWith(createTablesQuery);
+    expect(mockClient.query).toHaveBeenCalledWith(insertBasicInfoQuery);
+  });
+
+  it('should throw an error if query fails during onModuleInit', async () => {
+    mockClient.connect.mockImplementationOnce(() => {
+      throw new Error('Database connection failed');
+    });
+
+    await expect(service.onModuleInit()).rejects.toThrow(
+      'Database connection failed',
+    );
+  });
+
+  it('should throw an error if query execution fails', async () => {
+    const queryText = 'SELECT * FROM users';
+    mockClient.query.mockRejectedValueOnce(new Error('Query failed'));
+
+    await expect(service.query(queryText)).rejects.toThrow('Query failed');
+  });
+
+  it('should throw an error if createTables query fails', async () => {
+    mockClient.query.mockRejectedValueOnce(new Error('Table creation failed'));
+
+    await expect(service.createTables()).rejects.toThrow(
+      'Table creation failed',
+    );
+  });
 });

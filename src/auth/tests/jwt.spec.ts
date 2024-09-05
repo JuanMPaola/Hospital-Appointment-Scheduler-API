@@ -1,4 +1,4 @@
-import { sign, verify } from '../jwl';
+import { sign, verify } from '../jwt';
 
 describe('JWT', () => {
   const payload = { userId: 123, role: 'admin' };

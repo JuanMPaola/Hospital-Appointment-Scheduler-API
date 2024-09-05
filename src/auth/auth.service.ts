@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { UserDto } from '../users/dto/user.dto';
-import { sign, verify } from './jwl';
+import { sign, verify } from './jwt';
 import { AuthDto } from './dto/auth.dto';
 
 @Injectable()
@@ -23,6 +23,10 @@ export class AuthService {
   }
 
   async login(user: UserDto) {
+    if (!user || !user.email) {
+      throw new Error('Invalid user data');
+    }
+
     const payload = { email: user.email, sub: user.id, role: user.role };
 
     return {

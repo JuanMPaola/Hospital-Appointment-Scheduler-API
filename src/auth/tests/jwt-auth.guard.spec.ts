@@ -66,4 +66,23 @@ describe('JwtAuthGuard', () => {
       UnauthorizedException,
     );
   });
+
+  it('should return null if Authorization header is improperly formatted', async () => {
+    jest.spyOn(reflector, 'get').mockReturnValue(false);
+
+    const mockContext = {
+      getHandler: jest.fn(),
+      switchToHttp: jest.fn().mockReturnValue({
+        getRequest: jest.fn().mockReturnValue({
+          headers: {
+            authorization: 'Token invalidFormatToken',
+          },
+        }),
+      }),
+    } as unknown as ExecutionContext;
+
+    await expect(guard.canActivate(mockContext)).rejects.toThrow(
+      UnauthorizedException,
+    );
+  });
 });

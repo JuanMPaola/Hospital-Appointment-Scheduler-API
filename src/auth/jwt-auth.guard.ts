@@ -21,7 +21,7 @@ export class JwtAuthGuard implements CanActivate {
       context.getHandler(),
     );
     if (skipAuth) {
-      return true; 
+      return true;
     }
 
     // Get the request and extract the token

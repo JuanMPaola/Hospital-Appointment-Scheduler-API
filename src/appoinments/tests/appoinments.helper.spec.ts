@@ -10,8 +10,8 @@ describe('searchNearest', () => {
     {
       id: 'doctor1',
       weekly_availability: {
-        2: [9, 10, 11], 
-        3: [9, 14], 
+        2: [9, 10, 11],
+        3: [9, 14],
       },
       appointments: [],
     },
@@ -73,8 +73,9 @@ describe('searchNearest', () => {
       },
     ];
 
-    expect(() => searchNearest(noAvailableDoctors, mockPatient))
-      .toThrow('No available appointment found within the next 30 days');
+    expect(() => searchNearest(noAvailableDoctors, mockPatient)).toThrow(
+      'No available appointment found within the next 30 days',
+    );
   });
 
   it('should correctly move to the next day if no appointment is found on the current day', () => {
@@ -130,5 +131,4 @@ describe('searchNearest', () => {
       status: 'pending',
     });
   });
-
 });
