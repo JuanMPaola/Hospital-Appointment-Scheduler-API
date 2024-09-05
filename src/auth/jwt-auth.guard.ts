@@ -12,7 +12,7 @@ import { SKIP_AUTH_KEY } from './skip-auth.decorator';
 export class JwtAuthGuard implements CanActivate {
   constructor(
     private readonly authService: AuthService,
-    private readonly reflector: Reflector, // Is used to access @SkipAuth
+    private readonly reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -21,7 +21,7 @@ export class JwtAuthGuard implements CanActivate {
       context.getHandler(),
     );
     if (skipAuth) {
-      return true; // Skip authentication for routes with @SkipAuth
+      return true; 
     }
 
     // Get the request and extract the token

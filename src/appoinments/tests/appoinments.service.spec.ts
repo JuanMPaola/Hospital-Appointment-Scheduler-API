@@ -11,6 +11,8 @@ import {
   testingAppointmentExample,
 } from '../../utils/examples/appointments.example';
 import { deleteAppointmentById } from '../appoinmetns.querys';
+import { UpdateAppoinmentDto } from '../dto/update-appoinment.dto';
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 
 describe('AppoinmentsService', () => {
   let service: AppoinmentsService;
@@ -158,5 +160,102 @@ describe('AppoinmentsService', () => {
     expect(databaseService.query).toHaveBeenCalledWith(deleteAppointmentById, [
       appointmentId,
     ]);
+  });
+
+  const updateAppointmentDto: UpdateAppoinmentDto = {
+    patient_id: 'patientId',
+    doctor_id: 'doctorId',
+    date: new Date(),
+    time_range_id: 17,
+    status: 'scheduled',
+  };
+
+  describe('update', () => {
+    it('should throw InternalServer if appointment does not exist', async () => {
+      const appointmentId = '123';
+  
+      databaseService.query.mockResolvedValueOnce({
+        rowCount: 0,
+        rows: [],
+      });
+  
+      await expect(
+        service.update(appointmentId, updateAppointmentDto),
+      ).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete an appointment by ID and return the deleted appointment', async () => {
+      const appointmentId = 1;
+      const deletedAppointment = {
+        id: appointmentId,
+        doctor_id: 'doctorId',
+        patient_id: 'patientId',
+        date: '2024-10-10T10:00:00Z',
+        time_range_id: 'timeRangeId',
+        status: 'scheduled',
+      };
+  
+      databaseService.query.mockResolvedValueOnce({
+        rowCount: 1,
+        rows: [deletedAppointment],
+      });
+  
+      const result = await service.delete(appointmentId);
+  
+      expect(result).toEqual(deletedAppointment);
+      expect(databaseService.query).toHaveBeenCalledWith(deleteAppointmentById, [
+        appointmentId,
+      ]);
+    });
+  });
+
+  describe('appointmentValidation', () => {
+  
+    it('should throw an error if the doctor is not available at the selected time', async () => {
+      const dto: UpdateAppoinmentDto = {
+        patient_id: 'patientId',
+        doctor_id: 'doctorId',
+        date: new Date('2024-09-10'), // A future date
+        time_range_id: 17,
+        status: 'scheduled',
+      };
+  
+      databaseService.query.mockResolvedValueOnce({
+        rows: [{
+          weekly_availability: { 2: [18] }, // Doctor available on Tuesday (2) at time range 18
+          appointments: []
+        }]
+      });
+  
+      await expect(service.appointmentValidation(dto))
+        .rejects
+        .toThrow(new Error('Error during appointment validation: Doctor is not available at the selected day and time'));
+    });
+  
+    it('should throw an error if the doctor has a conflicting appointment at the selected time', async () => {
+      const dto: UpdateAppoinmentDto = {
+        patient_id: 'patientId',
+        doctor_id: 'doctorId',
+        date: new Date('2024-09-10'), // A future date
+        time_range_id: 17,
+        status: 'scheduled',
+      };
+  
+      databaseService.query.mockResolvedValueOnce({
+        rows: [{
+          weekly_availability: { 2: [17] }, // Doctor available on Tuesday (2) at time range 17
+          appointments: [{
+            date: new Date('2024-09-10').toISOString(), // A conflicting appointment
+            time_range_id: 17,
+          }]
+        }]
+      });
+  
+      await expect(service.appointmentValidation(dto))
+        .rejects
+        .toThrow(new Error('Error during appointment validation: Doctor already has an appointment at the selected time'));
+    });
   });
 });

@@ -15,12 +15,14 @@ import {
   findSpecificAppointmentDoctorQuery,
   findSpecificAppointmentPatientQuery,
   deleteAppointmentById,
+  findAppointmentByIdQuery,
 } from './appoinmetns.querys';
 import {
   findAllDoctorDataBySpecialityQuery,
   findeDoctorsWeekAvailabilityAndAppointments,
 } from '../doctors/doctors.querys';
 import { getPatientByIdQuery } from '../patients/patients.querys';
+import { searchNearest, getDayIdFromDate } from './appoinments.helper';
 
 @Injectable()
 export class AppoinmentsService {
@@ -36,7 +38,7 @@ export class AppoinmentsService {
         appoinmentDto.doctor_id,
         appoinmentDto.patient_id,
         appoinmentDto.date,
-        this.getDayIdFromDate(dateObject),
+        getDayIdFromDate(dateObject),
         appoinmentDto.time_range_id,
         appoinmentDto.status,
       ];
@@ -74,7 +76,7 @@ export class AppoinmentsService {
           'There are no doctors of that speciality available',
         );
       }
-      const nearestAppointment = await this.searchNearest(
+      const nearestAppointment = searchNearest(
         doctors.rows,
         patient.rows[0],
       );
@@ -138,13 +140,17 @@ export class AppoinmentsService {
   async update(id: string, updateAppointmentDto: UpdateAppoinmentDto) {
     try {
       //Validate info
+      const appoinment = await this.databaseService.query(findAppointmentByIdQuery, [id])
+      if (appoinment.rows.length === 0) {
+        throw new NotFoundException(`Appointment with id ${id} not found`);
+      }
       await this.appointmentValidation(updateAppointmentDto);
       const dateObject = new Date(updateAppointmentDto.date);
       //Extracting values from dto
       const updateValues = [
         updateAppointmentDto.doctor_id,
         updateAppointmentDto.date,
-        this.getDayIdFromDate(dateObject),
+        getDayIdFromDate(dateObject),
         updateAppointmentDto.time_range_id,
         id,
       ];
@@ -152,10 +158,6 @@ export class AppoinmentsService {
         updateAppointmentQuery,
         updateValues,
       );
-      // If no result notify
-      if (result.rows.length === 0) {
-        throw new NotFoundException(`Appointment with id ${id} not found`);
-      }
       return result.rows[0];
     } catch (error) {
       throw new InternalServerErrorException(
@@ -221,56 +223,48 @@ export class AppoinmentsService {
     appoinmentDto: AppoinmentDto | UpdateAppoinmentDto,
   ) {
     try {
-      // If date is today or before, send error
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
-      // Convert appoinmentDto.date to a Date object if it's not already
       const dateObject = new Date(appoinmentDto.date);
-
+  
       if (dateObject <= today) {
         throw new Error('Appointment must be tomorrow or later');
       }
-
-      // Check if doctor is available at that time range
+  
       const doctorData = await this.databaseService.query(
         findeDoctorsWeekAvailabilityAndAppointments,
         [appoinmentDto.doctor_id],
       );
-
+  
       const { weekly_availability, appointments } = doctorData.rows[0];
-
-      // Get dayId and time range
-      const dayId = this.getDayIdFromDate(dateObject);
+  
+      const dayId = getDayIdFromDate(dateObject);
       const timeRangeId = appoinmentDto.time_range_id;
-
-      // Check if the doctor works on the selected day and time range
+  
       const availableTimeRanges = weekly_availability[dayId];
       if (!availableTimeRanges || !availableTimeRanges.includes(timeRangeId)) {
         throw new Error('Doctor is not available at the selected day and time');
       }
-
-      // Check if the doctor already has an appointment at the selected time range and date
+  
       const conflictingAppointment = appointments.find(
         (appointment) =>
           new Date(appointment.date).toDateString() ===
             dateObject.toDateString() &&
           appointment.time_range_id === timeRangeId,
       );
-
+  
       if (conflictingAppointment) {
         throw new Error(
           'Doctor already has an appointment at the selected time',
         );
       }
-
-      // Check if the patient has an appointment at that time range and date
+  
       const patientAppointment = await this.findSpecificAppointmentPatient(
         appoinmentDto.patient_id,
         dateObject,
         appoinmentDto.time_range_id,
       );
-
+  
       if (patientAppointment) {
         throw new Error(
           'Patient already has an appointment at the selected time',
@@ -281,118 +275,5 @@ export class AppoinmentsService {
         'Error during appointment validation: ' + error.message,
       );
     }
-  }
-
-  async searchNearest(doctors, patient) {
-    const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + 1); // Starts from tomorrow
-    let day_id = (currentDate.getDay() % 7) + 1; // Get day_id
-    let found = false;
-    let appointmentObject: AppoinmentDto;
-    const maxDaysToCheck = 30; // to prevent infinite loop
-    let daysChecked = 0;
-
-    while (!found && daysChecked < maxDaysToCheck) {
-      // Filter doctors who are available on the current day_id
-      const availableDoctors = doctors.filter(
-        (doctor) =>
-          doctor.weekly_availability[day_id] &&
-          doctor.weekly_availability[day_id].length > 0,
-      );
-      const timeRanges = new Set<number>();
-
-      if (availableDoctors.length > 0) {
-        availableDoctors.forEach((doctor) => {
-          // Add all time ranges into timeRanges set
-          doctor.weekly_availability[day_id].forEach((tm) => {
-            timeRanges.add(tm);
-          });
-        });
-
-        // Convert Set to Array and sort in ascending order
-        const uniqueTimeRanges = Array.from(timeRanges).sort((a, b) => a - b);
-
-        // Iterate through all unique time ranges
-        for (let i = 0; i < uniqueTimeRanges.length; i++) {
-          const currentTimeRange = uniqueTimeRanges[i];
-
-          // Check if the patient already has an appointment at the current date and time range
-          const patHasAppointment =
-            patient.appointments &&
-            patient.appointments.some((appointment) => {
-              return (
-                appointment.date === currentDate.toISOString().split('T')[0] &&
-                appointment.time_range_id === currentTimeRange
-              );
-            });
-
-          if (patHasAppointment) {
-            continue; // Skip if the patient already has an appointment
-          }
-
-          for (const doctor of availableDoctors) {
-            if (
-              !doctor.weekly_availability[day_id] ||
-              !doctor.weekly_availability[day_id].includes(currentTimeRange)
-            )
-              continue; // Skip if the time range is not available
-
-            // Check if the doctor already has an appointment at the date and time range
-            const docHasAppointment =
-              doctor.appointments &&
-              doctor.appointments.some((appointment) => {
-                return (
-                  appointment.day_id === day_id &&
-                  appointment.time_range_id === currentTimeRange
-                );
-              });
-
-            if (!docHasAppointment) {
-              // If no appointment exists, set the appointment object and flag as found
-              appointmentObject = {
-                doctor_id: doctor.id,
-                patient_id: patient.id,
-                date: currentDate,
-                time_range_id: currentTimeRange,
-                status: 'pending',
-              };
-              found = true;
-              break; // Exit the loop once an appointment is found
-            }
-          }
-
-          if (found) break; // Exit the outer loop if an appointment is found
-        }
-      }
-
-      if (!found) {
-        currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
-        day_id = (day_id % 7) + 1;
-        daysChecked++;
-      }
-    }
-
-    if (!found) {
-      throw new Error('No available appointment found within the next 30 days');
-    }
-    return appointmentObject;
-  }
-
-  getDayIdFromDate(date: Date): number {
-    // Days of the week mapping to id
-    const dayMapping = {
-      0: 1, // Sunday
-      1: 2, // Monday
-      2: 3, // Tuesday
-      3: 4, // Wednesday
-      4: 5, // Thursday
-      5: 6, // Friday
-      6: 7, // Saturday
-    };
-
-    // Get the day index from the date (0 for Sunday, 1 for Monday, etc.)
-    const dayIndex = date.getDay();
-
-    return dayMapping[dayIndex];
   }
 }
