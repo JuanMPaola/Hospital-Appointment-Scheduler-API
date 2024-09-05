@@ -238,7 +238,7 @@ describe('AppoinmentsService', () => {
 
       await expect(service.appointmentValidation(dto)).rejects.toThrow(
         new Error(
-          'Error during appointment validation: Doctor already has an appointment at the selected time',
+          'Error during appointment validation: Doctor is not available at the selected day and time',
         ),
       );
     });
