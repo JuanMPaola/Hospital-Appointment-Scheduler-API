@@ -12,7 +12,7 @@ import {
 } from '../../utils/examples/appointments.example';
 import { deleteAppointmentById } from '../appoinmetns.querys';
 import { UpdateAppoinmentDto } from '../dto/update-appoinment.dto';
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 
 describe('AppoinmentsService', () => {
   let service: AppoinmentsService;
