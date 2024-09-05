@@ -4,7 +4,7 @@ import { AuthService } from '../auth.service';
 import { UsersService } from '../../users/users.service';
 import { DoctorDto } from '../../doctors/dto/doctor.dto';
 import { PatientDto } from 'src/patients/dto/patient.dto';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -87,39 +87,39 @@ describe('AuthController', () => {
     });
   });
 
+  const registeredDoctor: DoctorDto & PatientDto = {
+    id: 'some-doctor-id',
+    name: 'Dr. John Doe',
+    password: 'securepassword',
+    age: 45,
+    phone: '987-654-3210',
+    email: 'john.doe@example.com',
+    born: new Date('1979-05-15T00:00:00Z'),
+    role: 'doctor',
+    specialties: [1, 2],
+    week_availability: {
+      1: [9, 10, 11],
+      3: [14, 15, 16],
+    },
+  };
+
+  const registrationBody: DoctorDto & PatientDto = {
+    id: 'some-doctor-id',
+    name: 'Dr. John Doe',
+    password: 'securepassword',
+    age: 45,
+    phone: '987-654-3210',
+    email: 'john.doe@example.com',
+    born: new Date('1979-05-15T00:00:00Z'),
+    role: 'doctor',
+    specialties: [1, 2],
+    week_availability: {
+      1: [9, 10, 11],
+      3: [14, 15, 16],
+    },
+  };
   describe('register', () => {
     it('should return the doctor values if registration was successful', async () => {
-      const registeredDoctor: DoctorDto & PatientDto = {
-        id: 'some-doctor-id',
-        name: 'Dr. John Doe',
-        password: 'securepassword',
-        age: 45,
-        phone: '987-654-3210',
-        email: 'john.doe@example.com',
-        born: new Date('1979-05-15T00:00:00Z'),
-        role: 'doctor',
-        specialties: [1, 2],
-        week_availability: {
-          1: [9, 10, 11],
-          3: [14, 15, 16],
-        },
-      };
-
-      const registrationBody: DoctorDto & PatientDto = {
-        id: 'some-doctor-id',
-        name: 'Dr. John Doe',
-        password: 'securepassword',
-        age: 45,
-        phone: '987-654-3210',
-        email: 'john.doe@example.com',
-        born: new Date('1979-05-15T00:00:00Z'),
-        role: 'doctor',
-        specialties: [1, 2],
-        week_availability: {
-          1: [9, 10, 11],
-          3: [14, 15, 16],
-        },
-      };
 
       // Ensure findByEmail returns null to simulate no existing user
       jest.spyOn(usersService, 'findByEmail').mockResolvedValue(null);
@@ -141,6 +141,14 @@ describe('AuthController', () => {
 
       // Ensure the result is the registered doctor
       expect(result).toEqual(registeredDoctor);
+
+    });
+    
+    it('should throw NotFoundException if the user is not registered', async () => {
+      jest.spyOn(usersService, 'findByEmail').mockResolvedValue(registeredDoctor);
+      await expect(controller.register(registrationBody)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 });

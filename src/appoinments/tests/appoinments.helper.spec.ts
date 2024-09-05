@@ -138,42 +138,42 @@ describe('getDayIdFromDate', () => {
     it('should return 1 for Sunday', () => {
       const date = new Date('2024-09-01'); // A Sunday
       const dayId = getDayIdFromDate(date);
-      expect(dayId).toBe(7);
+      expect(dayId).toBe(1);
     });
   
     it('should return 2 for Monday', () => {
       const date = new Date('2024-09-02'); // A Monday
       const dayId = getDayIdFromDate(date);
-      expect(dayId).toBe(1);
+      expect(dayId).toBe(2);
     });
   
     it('should return 3 for Tuesday', () => {
       const date = new Date('2024-09-03'); // A Tuesday
       const dayId = getDayIdFromDate(date);
-      expect(dayId).toBe(2);
+      expect(dayId).toBe(3);
     });
   
     it('should return 4 for Wednesday', () => {
       const date = new Date('2024-09-04'); // A Wednesday
       const dayId = getDayIdFromDate(date);
-      expect(dayId).toBe(3);
+      expect(dayId).toBe(4);
     });
   
     it('should return 5 for Thursday', () => {
       const date = new Date('2024-09-05'); // A Thursday
       const dayId = getDayIdFromDate(date);
-      expect(dayId).toBe(4);
+      expect(dayId).toBe(5);
     });
   
     it('should return 6 for Friday', () => {
       const date = new Date('2024-09-06'); // A Friday
       const dayId = getDayIdFromDate(date);
-      expect(dayId).toBe(5);
+      expect(dayId).toBe(6);
     });
   
     it('should return 7 for Saturday', () => {
       const date = new Date('2024-09-07'); // A Saturday
       const dayId = getDayIdFromDate(date);
-      expect(dayId).toBe(6);
+      expect(dayId).toBe(7);
     });
   });
