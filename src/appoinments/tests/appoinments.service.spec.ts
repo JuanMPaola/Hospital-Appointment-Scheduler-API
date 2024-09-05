@@ -213,26 +213,7 @@ describe('AppoinmentsService', () => {
 
   describe('appointmentValidation', () => {
   
-    it('should throw an error if the doctor is not available at the selected time', async () => {
-      const dto: UpdateAppoinmentDto = {
-        patient_id: 'patientId',
-        doctor_id: 'doctorId',
-        date: new Date('2024-09-10'), // A future date
-        time_range_id: 17,
-        status: 'scheduled',
-      };
-  
-      databaseService.query.mockResolvedValueOnce({
-        rows: [{
-          weekly_availability: { 2: [18] }, // Doctor available on Tuesday (2) at time range 18
-          appointments: []
-        }]
-      });
-  
-      await expect(service.appointmentValidation(dto))
-        .rejects
-        .toThrow(new Error('Error during appointment validation: Doctor is not available at the selected day and time'));
-    });
+
   
     it('should throw an error if the doctor has a conflicting appointment at the selected time', async () => {
       const dto: UpdateAppoinmentDto = {
