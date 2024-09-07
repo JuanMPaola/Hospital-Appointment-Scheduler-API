@@ -33,4 +33,9 @@ export class PatientsController {
   findOne(@Param('id') id: string) {
     return this.patientsService.findOne(id);
   }
+
+  @Get('/specialties/:symptoms')
+  getSpecialties(@Param('symptoms') symptoms: string) {
+    return this.patientsService.findSpecialties(symptoms);
+  }
 }

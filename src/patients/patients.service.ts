@@ -9,6 +9,8 @@ import {
 } from './patients.querys';
 import { deleteAppointmentsByUserIdQuery } from '../appoinments/appoinmetns.querys';
 import { UpdatePatientDto } from './dto/update-patient.dto';
+import { getSpecialtyWithSymptom } from './patients.helper';
+import { findAllDoctorsBySpecialtyTitleQuery } from '../doctors/doctors.querys';
 
 @Injectable()
 export class PatientsService {
@@ -114,6 +116,29 @@ export class PatientsService {
         'Could not update patient',
         error.message,
       );
+    }
+  }
+
+  async findSpecialties(symptom: string) {
+    const specialty = getSpecialtyWithSymptom(symptom);
+    if (specialty === 'Specialty not found for this symptom') {
+      return 'Specialty not found for this symptom';
+    }
+
+    const result = await this.databaseService.query(
+      findAllDoctorsBySpecialtyTitleQuery,
+      [specialty],
+    );
+    if (result.rows.length === 0) {
+      return {
+        specialty: specialty,
+        doctors: 'There are not registered doctors with this specialty',
+      };
+    } else {
+      return {
+        specialty: specialty,
+        doctors: result.rows,
+      };
     }
   }
 }

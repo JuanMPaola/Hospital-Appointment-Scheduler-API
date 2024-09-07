@@ -19,6 +19,7 @@ import {
 } from './appoinmetns.querys';
 import {
   findAllDoctorDataBySpecialityQuery,
+  findDoctorByIdQuery,
   findeDoctorsWeekAvailabilityAndAppointments,
 } from '../doctors/doctors.querys';
 import { getPatientByIdQuery } from '../patients/patients.querys';
@@ -66,19 +67,51 @@ export class AppoinmentsService {
       if (!patient.rows[0]) {
         throw new Error('Missing patient');
       }
-      // Get doctors by specialtie
+
+      // Get doctors by specialty
       const doctors = await this.databaseService.query(
         findAllDoctorDataBySpecialityQuery,
         [specialtyId],
       );
       if (doctors.rows.length === 0) {
-        return new InternalServerErrorException(
-          'There are no doctors of that speciality available',
+        throw new InternalServerErrorException(
+          'There are no doctors of that specialty available',
         );
       }
+
+      // Find nearest available appointment
       const nearestAppointment = searchNearest(doctors.rows, patient.rows[0]);
 
-      return this.create(nearestAppointment);
+      // Get doctor information for the nearest appointment
+      const doctor = await this.databaseService.query(findDoctorByIdQuery, [
+        nearestAppointment.doctor_id,
+      ]);
+
+      if (!doctor.rows[0]) {
+        throw new Error('Doctor not found');
+      }
+
+      // Create the appointment
+      const result = await this.create(nearestAppointment);
+
+      const { id, patient_id, date, day_id, time_range_id, status } = result;
+
+      // Construct the response with doctor details
+      const appointmentWithDoctor = {
+        id,
+        doctor: {
+          id: nearestAppointment.doctor_id,
+          name: doctor.rows[0].name,
+          specialties: doctor.rows[0].specialties,
+        },
+        patient_id,
+        date,
+        day_id,
+        time_range_id,
+        status,
+      };
+
+      return appointmentWithDoctor;
     } catch (error) {
       throw new InternalServerErrorException(
         'Error creating nearest appointment',

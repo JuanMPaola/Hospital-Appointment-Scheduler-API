@@ -129,6 +129,19 @@ WHERE ds.specialty_id = $1
 GROUP BY u.id;
 `;
 
+export const findAllDoctorsBySpecialtyTitleQuery = `
+SELECT 
+    u.id,
+    u.name,
+    u.email
+FROM users u
+JOIN doctors d ON u.id = d.user_id
+JOIN doctor_specialties ds ON d.user_id = ds.doctor_id
+JOIN specialties s ON ds.specialty_id = s.id
+WHERE s.title = $1
+GROUP BY u.id;
+`;
+
 export function createInsertSpecialtiesQuery(doctor) {
   return `
     INSERT INTO doctor_specialties (doctor_id, specialty_id)

@@ -78,7 +78,22 @@ describe('AppoinmentsController', () => {
     it('should create the nearest appointment for given specialtieId and patientId', async () => {
       const specialtieId = 1;
       const patientId = 'patient-uuid';
-      const mockAppointment = testingAppointmentExample;
+      //const mockAppointment = testingAppointmentExample;
+      const mockDoctor = {
+        id: '11cf6df3-2d95-4cc5-954a-aa30b2b42bc6',
+        name: 'Dr. Example',
+        specialties: ['Cardiology'],
+      };
+
+      const mockAppointment = {
+        id: 'appointment-id',
+        doctor: mockDoctor,
+        patient_id: '167e51b1-57cc-4620-833e-3533d0874679',
+        date: new Date(new Date().setDate(new Date().getDate() + 1)),
+        day_id: 1,
+        time_range_id: 17,
+        status: 'pending',
+      };
 
       // Mock the service method to return the mock appointment
       jest.spyOn(service, 'createNearest').mockResolvedValue(mockAppointment);

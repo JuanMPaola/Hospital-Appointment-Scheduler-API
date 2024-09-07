@@ -47,13 +47,13 @@ export class AppoinmentsController {
     return this.appoinmentsService.create(appoinmentDto);
   }
 
-  @Post('nearest/:specialtie/:patientId')
+  @Post('nearest/:specialty/:patientId')
   @ApiCreatedResponse(swaggerPostNearestAppointmentResponseExample)
   nearestAppointment(
-    @Param('specialtie') specialtieId: number,
+    @Param('specialty') specialtyId: number,
     @Param('patientId') patientId: string,
   ) {
-    return this.appoinmentsService.createNearest(specialtieId, patientId);
+    return this.appoinmentsService.createNearest(specialtyId, patientId);
   }
 
   @Get()
