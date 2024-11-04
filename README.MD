@@ -74,7 +74,7 @@ You have two options to run this project: **using Docker** (recommended) or **ru
 
 5. The API will be available at:
     ```
-    http://localhost:3000/api/v1
+    http://localhost:3000/apidocs
     ```
 
 ## Option 2: Run Locally
